@@ -1,4 +1,14 @@
 {
+  "choose_language_title": "Choose Your Language",
+  "choose_language_subtitle": "Select your preferred language to start your journey in the world of Hawaj, where intelligence meets daily experience in one platform.",
+  "arabic": "Arabic",
+  "english": "English",
+  "arabic_en": "العربية",
+  "english_ar": "الإنجليزية",
+
+
+
+
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",

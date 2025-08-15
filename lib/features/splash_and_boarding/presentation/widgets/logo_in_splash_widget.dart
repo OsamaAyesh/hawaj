@@ -10,9 +10,9 @@ class LogoInSplashWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset(
-        ManagerImages.logo,
-        height: ManagerHeight.h270,
-        width: ManagerWidth.w270,
+        ManagerImages.logoPrimary,
+        height: ManagerHeight.h170,
+        width: ManagerWidth.w190,
         fit: BoxFit.contain,
       ),
     );

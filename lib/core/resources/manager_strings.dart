@@ -2,6 +2,62 @@ import 'package:easy_localization/easy_localization.dart';
 
 /// A class defined for strings the app
 class ManagerStrings {
+
+  ///Change Language Screen
+  static String get chooseLanguageTitle => tr('choose_language_title');
+  static String get chooseLanguageSubtitle => tr('choose_language_subtitle');
+  static String get arabic => tr('arabic');
+  static String get english => tr('english');
+  static String get arabicEn => tr('arabic_en');
+  static String get englishAr => tr('english_ar');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

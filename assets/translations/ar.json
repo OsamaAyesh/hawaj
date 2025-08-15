@@ -1,4 +1,13 @@
 {
+  "choose_language_title": "اختر لغتك",
+  "choose_language_subtitle": "حدد لغتك المفضلة لبدء رحلتك في عالم حواج، حيث تلتقي الذكاء بالتجربة اليومية في منصة واحدة.",
+  "arabic": "العربية",
+  "english": "الإنجليزية",
+  "arabic_en": "Arabic",
+  "english_ar": "English",
+
+
+
   "noRouteFound": "لم يتم العثور على المسار",
   "success": "نجاح",
   "noContent": "لا يوجد محتوى",
