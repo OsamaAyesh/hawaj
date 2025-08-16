@@ -42,6 +42,7 @@ dependencies:
   flutter_native_splash: ^2.4.1
   flutter_screenutil: ^5.9.3
   device_preview: ^1.2.0
+  flutter_animate: ^4.5.2
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,13 @@ flutter:
     - assets/json/mockup/
     - assets/translations/
     - .env
+  fonts:
+    - family: Almarai
+      fonts:
+        - asset: assets/fonts/Almarai-Bold.ttf
+        - asset: assets/fonts/Almarai-ExtraBold.ttf
+        - asset: assets/fonts/Almarai-Light.ttf
+        - asset: assets/fonts/Almarai-Regular.ttf
 flutter_native_splash:
   color: "#ffffff"
   image: assets/images/logo.png
