@@ -6,7 +6,15 @@
   "arabic_en": "العربية",
   "english_ar": "الإنجليزية",
 
-
+  "skip": "Skip",
+  "next": "Next",
+  "login": "Login",
+  "page1_title": "Your daily and professional services… without moving or complications",
+  "page1_text": "Search, browse, connect, and request what you need from real estate, jobs, offers, delivery, and business contracts — all from a single integrated interface.",
+  "page2_title": "Hawaj understands and interacts with you",
+  "page2_text": "Hawaj uses artificial intelligence to understand you and suggest services tailored to your needs, saving you time and effort.",
+  "page3_title": "Goodbye to multiple apps – Hawaj combines them all",
+  "page3_text": "From real estate to jobs, and from accessing your contracts… Hawaj has simplified everything into one smart, seamless experience with a simple design that supports your needs.",
 
 
   "noRouteFound": "No route found",

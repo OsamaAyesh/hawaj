@@ -12,7 +12,23 @@ class ManagerStrings {
   static String get englishAr => tr('english_ar');
 
 
+  ///On Boarding Screen
+  // General Actions
+  static String get skip => tr('skip');
+  static String get next => tr('next');
+  static String get login => tr('login');
 
+  // First Page
+  static String get page1Title => tr('page1_title');
+  static String get page1Text => tr('page1_text');
+
+  // Second Page
+  static String get page2Title => tr('page2_title');
+  static String get page2Text => tr('page2_text');
+
+  // Third Page
+  static String get page3Title => tr('page3_title');
+  static String get page3Text => tr('page3_text');
 
 
 

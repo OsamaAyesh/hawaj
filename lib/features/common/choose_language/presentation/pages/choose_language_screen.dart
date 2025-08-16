@@ -24,12 +24,9 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
       selectedLang = lang;
     });
 
-    // 🔹 مثال منطق مستقبلي:
     // MyAppLocalizations.load(Locale(lang));
-    // أو باستخدام GetX:
     // Get.updateLocale(Locale(lang));
 
-    // 🔹 تخزين الاختيار محلي (SharedPreferences مثلاً):
     // SharedPreferences prefs = await SharedPreferences.getInstance();
     // await prefs.setString("app_language", lang);
   }
