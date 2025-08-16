@@ -31,6 +31,14 @@ class ManagerStrings {
   static String get page3Text => tr('page3_text');
 
 
+  ///Login Screen
+  static String get welcomeTitle => tr('welcome_title');
+  static String get welcomeSubtitle => tr('welcome_subtitle');
+  static String get phoneLabel => tr('phone_label');
+  static String get phoneHint => tr('phone_hint');
+  static String get loginButton => tr('login_button');
+
+
 
 
 

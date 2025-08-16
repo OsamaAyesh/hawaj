@@ -55,7 +55,6 @@ class _BodyOnBoardingWidgetState extends State<BodyOnBoardingWidget> with Ticker
       curve: Curves.easeOut,
     ));
 
-    // تشغيل الأنميشن بتأخير بسيط
     _imageController.forward();
     Future.delayed(const Duration(milliseconds: 100), () {
       _textController.forward();
@@ -101,8 +100,8 @@ class _BodyOnBoardingWidgetState extends State<BodyOnBoardingWidget> with Ticker
                   child: Text(
                     model.title,
                     style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s16,
-                      color: ManagerColors.primaryColor,
+                      fontSize: ManagerFontSize.s14,
+                      color: ManagerColors.black,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,

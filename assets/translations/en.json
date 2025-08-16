@@ -16,6 +16,11 @@
   "page3_title": "Goodbye to multiple apps – Hawaj combines them all",
   "page3_text": "From real estate to jobs, and from accessing your contracts… Hawaj has simplified everything into one smart, seamless experience with a simple design that supports your needs.",
 
+  "welcome_title": "Welcome back! I’m Hawaj 👋",
+  "welcome_subtitle": "Log in to continue your journey, and we’ll help you find the services that best suit your needs easily and quickly.",
+  "phone_label": "Phone Number",
+  "phone_hint": "Enter your phone number",
+  "login_button": "Login",
 
   "noRouteFound": "No route found",
   "success": "Success",

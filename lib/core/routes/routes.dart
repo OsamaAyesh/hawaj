@@ -1,4 +1,6 @@
+import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.dart';
 import 'package:app_mobile/features/common/choose_language/presentation/pages/choose_language_screen.dart';
+import 'package:app_mobile/features/splash_and_boarding/presentation/pages/on_boarding_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import '../resources/manager_strings.dart';
@@ -7,6 +9,8 @@ import '../resources/manager_strings.dart';
 class Routes {
   static const String splash = '/splash';
   static const String chooseLanguageScreen = '/change_language_screen';
+  static const String onBoardingScreen = '/on_boarding_screen';
+  static const String loginScreen = '/login_screen';
 }
 
 class RouteGenerator {
@@ -16,6 +20,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SplashScreen());
       case Routes.chooseLanguageScreen:
         return MaterialPageRoute(builder: (_) => const ChooseLanguageScreen());
+      case Routes.onBoardingScreen:
+        return MaterialPageRoute(builder: (_) => const OnBoardingScreen());
+      case Routes.loginScreen:
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
 
       default:
         return unDefinedRoute();

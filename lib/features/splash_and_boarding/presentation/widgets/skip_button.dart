@@ -19,7 +19,7 @@ class SkipButton extends StatelessWidget {
         tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
       child: Text(
-        ManagerStrings.skip,
+        ManagerStrings.login,
         style: getRegularTextStyle(
           fontSize: ManagerFontSize.s12,
           color: ManagerColors.gery1OnBoarding,
