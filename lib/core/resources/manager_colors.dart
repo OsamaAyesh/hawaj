@@ -7,6 +7,7 @@ class ManagerColors {
   static const Color white = Colors.white;
   static const Color black = Colors.black;
   static const Color gery1OnBoarding = Color(0XFF9F9696);
+  static const Color subtitleLoginTextColor = Color(0XFF9F9F9F);
 
   ///Choose Language Screen
   static const Color chooseLanguageSubtitleColor = Color(0XFF8E8C8E);
