@@ -1,0 +1,347 @@
+import 'package:flutter/material.dart';
+import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_font_size.dart';
+import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_radius.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
+import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:get/get.dart';
+
+class LabeledTextField extends StatefulWidget {
+  final String? label;
+  final String? hintText;
+  final TextEditingController? controller;
+  final int minLines;
+  final int maxLines;
+  final bool enabled;
+  final TextInputType keyboardType;
+
+  final Widget? buttonWidget;
+  final Widget? prefixIcon;
+  final VoidCallback? onButtonTap;
+  final double widthButton;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
+  final TextInputAction? textInputAction;
+  final Function(String)? onFieldSubmitted;
+
+  final bool isPhoneField;
+
+  const LabeledTextField({
+    super.key,
+    this.label,
+    this.hintText,
+    this.controller,
+    this.minLines = 1,
+    this.maxLines = 1,
+    this.enabled = true,
+    this.prefixIcon,
+    this.keyboardType = TextInputType.text,
+    this.buttonWidget,
+    this.onButtonTap,
+    required this.widthButton,
+    this.focusNode,
+    this.nextFocusNode,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.isPhoneField = false,
+  });
+
+  @override
+  State<LabeledTextField> createState() => _LabeledTextFieldState();
+}
+
+class _LabeledTextFieldState extends State<LabeledTextField> {
+  bool isSaudiNumber = false;
+
+  bool _validateSaudiNumber(String input) {
+    return (input.startsWith('966') && input.length >= 12) ||
+        (input.startsWith('05') && input.length >= 10);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (widget.label != null) ...[
+          Padding(
+            padding: EdgeInsets.only(bottom: ManagerHeight.h8),
+            child: Text(
+              widget.label!,
+              style: getBoldTextStyle(
+                fontSize: ManagerFontSize.s12,
+                color: ManagerColors.black,
+              ),
+            ),
+          ),
+        ],
+        TextFormField(
+          controller: widget.controller,
+          focusNode: widget.focusNode,
+          textInputAction: widget.textInputAction,
+          onChanged: (val) {
+            if (widget.isPhoneField) {
+              setState(() {
+                isSaudiNumber = _validateSaudiNumber(val);
+              });
+            }
+          },
+          onFieldSubmitted: widget.onFieldSubmitted ??
+                  (_) {
+                if (widget.nextFocusNode != null) {
+                  FocusScope.of(context).requestFocus(widget.nextFocusNode);
+                } else {
+                  FocusScope.of(context).unfocus();
+                }
+              },
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          enabled: widget.enabled,
+          keyboardType: widget.keyboardType,
+          style: getRegularTextStyle(
+            fontSize: ManagerFontSize.s12,
+            color: ManagerColors.black,
+          ),
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: getRegularTextStyle(
+              fontSize: ManagerFontSize.s12,
+              color: ManagerColors.greyWithColor,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: ManagerWidth.w8,
+              vertical: ManagerHeight.h12,
+            ),
+            filled: true,
+            fillColor: ManagerColors.white,
+            prefixIcon: widget.prefixIcon,
+            suffixIcon: widget.isPhoneField
+                ? (isSaudiNumber
+                ? Icon(Icons.check,
+                color: ManagerColors.primaryColor) // ✅ للرقم السعودي
+                : null)
+                : (widget.onButtonTap != null
+                ? ConstrainedBox(
+              constraints: BoxConstraints.tightFor(
+                width: widget.widthButton,
+                height: ManagerHeight.h48,
+              ),
+              child: ElevatedButton(
+                onPressed: widget.onButtonTap,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: ManagerColors.primaryColor,
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(
+                      ManagerRadius.r4,
+                    ),
+                  ),
+                  elevation: 0,
+                ),
+                child: widget.buttonWidget,
+              ),
+            )
+                : null),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(ManagerRadius.r4),
+              borderSide: BorderSide(
+                color: ManagerColors.greyWithColor.withOpacity(0.3),
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(ManagerRadius.r4),
+              borderSide: BorderSide(
+                color: ManagerColors.greyWithColor.withOpacity(0.3),
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(ManagerRadius.r4),
+              borderSide: const BorderSide(
+                color: ManagerColors.primaryColor,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import 'package:flutter/material.dart';
+// import 'package:app_mobile/core/resources/manager_colors.dart';
+// import 'package:app_mobile/core/resources/manager_font_size.dart';
+// import 'package:app_mobile/core/resources/manager_height.dart';
+// import 'package:app_mobile/core/resources/manager_radius.dart';
+// import 'package:app_mobile/core/resources/manager_styles.dart';
+// import 'package:app_mobile/core/resources/manager_width.dart';
+// import 'package:get/get.dart';
+// import 'package:get/get_core/src/get_main.dart';
+//
+// class LabeledTextField extends StatelessWidget {
+//   final String? label;
+//   final String? hintText;
+//   final TextEditingController? controller;
+//   final int minLines;
+//   final int maxLines;
+//   final bool enabled;
+//   final TextInputType keyboardType;
+//
+//   final Widget? buttonWidget;
+//   final Widget? prefixIcon;
+//   final VoidCallback? onButtonTap;
+//   final double widthButton;
+//   final FocusNode? focusNode;
+//   final FocusNode? nextFocusNode;
+//   final TextInputAction? textInputAction;
+//   final Function(String)? onFieldSubmitted;
+//
+//   const LabeledTextField({
+//     super.key,
+//     this.label,
+//     this.hintText,
+//     this.controller,
+//     this.minLines = 1,
+//     this.maxLines = 1,
+//     this.enabled = true,
+//     this.prefixIcon,
+//     this.keyboardType = TextInputType.text,
+//     this.buttonWidget,
+//     this.onButtonTap,
+//     required this.widthButton,
+//     this.focusNode,
+//     this.nextFocusNode,
+//     this.textInputAction,
+//     this.onFieldSubmitted,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         if (label != null) ...[
+//           Padding(
+//             padding: EdgeInsets.only(bottom: ManagerHeight.h8),
+//             child: Text(
+//               label!,
+//               style: getBoldTextStyle(
+//                 fontSize: ManagerFontSize.s12,
+//                 color: ManagerColors.black,
+//               ),
+//             ),
+//           ),
+//         ],
+//         TextFormField(
+//           controller: controller,
+//           focusNode: focusNode,
+//           textInputAction: textInputAction,
+//           // onFieldSubmitted: (_) {
+//           //   if (nextFocusNode != null) {
+//           //     FocusScope.of(context).requestFocus(nextFocusNode);
+//           //   } else {
+//           //     FocusScope.of(context).unfocus();
+//           //   }
+//           // },
+//           onFieldSubmitted: onFieldSubmitted ??
+//                   (_) {
+//                 if (nextFocusNode != null) {
+//                   FocusScope.of(context).requestFocus(nextFocusNode);
+//                 } else {
+//                   FocusScope.of(context).unfocus();
+//                 }
+//               },
+//           minLines: minLines,
+//           maxLines: maxLines,
+//           enabled: enabled,
+//           keyboardType: keyboardType,
+//           // textAlign: TextAlign.right,
+//           style: getRegularTextStyle(
+//             fontSize: ManagerFontSize.s12,
+//             color: ManagerColors.black,
+//           ),
+//           decoration: InputDecoration(
+//             hintText: hintText,
+//             hintStyle: getRegularTextStyle(
+//               fontSize: ManagerFontSize.s12,
+//               color: ManagerColors.greyWithColor,
+//             ),
+//             contentPadding: EdgeInsets.symmetric(
+//               horizontal: ManagerWidth.w8,
+//               vertical: ManagerHeight.h12,
+//             ),
+//             filled: true,
+//             fillColor: ManagerColors.white,
+//             prefixIcon: prefixIcon,
+//             suffixIcon: (onButtonTap != null)
+//                 ? ConstrainedBox(
+//               constraints: BoxConstraints.tightFor(
+//                 width: widthButton,
+//                 height: ManagerHeight.h48,
+//               ),
+//               child: Padding(
+//                 padding: EdgeInsets.only(top: ManagerHeight.h4,bottom: ManagerHeight.h4,right:Get.locale?.languageCode == 'en'?ManagerWidth.w4:0,left: Get.locale?.languageCode == 'ar'?ManagerWidth.w4:0, ),
+//                 child: ElevatedButton(
+//                     onPressed: onButtonTap,
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: ManagerColors.primaryColor,
+//                       padding: EdgeInsets.zero,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.only(
+//                           topLeft: Get.locale?.languageCode == 'ar'? Radius.circular(ManagerRadius.r4):Radius.circular(0),
+//                           bottomLeft:  Get.locale?.languageCode == 'ar'?Radius.circular(ManagerRadius.r4):Radius.circular(0),
+//                           bottomRight: Get.locale?.languageCode == 'en'? Radius.circular(ManagerRadius.r4):Radius.circular(0),
+//                           topRight:  Get.locale?.languageCode == 'en'? Radius.circular(ManagerRadius.r4):Radius.circular(0),
+//                         ),
+//                       ),
+//                       elevation: 0,
+//                     ),
+//                     child: buttonWidget
+//                 ),
+//               ),
+//             )
+//                 : null,
+//             suffixIconConstraints: BoxConstraints(
+//               minWidth: 0,
+//               minHeight: 0,
+//               maxHeight: ManagerHeight.h48,
+//             ),
+//             border: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(ManagerRadius.r4),
+//               borderSide: BorderSide(
+//                 color: ManagerColors.greyWithColor.withOpacity(0.3),
+//               ),
+//             ),
+//             enabledBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(ManagerRadius.r4),
+//               borderSide: BorderSide(
+//                 color: ManagerColors.greyWithColor.withOpacity(0.3),
+//               ),
+//             ),
+//             focusedBorder: OutlineInputBorder(
+//               borderRadius: BorderRadius.circular(ManagerRadius.r4),
+//               borderSide: const BorderSide(
+//                 color: ManagerColors.primaryColor,
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }

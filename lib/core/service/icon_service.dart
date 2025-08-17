@@ -6,7 +6,7 @@ import '../resources/manager_icons.dart';
 
 class IconService {
   final Map<IconData, IconData> icons = {
-    ManagerIcons.arrowBackAndroid: ManagerIcons.arrowBackIos,
+    // ManagerIcons.arrowBackAndroid: ManagerIcons.arrowBackIos,
   };
 
   IconData? getPlatformIcon(IconData icon) {

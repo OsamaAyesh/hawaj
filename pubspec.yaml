@@ -64,6 +64,7 @@ flutter:
     - assets/json/
     - assets/json/mockup/
     - assets/translations/
+    - assets/icons/
     - .env
   fonts:
     - family: Almarai

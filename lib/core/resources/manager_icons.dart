@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+const String iconsPath = 'assets/icons';
 
 /// A class defined for all icons the app
 class ManagerIcons {
-  static IconData arrowBackIos = Icons.arrow_back_ios;
-  static IconData arrowBackAndroid = Icons.arrow_back;
+  static const String phoneIcon="$iconsPath/phone_icon.png";
+
 }
