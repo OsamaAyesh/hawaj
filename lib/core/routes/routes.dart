@@ -1,9 +1,11 @@
 import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/otp_login_screen.dart';
+import 'package:app_mobile/features/common/auth/presentation/pages/success_login_screen.dart';
 import 'package:app_mobile/features/common/choose_language/presentation/pages/choose_language_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/on_boarding_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
+import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
 import '../resources/manager_strings.dart';
 
 /// A class defined for all routes constants
@@ -15,6 +17,10 @@ class Routes {
   ///Auth Screens
   static const String loginScreen = '/login_screen';
   static const String otpLoginScreen = '/otp_login_screen';
+  static const String successLoginScreen = '/success_login_screen';
+  static const String completeInformationScreen = '/complete_information_screen';
+
+
 
 }
 
@@ -31,6 +37,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const LoginScreen());
       case Routes.otpLoginScreen:
         return MaterialPageRoute(builder: (_) => const OtpLoginScreen());
+      case Routes.successLoginScreen:
+        return MaterialPageRoute(builder: (_) => const SuccessLoginScreen());
+      case Routes.completeInformationScreen:
+        return MaterialPageRoute(builder: (_) => const CompleteInformationScreen());
       default:
         return unDefinedRoute();
     }

@@ -28,6 +28,27 @@
   "otp_resend": "Request a new code",
   "otp_verify_button": "Verify",
 
+  "verification_success_title": "Verification Successful!",
+  "verification_success_subtitle": "Welcome! Your number has been verified. You can now enjoy Hawaj services quickly and seamlessly.",
+  "complete_profile_button": "Complete Profile",
+  "view_policies_text": "View Terms of Use and Privacy Policy",
+
+  "profile_setup_title": "Let’s start your first step with Hawaj",
+  "profile_setup_subtitle": "Create your account in simple steps and let Hawaj help you reach every service easily and smartly.",
+  "full_name_label": "Full Name",
+  "full_name_hint": "Enter your full name",
+  "email_label": "Email Address",
+  "email_hint": "Enter your email address",
+  "location_label": "Set Location",
+  "location_hint": "Set your location on the map",
+  "location_button": "Set your location",
+  "profile_image_label": "Profile Picture",
+  "profile_image_hint": "Upload profile picture",
+  "profile_image_note": "Note: It is recommended to upload a clear and recent high-quality photo.",
+  "continue_button": "Continue",
+
+
+
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",

@@ -47,6 +47,30 @@ class ManagerStrings {
   static String get otpVerifyButton => tr('otp_verify_button');
 
 
+  ///Success Login Screen
+  static String get verificationSuccessTitle => tr('verification_success_title');
+  static String get verificationSuccessSubtitle => tr('verification_success_subtitle');
+  static String get completeProfileButton => tr('complete_profile_button');
+  static String get viewPoliciesText => tr('view_policies_text');
+
+
+  ///Complete Information Screen Strings
+  static String get profileSetupTitle => tr('profile_setup_title');
+  static String get profileSetupSubtitle => tr('profile_setup_subtitle');
+  static String get fullNameLabel => tr('full_name_label');
+  static String get fullNameHint => tr('full_name_hint');
+  static String get emailLabel => tr('email_label');
+  static String get emailHint => tr('email_hint');
+  static String get locationLabel => tr('location_label');
+  static String get locationHint => tr('location_hint');
+  static String get locationButton => tr('location_button');
+  static String get profileImageLabel => tr('profile_image_label');
+  static String get profileImageHint => tr('profile_image_hint');
+  static String get profileImageNote => tr('profile_image_note');
+  static String get continueButton => tr('continue_button');
+
+
+
 
 
 

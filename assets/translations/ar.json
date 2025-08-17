@@ -28,6 +28,25 @@
   "otp_resend": "طلب رمز جديد",
   "otp_verify_button": "التحقق",
 
+  "verification_success_title": "تم التحقق بنجاح!",
+  "verification_success_subtitle": "أهلاً بك! تم التحقق من رقمك، وبإمكانك الآن الاستمتاع بخدمات حواج بسرعة وسلاسة.",
+  "complete_profile_button": "أكمل الملف الشخصي",
+  "view_policies_text": "تصفح سياسات الإستخدام والخصوصية",
+
+  "profile_setup_title": "هيا نبدأ أول خطوة مع حواج",
+  "profile_setup_subtitle": "أنشئ حسابك بخطوات بسيطة، واجعل حواج يساعدك حتى تصل لكل خدمة بسهولة وذكاء.",
+  "full_name_label": "الاسم كامل",
+  "full_name_hint": "قم بإدخال الاسم الكامل",
+  "email_label": "البريد الإلكتروني",
+  "email_hint": "قم بإدخال البريد الإلكتروني",
+  "location_label": "تعيين الموقع الجغرافي",
+  "location_hint": "تعيين الموقع الجغرافي على الخريطة",
+  "location_button": "حدد موقعك",
+  "profile_image_label": "صورة البروفايل",
+  "profile_image_hint": "ارفع صورة البروفايل",
+  "profile_image_note": "ملحوظة: يفضل رفع صورة واضحة وحديثة بأبعاد عالية، لتظهر بوضوح.",
+  "continue_button": "استمرار",
+
 
   "noRouteFound": "لم يتم العثور على المسار",
   "success": "نجاح",
