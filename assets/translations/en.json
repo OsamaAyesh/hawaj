@@ -22,6 +22,12 @@
   "phone_hint": "Enter your phone number",
   "login_button": "Login",
 
+  "otp_title": "Enter Verification Code",
+  "otp_subtitle": "We have sent a confirmation code to the following phone number",
+  "otp_did_not_receive": "Didn’t receive a code?",
+  "otp_resend": "Request a new code",
+  "otp_verify_button": "Verify",
+
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",

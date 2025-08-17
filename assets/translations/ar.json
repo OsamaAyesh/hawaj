@@ -22,6 +22,12 @@
   "phone_hint": "قم بإدخال رقم الهاتف",
   "login_button": "تسجيل الدخول",
 
+  "otp_title": "أدخل رمز التحقق",
+  "otp_subtitle": "لقد قمنا بإرسال رمز التأكيد إلى رقم الهاتف التالي",
+  "otp_did_not_receive": "لم تستلم رمزاً؟",
+  "otp_resend": "طلب رمز جديد",
+  "otp_verify_button": "التحقق",
+
 
   "noRouteFound": "لم يتم العثور على المسار",
   "success": "نجاح",

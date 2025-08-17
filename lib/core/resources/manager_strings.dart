@@ -39,6 +39,15 @@ class ManagerStrings {
   static String get loginButton => tr('login_button');
 
 
+  ///Otp Login Screen
+  static String get otpTitle => tr('otp_title');
+  static String get otpSubtitle => tr('otp_subtitle');
+  static String get otpDidNotReceive => tr('otp_did_not_receive');
+  static String get otpResend => tr('otp_resend');
+  static String get otpVerifyButton => tr('otp_verify_button');
+
+
+
 
 
 
