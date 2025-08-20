@@ -6,6 +6,7 @@ import 'package:app_mobile/features/splash_and_boarding/presentation/pages/on_bo
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
+import '../../features/common/test/test_hawaj_screen.dart';
 import '../resources/manager_strings.dart';
 
 /// A class defined for all routes constants
@@ -20,6 +21,9 @@ class Routes {
   static const String successLoginScreen = '/success_login_screen';
   static const String completeInformationScreen = '/complete_information_screen';
 
+
+  ///Test Hawaj Screen
+  static const String testHawajScreen = '/test_hawaj_screen';
 
 
 }
@@ -41,6 +45,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SuccessLoginScreen());
       case Routes.completeInformationScreen:
         return MaterialPageRoute(builder: (_) => const CompleteInformationScreen());
+      // case Routes.testHawajScreen:
+      //   return MaterialPageRoute(builder: (_) => const SpeechScreen());
+
       default:
         return unDefinedRoute();
     }

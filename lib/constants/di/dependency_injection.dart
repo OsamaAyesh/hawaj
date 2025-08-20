@@ -43,7 +43,7 @@ initModule() async {
 
   if (!GetIt.I.isRegistered<NetworkInfo>()) {
     instance.registerLazySingleton<NetworkInfo>(
-        () => NetworkInfoImp(InternetConnectionCheckerPlus()));
+        () => NetworkInfoImp(InternetConnection()));
   }
 
   if (!GetIt.I.isRegistered<DioFactory>()) {
