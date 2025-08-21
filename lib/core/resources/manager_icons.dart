@@ -22,4 +22,7 @@ class ManagerIcons {
   static const String offerManagerIcons3="$iconsPath/offer_manager_icon3.png";
 
 
+  ///Subscription Plan Screens
+  static const String dollarIcon="$iconsPath/dollar_icon.png";
+
 }
