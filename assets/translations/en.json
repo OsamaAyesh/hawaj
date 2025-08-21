@@ -48,6 +48,42 @@
   "continue_button": "Continue",
 
 
+  "profile_title": "Profile",
+  "new_user": "New User",
+  "phone_number": "Phone Number",
+  "subscribed_services": "Subscribed Services",
+  "manage_services": "Manage Services",
+  "change_password": "Change Password",
+  "edit_profile": "Edit Profile",
+  "contact_support": "Contact Support",
+  "terms_conditions": "Terms & Conditions / User Agreement",
+  "logout": "Log Out",
+
+  "product_management": "Product Management",
+  "quick_access": "Quick Access",
+  "add_product": "Add Product",
+  "add_product_desc": "Easily add your product and specify its details through the form",
+  "manage_products": "Manage Products",
+  "manage_products_desc": "Full control over your products and manage them from one place",
+  "business_details": "Business Details",
+  "business_details_desc": "Review and update your business’s basic information for accurate reference",
+
+  "subscribe_now": "Subscribe Now",
+  "subscribe_description": "Publish your daily offers now with Hawaj! Subscribe to the plan that suits you and start publishing your offers smartly and professionally, reaching nearby customers with an interactive map.",
+
+  "popular_plan": "Popular Plan",
+  "plan_name": "Super",
+  "plan_price": "59.99 ₪",
+  "institution_type": "Institution Type",
+  "subscription_duration": "Subscription Duration",
+  "included_features": "Included Features",
+  "feature_1": "Publish a limited number of offers daily",
+  "feature_2": "Display your store location or activities on the map",
+  "feature_3": "Statistics and performance reports for offers",
+  "feature_4": "Showcase your products or services professionally",
+  "subscribe_button": "Subscribe to this plan",
+  "note_text": "You can change the plan you selected after the current one ends or by contacting support.",
+
 
   "noRouteFound": "No route found",
   "success": "Success",

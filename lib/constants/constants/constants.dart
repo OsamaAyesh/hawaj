@@ -1,3 +1,7 @@
+import 'package:app_mobile/core/resources/manager_icons.dart';
+
+import '../../core/resources/manager_strings.dart';
+
 class Constants {
   static const String message = "message";
   static const String error = "error";
@@ -28,4 +32,23 @@ class Constants {
   static const String englishName = 'English';
   static const String english = 'en';
   static const String arabic = 'ar';
+
+  static List<Map<String, String>> itemsOfferManagerProvider = [
+    {
+      'icon': ManagerIcons.offerManagerIcons1,
+      'title': ManagerStrings.addProduct,
+      'subtitle': ManagerStrings.addProductDesc,
+    },
+    {
+      'icon': ManagerIcons.offerManagerIcons2,
+      'title': ManagerStrings.manageProducts,
+      'subtitle': ManagerStrings.manageProductsDesc,
+    },
+    {
+      'icon': ManagerIcons.offerManagerIcons3,
+      'title': ManagerStrings.businessDetails,
+      'subtitle': ManagerStrings.businessDetailsDesc,
+    },
+  ];
+
 }

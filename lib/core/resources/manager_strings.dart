@@ -70,11 +70,46 @@ class ManagerStrings {
   static String get continueButton => tr('continue_button');
 
 
+///Profile Screen Strings
+  static String get profileTitle => tr('profile_title');
+  static String get newUser => tr('new_user');
+  static String get phoneNumber => tr('phone_number');
+  static String get subscribedServices => tr('subscribed_services');
+  static String get manageServices => tr('manage_services');
+  static String get changePassword => tr('change_password');
+  static String get editProfile => tr('edit_profile');
+  static String get contactSupport => tr('contact_support');
+  static String get termsConditions => tr('terms_conditions');
+  static String get logout => tr('logout');
+
+
+  ///Manager Products
+  static String get productManagement => tr('product_management');
+  static String get quickAccess => tr('quick_access');
+  static String get addProduct => tr('add_product');
+  static String get addProductDesc => tr('add_product_desc');
+  static String get manageProducts => tr('manage_products');
+  static String get manageProductsDesc => tr('manage_products_desc');
+  static String get businessDetails => tr('business_details');
+  static String get businessDetailsDesc => tr('business_details_desc');
 
 
 
-
-
+  ///Subscription Offer Provider Strings
+  static String get subscribeNow => tr('subscribe_now');
+  static String get subscribeDescription => tr('subscribe_description');
+  static String get popularPlan => tr('popular_plan');
+  static String get planName => tr('plan_name');
+  static String get planPrice => tr('plan_price');
+  static String get institutionType => tr('institution_type');
+  static String get subscriptionDuration => tr('subscription_duration');
+  static String get includedFeatures => tr('included_features');
+  static String get feature1 => tr('feature_1');
+  static String get feature2 => tr('feature_2');
+  static String get feature3 => tr('feature_3');
+  static String get feature4 => tr('feature_4');
+  static String get subscribeButton => tr('subscribe_button');
+  static String get noteText => tr('note_text');
 
 
 

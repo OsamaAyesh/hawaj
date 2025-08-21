@@ -1,6 +1,8 @@
+import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../constants/env/env_constants.dart';
+import '../../constants/request_constants/request_constants_endpoints.dart';
 import '../service/env_service.dart';
 
 part 'app_api.g.dart';
@@ -15,5 +17,11 @@ abstract class AppService {
       ),
     );
   }
+
+  ///On Boarding Request
+  @GET(RequestConstantsEndpoints.login)
+  Future<OnBoardingResponse> getOnBoardingData(
+      );
+
 
 }

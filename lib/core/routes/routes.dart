@@ -7,6 +7,8 @@ import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splas
 import 'package:flutter/material.dart';
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
 import '../../features/common/test/test_hawaj_screen.dart';
+import '../../features/providers/offers_provider/manager_products_offer_provider/pages/manager_products_offer_provider_screen.dart';
+import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
 import '../resources/manager_strings.dart';
 
 /// A class defined for all routes constants
@@ -25,6 +27,10 @@ class Routes {
   ///Test Hawaj Screen
   static const String testHawajScreen = '/test_hawaj_screen';
 
+
+  ///Offer Provider
+  static const String managerProductsOfferProviderScreen = '/manager_products_offer_provider_screen';
+  static const String subscriptionOfferProviderScreen = '/subscription_offer_provider_screen';
 
 }
 
@@ -45,8 +51,10 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SuccessLoginScreen());
       case Routes.completeInformationScreen:
         return MaterialPageRoute(builder: (_) => const CompleteInformationScreen());
-      // case Routes.testHawajScreen:
-      //   return MaterialPageRoute(builder: (_) => const SpeechScreen());
+      case Routes.managerProductsOfferProviderScreen:
+        return MaterialPageRoute(builder: (_) => const ManagerProductsOfferProviderScreen());
+      case Routes.subscriptionOfferProviderScreen:
+        return MaterialPageRoute(builder: (_) => const SubscriptionOfferProviderScreen());
 
       default:
         return unDefinedRoute();

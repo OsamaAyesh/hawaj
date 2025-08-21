@@ -11,4 +11,15 @@ class ManagerIcons {
   static const String uploadIcon="$iconsPath/upload_icon.png";
 
 
+  ///Arrow Backs Icons
+  static const String arrowBackForward="$iconsPath/arrow_back_icon_farward.png";
+  static const String arrowBackIcon="$iconsPath/arrow_back_icon.png";
+
+
+  ///Offer Provider Icons
+  static const String offerManagerIcons1="$iconsPath/offer_manager_icon1.png";
+  static const String offerManagerIcons2="$iconsPath/offer_manager_icon2.png";
+  static const String offerManagerIcons3="$iconsPath/offer_manager_icon3.png";
+
+
 }
