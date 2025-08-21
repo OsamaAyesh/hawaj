@@ -8,6 +8,8 @@ import 'package:get/get.dart'; // مهم لاستعمال Get.locale
 import '../../../../../../core/resources/manager_font_size.dart';
 import '../../../../../../core/resources/manager_styles.dart';
 import '../../../../../../core/widgets/custom_header_subscription_widget.dart';
+import '../../../../../common/common_widgets/subscription_screen_widgets/label_drop_down_subscription_widget.dart';
+import '../../../../../common/common_widgets/subscription_screen_widgets/row_with_dollar_icon_price_widget.dart';
 import '../../../../../common/common_widgets/subscription_screen_widgets/sub_title_subscription_offer_provider_widget.dart';
 import '../../../../../common/common_widgets/subscription_screen_widgets/title_container_widget.dart';
 import '../../../../../common/common_widgets/subscription_screen_widgets/title_subscription_offer_provider_widget.dart';
@@ -55,70 +57,33 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                       SizedBox(height: ManagerHeight.h16,),
                       
                       /// ============ Plan Title  =============
-                      TitleContainerWidget(title: 'الخطة الرائجة',),
+                      const TitleContainerWidget(title: 'الخطة الرائجة',),
                        SizedBox(height: ManagerHeight.h8),
 
                       /// ============ Plan Name  =============
-                      TitlePlanNameWidget(title: "Super"),
-                      const Text(
-                        "Super",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.deepPurple,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      // Price
-                      const Text(
-                        "59.99 ₪",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                          color: Colors.black,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Dropdown: نوع المؤسسة
-                      DropdownButtonFormField<String>(
+                      const TitlePlanNameWidget(title: "Super"),
+
+                       SizedBox(height: ManagerHeight.h4),
+
+                      /// ====== Price Plan Widget ========
+                      const RowWithDollarIconPriceWidget(pricePlan: '59.99',),
+
+
+                      ///======= Drop Down Type  Company Widget =======
+                      LabelDropDownSubscriptionWidget<String>(
+                        label: "نوع المؤسسة",
+                        hint: "اختر نوع المؤسسة",
                         value: "مطعم",
                         items: const [
                           DropdownMenuItem(value: "مطعم", child: Text("مطعم")),
                           DropdownMenuItem(value: "سوبرماركت", child: Text("سوبرماركت")),
+                          DropdownMenuItem(value: "مقهى", child: Text("مقهى")),
                         ],
-                        onChanged: (val) {},
-                        decoration: const InputDecoration(
-                          labelText: "نوع المؤسسة",
-                          border: OutlineInputBorder(),
-                        ),
+                        onChanged: (val) {
+                          print("تم الاختيار: $val");
+                        },
                       ),
-                      const SizedBox(height: 15),
-                      // Dropdown: مدة الاشتراك
-                      DropdownButtonFormField<String>(
-                        value: "شهرية",
-                        items: const [
-                          DropdownMenuItem(value: "شهرية", child: Text("شهرية")),
-                          DropdownMenuItem(value: "سنوية", child: Text("سنوية")),
-                        ],
-                        onChanged: (val) {},
-                        decoration: const InputDecoration(
-                          labelText: "مدة الاشتراك",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      // Features Title
-                      const Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "القطاعات المشمولة",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 10),
+
                       // Features List
                       const FeatureItem(text: "نشر عدد محدد من العروض يومياً"),
                       const FeatureItem(text: "عرض موقع متجرك أو نشاطك على الخريطة"),

@@ -53,6 +53,7 @@ dependencies:
   flutter_audio_capture: ^1.1.11
 #  mic_stream: ^0.7.2
 #  record: ^6.1.0
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:
