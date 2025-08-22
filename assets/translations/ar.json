@@ -120,6 +120,11 @@
   "confirm_add_org_confirm": "متابعة",
   "confirm_add_org_cancel": "إلغاء",
 
+  "org_added_main_title": "تم إضافة المؤسسة بنجاح!",
+  "org_added_subtitle": "خطوتك الأولى موفقة! أضف الآن عروضك أو منتجاتك لتظهر للآلاف المستخدمين على دواج",
+  "org_added_primary_btn": "استكمال إضافة المنتجات",
+  "org_added_secondary_btn": "استكمال إضافة المنتجات لاحقًا",
+
 
   "noRouteFound": "لم يتم العثور على المسار",
   "success": "نجاح",

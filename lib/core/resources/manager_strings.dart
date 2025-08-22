@@ -151,7 +151,10 @@ class ManagerStrings {
   static String get confirmAddOrgConfirm => tr('confirm_add_org_confirm');
   static String get confirmAddOrgCancel => tr('confirm_add_org_cancel');
 
-
+  static String get orgAddedMainTitle => tr('org_added_main_title');
+  static String get orgAddedSubtitle => tr('org_added_subtitle');
+  static String get orgAddedPrimaryBtn => tr('org_added_primary_btn');
+  static String get orgAddedSecondaryBtn => tr('org_added_secondary_btn');
 
 
 

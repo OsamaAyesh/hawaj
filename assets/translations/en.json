@@ -121,6 +121,10 @@
   "confirm_add_org_confirm": "Continue",
   "confirm_add_org_cancel": "Cancel",
 
+  "org_added_main_title": "Organization added successfully!",
+  "org_added_subtitle": "Great first step! Now add your offers or products to appear to thousands of users on Dawaj",
+  "org_added_primary_btn": "Continue adding products",
+  "org_added_secondary_btn": "Add products later",
 
   "noRouteFound": "No route found",
   "success": "Success",

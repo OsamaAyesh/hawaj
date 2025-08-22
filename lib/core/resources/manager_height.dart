@@ -503,6 +503,7 @@ class ManagerHeight {
   static double h499 = ScreenUtilNew.height(499.0);
   static double h500 = ScreenUtilNew.height(500.0);
   static double h600 = ScreenUtilNew.height(600.0);
+  static double h609 = ScreenUtilNew.height(609);
   static double h700 = ScreenUtilNew.height(700.0);
   static double h710 = ScreenUtilNew.height(710.0);
   static double h720 = ScreenUtilNew.height(720.0);
