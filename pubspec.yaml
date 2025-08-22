@@ -73,6 +73,7 @@ flutter:
   assets:
     - assets/images/
     - assets/json/
+    - assets/images_for_remove/
     - assets/json/mockup/
     - assets/translations/
     - assets/icons/

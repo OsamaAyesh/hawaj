@@ -27,6 +27,7 @@ class ManagerIcons {
 
   ///Fields Price Widgets Icon
   static const String ryalSudia="$iconsPath/ryal_sudia.png";
+  static const String editIconWidget="$iconsPath/edit_icon_widget.png";
 
 
 }

@@ -188,6 +188,7 @@ class ManagerStrings {
   static String get confirmAddProductSubtitle => tr('confirm_add_product_subtitle');
   static String get confirmAddProductConfirm => tr('confirm_add_product_confirm');
   static String get confirmAddProductCancel => tr('confirm_add_product_cancel');
+  static String get productList => tr('product_list');
 
 
 

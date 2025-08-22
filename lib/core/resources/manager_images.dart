@@ -1,4 +1,5 @@
 const String imagesPath = 'assets/images';
+const String imagesRemovePath = 'assets/images_for_remove';
 
 /// A class defined for all images the app
 class ManagerImages {
@@ -9,4 +10,8 @@ class ManagerImages {
   static const String onBoardingImage2="$imagesPath/on_boarding2_image.png";
   static const String onBoardingImage3="$imagesPath/on_boarding3_image.png";
   static const String successSubscriptionImage="$imagesPath/success_subscription_image.png";
+
+  ///======== Images For Remove
+  static const String imageFoodOneRemove="$imagesRemovePath/image_food_one.png";
+
 }

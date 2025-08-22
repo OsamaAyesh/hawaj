@@ -157,6 +157,9 @@
   "confirm_add_product_confirm": "متابعة",
   "confirm_add_product_cancel": "إلغاء",
 
+  "product_list": "قائمة المنتجات",
+
+
   "noRouteFound": "لم يتم العثور على المسار",
   "success": "نجاح",
   "noContent": "لا يوجد محتوى",
