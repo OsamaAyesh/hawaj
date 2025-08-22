@@ -8,4 +8,5 @@ class ManagerImages {
   static const String onBoardingImage1="$imagesPath/on_boarding1_image.png";
   static const String onBoardingImage2="$imagesPath/on_boarding2_image.png";
   static const String onBoardingImage3="$imagesPath/on_boarding3_image.png";
+  static const String successSubscriptionImage="$imagesPath/success_subscription_image.png";
 }

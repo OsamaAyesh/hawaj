@@ -112,8 +112,10 @@ class ManagerStrings {
   static String get noteText => tr('note_text');
 
 
-
-
+  ///Success Subscription Screen Strings.
+  static String get subscriptionSuccessTitle => tr('subscription_success_title');
+  static String get subscriptionSuccessDesc => tr('subscription_success_desc');
+  static String get subscriptionSuccessButton => tr('subscription_success_button');
 
 
 

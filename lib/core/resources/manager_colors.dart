@@ -13,6 +13,7 @@ class ManagerColors {
   static const Color iconsColorInAuth = Color(0XFF9F9F9F);
   static const Color colorGreySubscription = Color(0XFF666666);
   static const Color titleDropDownSubscriptionWidget = Color(0XFF6D6D6D);
+  static const Color colorGrey = Color(0XFF9F9696);
 
   ///Choose Language Screen
   static const Color chooseLanguageSubtitleColor = Color(0XFF8E8C8E);

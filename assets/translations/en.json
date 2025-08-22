@@ -85,6 +85,10 @@
   "note_text": "You can change the plan you selected after the current one ends or by contacting support.",
 
 
+  "subscription_success_title": "Congratulations! Your subscription has been completed successfully",
+  "subscription_success_desc": "To complete your professional experience on Hawaj, please provide your company information and registration details to ensure your offers appear trustworthy and attractive to customers.",
+  "subscription_success_button": "Complete Information",
+
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",
