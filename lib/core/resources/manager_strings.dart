@@ -145,7 +145,11 @@ class ManagerStrings {
   static String get commercialRecordHint => tr('commercial_record_hint');
   static String get commercialRecordHint2 => tr('commercial_record_hint2');
   static String get submitButton => tr('submit_button');
-
+    ///======> Confirm Dialog Strings Offer Provider
+  static String get confirmAddOrgTitle => tr('confirm_add_org_title');
+  static String get confirmAddOrgSubtitle => tr('confirm_add_org_subtitle');
+  static String get confirmAddOrgConfirm => tr('confirm_add_org_confirm');
+  static String get confirmAddOrgCancel => tr('confirm_add_org_cancel');
 
 
 

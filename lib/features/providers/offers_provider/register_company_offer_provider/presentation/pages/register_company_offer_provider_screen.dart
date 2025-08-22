@@ -2,6 +2,7 @@ import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
+import 'package:app_mobile/core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/resources/manager_font_size.dart';
@@ -24,8 +25,8 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
         child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
           physics: const BouncingScrollPhysics(),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,19 +34,21 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
               SizedBox(
                 height: ManagerHeight.h24,
               ),
-          
+
               /// ======== Title Widget =========
               TitleFormScreenWidget(
                 title: ManagerStrings.registerCompanyTitle,
               ),
-          
+
               /// ======== Subtitle Widget =========
               SubTitleFormScreenWidget(
                 subTitle: ManagerStrings.registerCompanySubtitle,
               ),
-          
-              SizedBox(height: ManagerHeight.h16,),
-          
+
+              SizedBox(
+                height: ManagerHeight.h16,
+              ),
+
               /// ======== Text Field Company Name =================
               LabeledTextField(
                 widthButton: ManagerWidth.w130,
@@ -58,9 +61,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                 maxLines: 1,
               ),
 
-
               const SizedBoxBetweenFieldWidgets(),
-
 
               /// ======== Text Field Company Services =================
               LabeledTextField(
@@ -148,6 +149,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                 maxLines: 1,
               ),
               const SizedBoxBetweenFieldWidgets(),
+
               /// ======== Upload File Widget=================
               UploadProfileImageField(
                 label: ManagerStrings.companyLogo,
@@ -181,13 +183,35 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                   // Action Upload Image
                 },
               ),
-              SizedBox(height: ManagerHeight.h16,),
+              SizedBox(
+                height: ManagerHeight.h16,
+              ),
 
               /// ======== Button Widget=================
-              ButtonApp(title: ManagerStrings.submitButton, onPressed: (){}, paddingWidth: 0),
+              ButtonApp(
+                  title: ManagerStrings.submitButton,
+                  onPressed: () {
+                    showDialogConfirmRegisterCompanyOffer(
+                      title: ManagerStrings.confirmAddOrgTitle,
+                      subTitle: ManagerStrings.confirmAddOrgSubtitle,
+                      actionConfirmText: ManagerStrings.confirmAddOrgConfirm,
+                      actionCancel: ManagerStrings.confirmAddOrgCancel,
+                      context,
+                      onConfirm: () {
+                        // TODO: تنفيذ عملية التأكيد
+                        print("Company offer registered ✅");
+                      },
+                      onCancel: () {
+                        // TODO: إلغاء العملية
+                        print("Operation cancelled ❌");
+                      },
+                    );
+                  },
+                  paddingWidth: 0),
 
-              SizedBox(height: ManagerHeight.h16,),
-
+              SizedBox(
+                height: ManagerHeight.h16,
+              ),
             ],
           ),
         ),

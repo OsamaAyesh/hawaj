@@ -116,6 +116,12 @@
   "submit_button": "Add Company",
 
 
+  "confirm_add_org_title": "Confirm Adding the Organization",
+  "confirm_add_org_subtitle": "Are you sure you want to add this organization? Please verify all data before proceeding.",
+  "confirm_add_org_confirm": "Continue",
+  "confirm_add_org_cancel": "Cancel",
+
+
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",

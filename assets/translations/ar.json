@@ -115,6 +115,10 @@
   "commercial_record_hint2": "ملاحظة يجب رفع صورة واحدة او ملف يوضح تفاصيل السجل التجاري",
   "submit_button": "إضافة المؤسسة",
 
+  "confirm_add_org_title": "تأكيد إضافة المؤسسة",
+  "confirm_add_org_subtitle": "هل أنت متأكد من إضافة هذه المؤسسة؟ تأكد من صحة جميع البيانات قبل المتابعة.",
+  "confirm_add_org_confirm": "متابعة",
+  "confirm_add_org_cancel": "إلغاء",
 
 
   "noRouteFound": "لم يتم العثور على المسار",
