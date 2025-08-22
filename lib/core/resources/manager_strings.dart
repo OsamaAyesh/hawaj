@@ -157,8 +157,37 @@ class ManagerStrings {
   static String get orgAddedSecondaryBtn => tr('org_added_secondary_btn');
 
 
-
-
+  ///===== Add Offer Provider Screen Strings
+  static String get offerRegisterTitle => tr('offer_register_title');
+  static String get offerAddNew => tr('offer_add_new');
+  static String get offerSubtitle => tr('offer_subtitle');
+  static String get offerProductName => tr('offer_product_name');
+  static String get offerProductDesc1 => tr('offer_product_desc1');
+  static String get offerProductDesc => tr('offer_product_desc');
+  static String get offerProductDescHint => tr('offer_product_desc_hint');
+  static String get offerProductImages => tr('offer_product_images');
+  static String get offerProductImagesHint => tr('offer_product_images_hint');
+  static String get offerProductImagesHint2 => tr('offer_product_images_hint2');
+  static String get offerProductPrice => tr('offer_product_price');
+  static String get offerProductPriceHint => tr('offer_product_price_hint');
+  static String get offerProductType => tr('offer_product_type');
+  static String get offerType => tr('offer_type');
+  static String get offerTypeHint => tr('offer_type_hint');
+  static String get offerPrice => tr('offer_price');
+  static String get offerPriceHint => tr('offer_price_hint');
+  static String get offerFromDate => tr('offer_from_date');
+  static String get offerFromDateHint => tr('offer_from_date_hint');
+  static String get offerToDate => tr('offer_to_date');
+  static String get offerTDateHint => tr('offer_to_date_hint');
+  static String get offerDesc => tr('offer_desc');
+  static String get offerDescHint => tr('offer_desc_hint');
+  static String get offerSubmit => tr('offer_submit');
+  static String get offerTypeDiscount => tr('offer_type_discount');
+  static String get offerTypeNormal => tr('offer_type_normal');
+  static String get confirmAddProductTitle => tr('confirm_add_product_title');
+  static String get confirmAddProductSubtitle => tr('confirm_add_product_subtitle');
+  static String get confirmAddProductConfirm => tr('confirm_add_product_confirm');
+  static String get confirmAddProductCancel => tr('confirm_add_product_cancel');
 
 
 

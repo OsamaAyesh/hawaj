@@ -25,4 +25,8 @@ class ManagerIcons {
   ///Subscription Plan Screens
   static const String dollarIcon="$iconsPath/dollar_icon.png";
 
+  ///Fields Price Widgets Icon
+  static const String ryalSudia="$iconsPath/ryal_sudia.png";
+
+
 }
