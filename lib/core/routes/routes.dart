@@ -2,6 +2,7 @@ import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.
 import 'package:app_mobile/features/common/auth/presentation/pages/otp_login_screen.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/success_login_screen.dart';
 import 'package:app_mobile/features/common/choose_language/presentation/pages/choose_language_screen.dart';
+import 'package:app_mobile/features/providers/offers_provider/register_company_offer_provider/presentation/pages/register_company_offer_provider_screen.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/presentation/pages/success_subscription_offer_provider_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/on_boarding_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splash_screen.dart';
@@ -33,6 +34,7 @@ class Routes {
   static const String managerProductsOfferProviderScreen = '/manager_products_offer_provider_screen';
   static const String subscriptionOfferProviderScreen = '/subscription_offer_provider_screen';
   static const String successSubSubscriptionOfferProviderScreen = '/success_subscription_offer_provider_screen';
+  static const String registerCompanyOfferProviderScreen = '/register_company_offer_provider_screen';
 
 }
 
@@ -59,6 +61,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SubscriptionOfferProviderScreen());
       case Routes.successSubSubscriptionOfferProviderScreen:
         return MaterialPageRoute(builder: (_) => const SuccessSubscriptionOfferProviderScreen());
+      case Routes.registerCompanyOfferProviderScreen:
+        return MaterialPageRoute(builder: (_) => const RegisterCompanyOfferProviderScreen());
 
       default:
         return unDefinedRoute();

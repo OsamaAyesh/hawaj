@@ -119,6 +119,33 @@ class ManagerStrings {
 
 
 
+  /// Register Company Offer Provider Screen Strings.
+  static String get registerCompany => tr('register_company');
+  static String get registerCompanyTitle => tr('register_company_title');
+  static String get registerCompanySubtitle => tr('register_company_subtitle');
+  static String get companyName => tr('company_name');
+  static String get companyNameHint => tr('company_name_hint');
+  static String get companyServices => tr('company_services');
+  static String get companyServicesHint => tr('company_services_hint');
+  static String get setLocation => tr('set_location');
+  static String get setLocationButton => tr('set_location_button');
+  static String get detailedAddress => tr('detailed_address');
+  static String get detailedAddressHint => tr('detailed_address_hint');
+  static String get responsiblePerson => tr('responsible_person');
+  static String get responsiblePersonHint => tr('responsible_person_hint');
+  static String get phoneNumberHint => tr('phone_number_hint');
+  static String get workingHours => tr('working_hours');
+  static String get workingHoursHint => tr('working_hours_hint');
+  static String get companyLogo => tr('company_logo');
+  static String get companyLogoHint => tr('company_logo_hint');
+  static String get companyLogoHint2 => tr('company_logo_hint2');
+  static String get commercialNumber => tr('commercial_number');
+  static String get commercialNumberHint => tr('commercial_number_hint');
+  static String get commercialRecord => tr('commercial_record');
+  static String get commercialRecordHint => tr('commercial_record_hint');
+  static String get commercialRecordHint2 => tr('commercial_record_hint2');
+  static String get submitButton => tr('submit_button');
+
 
 
 

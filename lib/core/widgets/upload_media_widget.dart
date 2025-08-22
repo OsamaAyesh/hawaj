@@ -88,7 +88,7 @@ class UploadProfileImageField extends StatelessWidget {
           Text(
             note!,
             style: getRegularTextStyle(
-              fontSize: ManagerFontSize.s10,
+              fontSize: ManagerFontSize.s8,
               color: ManagerColors.greyWithColor,
             ),
           ),
