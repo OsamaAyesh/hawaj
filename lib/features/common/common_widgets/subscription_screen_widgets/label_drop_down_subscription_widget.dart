@@ -47,16 +47,23 @@ class LabelDropDownSubscriptionWidget<T> extends StatelessWidget {
               isExpanded: true,
               value: value,
               hint: Align(
-                alignment:
-                    isArabic ? Alignment.centerRight : Alignment.centerLeft,
+                alignment: isArabic ? Alignment.centerRight : Alignment.centerLeft,
                 child: Text(
                   hint,
-                  style:
-                 getRegularTextStyle(fontSize: ManagerFontSize.s14, color: ManagerColors.titleDropDownSubscriptionWidget)
+                  style: getRegularTextStyle(
+                    fontSize: ManagerFontSize.s14,
+                    color: ManagerColors.titleDropDownSubscriptionWidget,
+                  ),
                 ),
               ),
               items: items,
               onChanged: onChanged,
+
+              /// ===== Style of Selected Value =====
+              style: getRegularTextStyle(
+                fontSize: ManagerFontSize.s14,
+                color: ManagerColors.primaryColor,
+              ),
 
               /// ===== Style of Button =====
               buttonStyleData: ButtonStyleData(
