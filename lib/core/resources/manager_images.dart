@@ -11,6 +11,10 @@ class ManagerImages {
   static const String onBoardingImage3="$imagesPath/on_boarding3_image.png";
   static const String successSubscriptionImage="$imagesPath/success_subscription_image.png";
 
+
+  ///===Contact Us Image Widget.
+  static const String contactUsImage="$imagesPath/contact_us_image.png";
+
   ///======== Images For Remove
   static const String imageFoodOneRemove="$imagesRemovePath/image_food_one.png";
 

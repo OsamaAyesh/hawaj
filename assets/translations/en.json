@@ -170,6 +170,12 @@
   "full_name": "Full Name",
   "edit": "Edit",
 
+  "contact_us_title": "Contact Us",
+  "contact_us_header": "We are here for you",
+  "contact_us_subtitle": "Feel free to contact us, your opinion matters and your first step starts here. We are always by your side to make everything easier and faster.",
+  "contact_us_field_label": "Contact Us",
+  "contact_us_field_hint": "The message you want to send, don’t hesitate to reach out",
+  "send_message_button": "Send Message",
 
 
   "noRouteFound": "No route found",

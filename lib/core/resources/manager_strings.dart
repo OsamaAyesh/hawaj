@@ -208,6 +208,13 @@ class ManagerStrings {
   static String get edit => tr('edit');
 
 
+  ///Contact Us Screen
+  static String get contactUsTitle => tr('contact_us_title');
+  static String get contactUsHeader => tr('contact_us_header');
+  static String get contactUsSubtitle => tr('contact_us_subtitle');
+  static String get contactUsFieldLabel => tr('contact_us_field_label');
+  static String get contactUsFieldHint => tr('contact_us_field_hint');
+  static String get sendMessageButton => tr('send_message_button');
 
 
 
