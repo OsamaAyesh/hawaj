@@ -3,6 +3,7 @@ import 'package:app_mobile/features/common/auth/presentation/pages/otp_login_scr
 import 'package:app_mobile/features/common/auth/presentation/pages/success_login_screen.dart';
 import 'package:app_mobile/features/common/choose_language/presentation/pages/choose_language_screen.dart';
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
+import 'package:app_mobile/features/common/profile/presentation/pages/edit_profile_screen.dart';
 import 'package:app_mobile/features/common/profile/presentation/pages/profile_screen.dart';
 import 'package:app_mobile/features/providers/offers_provider/add_offer/presentation/pages/add_offer_provider_screen.dart';
 import 'package:app_mobile/features/providers/offers_provider/register_company_offer_provider/presentation/pages/register_company_offer_provider_screen.dart';
@@ -49,6 +50,7 @@ class Routes {
   ///Common Screens
   static const String profileScreen = '/profile_screen';
   static const String mapScreen = '/mapp_screen';
+  static const String editProfileScreen = '/edit_profile_screen';
 
 
 }
@@ -88,6 +90,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.mapScreen:
         return MaterialPageRoute(builder: (_) => const MapScreen());
+      case Routes.editProfileScreen:
+        return MaterialPageRoute(builder: (_) => const EditProfileScreen());
 
       default:
         return unDefinedRoute();

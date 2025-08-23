@@ -194,10 +194,18 @@ class ManagerStrings {
 
 
 
+  ///Logout Dialog Confirm
+  static String get titleConfirmation => tr('title_confirmation');
+  static String get messageSignout => tr('message_signout');
+  static String get buttonContinue => tr('button_continue');
+  static String get buttonCancel => tr('button_cancel');
 
 
 
-
+/// Edit Profile Screen Strings.
+  static String get personalAccountInfo => tr('personal_account_info');
+  static String get fullName => tr('full_name');
+  static String get edit => tr('edit');
 
 
 

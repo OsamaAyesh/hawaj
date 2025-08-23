@@ -161,6 +161,16 @@
 
   "product_list": "Product List",
 
+  "title_confirmation": "Are you sure you want to log out?",
+  "message_signout": "You will be signed out of your current account. You can sign in again at any time using your saved credentials.",
+  "button_continue": "Continue",
+  "button_cancel": "Cancel",
+
+  "personal_account_info": "Personal Account Information",
+  "full_name": "Full Name",
+  "edit": "Edit",
+
+
 
   "noRouteFound": "No route found",
   "success": "Success",

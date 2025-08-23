@@ -21,6 +21,7 @@ import '../../../../../core/widgets/loading_widget.dart';
 import '../../../../../core/widgets/scaffold_with_back_button.dart';
 import 'package:dotted_border/dotted_border.dart';
 
+import '../../../../../core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
 import '../widgets/info_card.dart';
 import '../widgets/logout_widget.dart';
 import '../widgets/settings_tile_widget.dart';
@@ -184,7 +185,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                     LogoutWidget(
                       title: ManagerStrings.logout,
                       icon: ManagerIcons.profileIcon6,
-                      onTap: () {},
+                      onTap: () {
+                        showDialogConfirmRegisterCompanyOffer(
+                          title: ManagerStrings.titleConfirmation,
+                          subTitle: ManagerStrings.messageSignout,
+                          actionConfirmText: ManagerStrings.buttonContinue,
+                          actionCancel: ManagerStrings.buttonCancel,
+                          context,
+                          onConfirm: () {
+
+                          },
+                          onCancel: () {
+
+                          },
+                        );
+                      },
                     ),
                     SizedBox(height: ManagerHeight.h24),
                   ],
