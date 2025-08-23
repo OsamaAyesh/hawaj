@@ -5,6 +5,7 @@ class ManagerOpacity {
   static double op0_14 = 0.14;
   static double op0_2 = 0.2;
   static double op0_3 = 0.3;
+  static double op0_34 = 0.34;
   static double op0_4 = 0.4;
   static double op0_5 = 0.5;
   static double op0_6 = 0.6;

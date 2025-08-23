@@ -21,6 +21,10 @@ import '../../../../../core/widgets/loading_widget.dart';
 import '../../../../../core/widgets/scaffold_with_back_button.dart';
 import 'package:dotted_border/dotted_border.dart';
 
+import '../widgets/info_card.dart';
+import '../widgets/logout_widget.dart';
+import '../widgets/settings_tile_widget.dart';
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -36,9 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void initState() {
-
     super.initState();
-
 
     _controller = AnimationController(
       vsync: this,
@@ -46,16 +48,13 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
 
     _slideAnimation = Tween<Offset>(
-        begin: const Offset(0, 0.1), end: Offset.zero)
+            begin: const Offset(0, 0.1), end: Offset.zero)
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
     _fadeAnimation = Tween<double>(begin: 0, end: 1)
         .animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _controller.forward();
   }
-
-
-
 
   @override
   void dispose() {
@@ -65,170 +64,131 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    return  ScaffoldWithBackButton(
+    return ScaffoldWithBackButton(
       title: ManagerStrings.profileTitle,
-      onBack: (){},
-      body:  SingleChildScrollView(
+      onBack: () {},
+      body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         child: FadeTransition(
           opacity: _fadeAnimation,
           child: SlideTransition(
             position: _slideAnimation,
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: ManagerWidth.w16),
-              child: Column(
-                children: [
-                  SizedBox(height: ManagerHeight.h24),
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      // CircleAvatar(
-                      //   radius: ManagerHeight.h45,
-                      //   backgroundImage: const AssetImage(
-                      //       ManagerImages.profileInHomeImage),
-                      // ),
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                        child: const Icon(Icons.verified,
-                            color: ManagerColors.primaryColor,
-                            size: 20),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: ManagerHeight.h12),
-                  Text("محمد علي إسماعيل",
-                      style: getBoldTextStyle(
-                          fontSize: ManagerFontSize.s14,
-                          color: ManagerColors.black)),
-                  SizedBox(height: ManagerHeight.h4),
-                  Text(
-                    ManagerStrings.newUser,
-                    style: getRegularTextStyle(
-                      fontSize: ManagerFontSize.s10,
-                      color: ManagerColors.greyWithColor,
-                    ),
-                  ),
-                  SizedBox(height: ManagerHeight.h4),
+              padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    SizedBox(height: ManagerHeight.h24),
 
-                  SizedBox(height: ManagerHeight.h16),
-                  // Row(
-                  //   children: [
-                  //     _infoCard(
-                  //         "${profile?.ratesAverage ?? ""} ★",
-                  //         ManagerStrings.profileScreenHint3,
-                  //         subText:
-                  //         "(حسب ${profile?.ratesCount})"),
-                  //     _infoCard(profile?.createdAt ?? "",
-                  //         ManagerStrings.profileScreenHint4),
-                  //     _infoCard(
-                  //         profile?.completedOrders.toString() ??
-                  //             "",
-                  //         ManagerStrings.profileScreenHint5),
-                  //   ],
-                  // ),
-                  // SizedBox(height: ManagerHeight.h24),
-                  // Align(
-                  //   alignment: Alignment.centerRight,
-                  //   child: Text(
-                  //     ManagerStrings.profileScreenHint6,
-                  //     style: getBoldTextStyle(
-                  //         fontSize: ManagerFontSize.s12,
-                  //         color: ManagerColors.black),
-                  //   ),
-                  // ),
-                  // SizedBox(height: ManagerHeight.h16),
-                  // _settingTile(
-                  //     ManagerStrings.profileScreenHint7,
-                  //     ManagerIcons.profileIcon1, onTap: () {
-                  //   initChangerPasswordPassword();
-                  //   Get.put(ChangePasswordUseCase(
-                  //       GetIt.I<ChangePasswordRepository>()));
-                  //   Get.put(
-                  //       ChangePasswordController(Get.find()));
-                  //   Navigator.of(context).push(
-                  //     fadeSlideFromBottom(
-                  //         const EditPasswordScreen()),
-                  //   );
-                  // }),
-                  // _settingTile(
-                  //     ManagerStrings.profileScreenHint8,
-                  //     ManagerIcons.profileIcon2, onTap: () {
-                  //   initEditProfileRequest();
-                  //
-                  //   Get.put(EditProfileUseCase(
-                  //       GetIt.I<EditProfileRepository>()));
-                  //   Get.put(EditProfileController(Get.find()));
-                  //   Navigator.of(context).push(
-                  //     fadeSlideFromBottom(
-                  //         const EditInformationProfileScreen()),
-                  //   );
-                  // }),
-                  // _settingTile(
-                  //     ManagerStrings.profileScreenHint9,
-                  //     ManagerIcons.profileIcon3, onTap: () {
-                  //   initEditAccountBank();
-                  //   initGetInformationBank();
-                  //   Navigator.of(context).push(
-                  //     fadeSlideFromBottom(
-                  //         const InformationBankAccount()),
-                  //   );
-                  // }),
-                  // _settingTile(
-                  //     ManagerStrings.profileScreenHint10,
-                  //     ManagerIcons.profileIcon4, onTap: () {
-                  //   initAddReport();
-                  //   Navigator.of(context).push(
-                  //     fadeSlideFromBottom(
-                  //         const ContactUsScreen()),
-                  //   );
-                  // }),
-                  // _settingTile(
-                  //     ManagerStrings.profileScreenHint11,
-                  //     ManagerIcons.profileIcon5, onTap: () {
-                  //   Navigator.of(context).push(
-                  //     fadeSlideFromBottom(
-                  //         const PrivacyPolicy()),
-                  //   );
-                  // }),
-                  // _logoutWidget(
-                  //   ManagerStrings.profileScreenHint13,
-                  //   ManagerIcons.deleteAccountIcon,
-                  //   onTap: () {},
-                  // ),
-                  // _logoutWidget(
-                  //   ManagerStrings.profileScreenHint12,
-                  //   ManagerIcons.profileIcon6,
-                  //   onTap: () {
-                  //     showDialog(
-                  //       context: context,
-                  //       barrierDismissible: false,
-                  //       builder: (_) => CustomConfirmDialog(
-                  //         title: ManagerStrings
-                  //             .profileScreenDialogTitle,
-                  //         subtitle: ManagerStrings
-                  //             .profileScreenDialogSubTitle,
-                  //         confirmText: ManagerStrings
-                  //             .profileScreenDialogHint1,
-                  //         cancelText: ManagerStrings
-                  //             .profileScreenDialogHint2,
-                  //         onConfirm: () {
-                  //           Navigator.of(context).pop();
-                  //           Get.find<LogoutController>()
-                  //               .logout();
-                  //         },
-                  //         onCancel: () =>
-                  //             Navigator.of(context).pop(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  SizedBox(height: ManagerHeight.h24),
-                ],
+                    ///======= Profile Image With Verfied
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: ManagerHeight.h45,
+                          backgroundImage: const AssetImage(
+                              ManagerImages.imageFoodOneRemove),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: const Icon(Icons.verified,
+                              color: ManagerColors.primaryColor, size: 20),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: ManagerHeight.h12),
+
+                    ///======= Name Profile Widget
+                    Text("محمد علي إسماعيل",
+                        style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s14,
+                            color: ManagerColors.black)),
+                    SizedBox(height: ManagerHeight.h4),
+
+                    ///======New User Widget
+                    Text(
+                      ManagerStrings.newUser,
+                      style: getRegularTextStyle(
+                        fontSize: ManagerFontSize.s10,
+                        color: ManagerColors.greyWithColor,
+                      ),
+                    ),
+
+                    SizedBox(height: ManagerHeight.h16),
+
+                    ///====== Row Widget Phone Number And Number Of Subscription Services
+                    Row(
+                      children: [
+                        InfoCard(
+                          value: "9665665236253234",
+                          label: ManagerStrings.phoneNumber,
+                        ),
+                        InfoCard(
+                          value: "4",
+                          label: ManagerStrings.subscribedServices,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: ManagerHeight.h16),
+
+                    ///========= Text Title List Settings =====
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        ManagerStrings.listSettings,
+                        style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s12,
+                            color: ManagerColors.black),
+                      ),
+                    ),
+                    SizedBox(height: ManagerHeight.h8),
+
+                    ///======Manager Services Settings
+                    SettingsTileWidget(
+                      title: ManagerStrings.manageServices,
+                      icon: ManagerIcons.profileIcon1,
+                      onTap: () {},
+                    ),
+
+                    ///====== Change Password Comment Code When Use Remove Comment
+                    // SettingsTileWidget(
+                    //   title:  ManagerStrings.changePassword,
+                    //   icon:   ManagerIcons.profileIcon2, onTap: () {
+                    //
+                    // }),
+
+                    ///=========Edit Profile Settings
+                    SettingsTileWidget(
+                        title: ManagerStrings.editProfile,
+                        icon: ManagerIcons.profileIcon3,
+                        onTap: () {}),
+
+                    ///==== Contact Us Settings
+                    SettingsTileWidget(
+                        title: ManagerStrings.contactSupport,
+                        icon: ManagerIcons.profileIcon4,
+                        onTap: () {}),
+
+                    ///====== Privacy Policy Settings
+                    SettingsTileWidget(
+                        title: ManagerStrings.termsConditions,
+                        icon: ManagerIcons.profileIcon5,
+                        onTap: () {}),
+
+                    ///-======== Logout Settings Widget
+                    LogoutWidget(
+                      title: ManagerStrings.logout,
+                      icon: ManagerIcons.profileIcon6,
+                      onTap: () {},
+                    ),
+                    SizedBox(height: ManagerHeight.h24),
+                  ],
+                ),
               ),
             ),
           ),
@@ -237,109 +197,4 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  // Widget _infoCard(String value, String label, {String? subText}) {
-  //   return Expanded(
-  //     child: Padding(
-  //       padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w4),
-  //       child: DottedBorder(
-  //         color: ManagerColors.strokColor,
-  //         borderType: BorderType.RRect,
-  //         radius: Radius.circular(ManagerRadius.r6),
-  //         dashPattern: const [6, 3],
-  //         strokeWidth: 1.2,
-  //         child: Container(
-  //           padding: EdgeInsets.symmetric(vertical: ManagerHeight.h12),
-  //           child: Center(
-  //             child: Column(
-  //               children: [
-  //                 Padding(
-  //                   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w2),
-  //                   child: Text(value,
-  //                       maxLines: 1,
-  //                       style: getBoldTextStyle(
-  //                         fontSize: ManagerFontSize.s12,
-  //                         color: ManagerColors.black,
-  //                       )),
-  //                 ),
-  //                 SizedBox(height: ManagerHeight.h4),
-  //                 Text(label,
-  //                     style: getRegularTextStyle(
-  //                       fontSize: ManagerFontSize.s11,
-  //                       color: Colors.grey,
-  //                     )),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _settingTile(String title, String icon, {VoidCallback? onTap}) {
-  //   return GestureDetector(
-  //     onTap: onTap,
-  //     child: Container(
-  //       margin: const EdgeInsets.only(bottom: 12),
-  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.circular(ManagerRadius.r6),
-  //         border: Border.all(
-  //             color:
-  //             ManagerColors.strokColor.withOpacity(ManagerOpacity.op0_34)),
-  //       ),
-  //       child: Row(
-  //         children: [
-  //           Image.asset(icon,
-  //               height: ManagerHeight.h24, width: ManagerWidth.w24),
-  //           const SizedBox(width: 12),
-  //           Expanded(
-  //             child: Text(title,
-  //                 style: getBoldTextStyle(
-  //                     fontSize: ManagerFontSize.s12,
-  //                     color: ManagerColors.black),
-  //                 overflow: TextOverflow.ellipsis),
-  //           ),
-  //           const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-  //
-  // Widget _logoutWidget(
-  //     String title,
-  //     String icon, {
-  //       VoidCallback? onTap,
-  //     }) {
-  //   return GestureDetector(
-  //     onTap: onTap,
-  //     child: Container(
-  //       margin: const EdgeInsets.only(bottom: 12),
-  //       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-  //       decoration: BoxDecoration(
-  //         color: Colors.white,
-  //         borderRadius: BorderRadius.circular(ManagerRadius.r6),
-  //         border: Border.all(
-  //             color:
-  //             ManagerColors.strokColor.withOpacity(ManagerOpacity.op0_34)),
-  //       ),
-  //       child: Row(
-  //         children: [
-  //           Image.asset(icon,
-  //               height: ManagerHeight.h24, width: ManagerWidth.w24),
-  //           const SizedBox(width: 12),
-  //           Expanded(
-  //             child: Text(title,
-  //                 style: getBoldTextStyle(
-  //                     fontSize: ManagerFontSize.s12, color: ManagerColors.red),
-  //                 overflow: TextOverflow.ellipsis),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }
-

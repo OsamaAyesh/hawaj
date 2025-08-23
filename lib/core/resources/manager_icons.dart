@@ -35,4 +35,13 @@ class ManagerIcons {
   static const String notficationIcon="$iconsPath/notfication.png";
 
 
+  ///Profile Icons
+  static const String profileIcon1="$iconsPath/profile_icon1.png";
+  static const String profileIcon2="$iconsPath/profile_icon2.png";
+  static const String profileIcon3="$iconsPath/profile_icon3.png";
+  static const String profileIcon4="$iconsPath/profile_icon4.png";
+  static const String profileIcon5="$iconsPath/profile_icon5.png";
+  static const String profileIcon6="$iconsPath/profile_icon6.png";
+
+
 }

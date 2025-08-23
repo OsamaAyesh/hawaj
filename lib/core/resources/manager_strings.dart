@@ -74,6 +74,7 @@ class ManagerStrings {
   static String get profileTitle => tr('profile_title');
   static String get newUser => tr('new_user');
   static String get phoneNumber => tr('phone_number');
+  static String get listSettings => tr('list_settings');
   static String get subscribedServices => tr('subscribed_services');
   static String get manageServices => tr('manage_services');
   static String get changePassword => tr('change_password');
