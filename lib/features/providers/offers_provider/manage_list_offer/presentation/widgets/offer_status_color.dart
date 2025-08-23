@@ -5,13 +5,13 @@ import "package:flutter/material.dart";
 Color getStatusColor(OfferModel offer) {
   switch (offer.status) {
     case "expired":
-      return ManagerColors.colorGrey.withOpacity(0.6);
+      return ManagerColors.greyStatus;
     case "active":
-      return ManagerColors.redNew;
+      return ManagerColors.redStatus;
     case "ongoing":
       return ManagerColors.primaryColor;
     default:
-      return ManagerColors.colorGrey;
+      return ManagerColors.greyStatus;
   }
 }
 String getStatusText(OfferModel offer) {

@@ -75,22 +75,102 @@ class OfferCard extends StatelessWidget {
             ],
           ),
 
-          // SizedBox(height: ManagerHeight.h6),
-          // Padding(
-          //   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
-          //   child: Text(
-          //     offer.name,
-          //     style: getBoldTextStyle(
-          //       fontSize: ManagerFontSize.s12,
-          //       color: ManagerColors.white,
-          //     ),
-          //     maxLines: 1,
-          //     overflow: TextOverflow.ellipsis,
-          //   ),
-          // ),
+          SizedBox(height: ManagerHeight.h8),
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
+                    child: Text(
+                      offer.name,
+                      style: getBoldTextStyle(
+                        fontSize: ManagerFontSize.s10,
+                        color: ManagerColors.white,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  SizedBox(
+                    height: ManagerHeight.h6,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
+                    child: Row(
+                      children: [
+                        Container(
+                          // width: ManagerWidth.w70,
+                          decoration: BoxDecoration(
+                            borderRadius:
+                                BorderRadius.circular(ManagerRadius.r2),
+                            color: ManagerColors.white.withOpacity(0.2),
+                          ),
+                          child: Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                vertical: ManagerHeight.h2,
+                                horizontal: ManagerWidth.w12,
+                              ),
+                              child: Text(
+                                "40 ريال سعودي",
+                                style: getBoldTextStyle(
+                                  fontSize: ManagerFontSize.s6,
+                                  color: ManagerColors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: ManagerWidth.w4,),
+                        Text(
+                          "45 ر.س",
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s9,
+                            color: ManagerColors.white,
+                            decoration: TextDecoration.lineThrough,
+                          ),
+                          textDirection: TextDirection.rtl,
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              )
+            ],
+          ),
+          SizedBox(
+            height: ManagerHeight.h6,
+          ),
+
           //
-          // SizedBox(height: ManagerHeight.h4),
-          //
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
+            child: Container(
+              // width: ManagerWidth.w70,
+              decoration: BoxDecoration(
+                borderRadius:
+                BorderRadius.circular(ManagerRadius.r2),
+                color: ManagerColors.white.withOpacity(0.2),
+              ),
+              child: Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: ManagerHeight.h2,
+                    horizontal: ManagerWidth.w12,
+                  ),
+                  child: Text(
+                    "05-07-2025",
+                    style: getBoldTextStyle(
+                      fontSize: ManagerFontSize.s6,
+                      color: ManagerColors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),          //
           // Padding(
           //   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
           //   child: Row(

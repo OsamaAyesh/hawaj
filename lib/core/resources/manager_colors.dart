@@ -16,6 +16,8 @@ class ManagerColors {
   static const Color colorGrey = Color(0XFF9F9696);
   static const Color bariarColor=Color(0XFFD9D9D9);
   static const Color redNew=Color(0XFFFF0000);
+  static const Color redStatus=Color(0XFFA52303);
+  static const Color greyStatus=Color(0XFF6B6B6B);
 
   ///Choose Language Screen
   static const Color chooseLanguageSubtitleColor = Color(0XFF8E8C8E);

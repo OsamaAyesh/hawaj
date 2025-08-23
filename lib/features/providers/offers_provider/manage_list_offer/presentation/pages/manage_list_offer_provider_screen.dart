@@ -49,7 +49,7 @@ class ManageListOfferProviderScreen extends StatelessWidget {
           itemCount: demoOffers.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            mainAxisExtent: ManagerHeight.h220,
+            mainAxisExtent: ManagerHeight.h192,
             crossAxisSpacing: ManagerWidth.w12,
             mainAxisSpacing: ManagerHeight.h12,
           ),
