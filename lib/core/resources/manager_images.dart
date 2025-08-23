@@ -18,4 +18,9 @@ class ManagerImages {
   ///======== Images For Remove
   static const String imageFoodOneRemove="$imagesRemovePath/image_food_one.png";
 
+  ///======== Welcome Hawaj Start Images.
+  static const String welcomeStartImage="$imagesPath/welcome_start_image.png";
+  static const String welcomeStartBackground1="$imagesPath/welcome_start_background1.png";
+  static const String welcomeStartBackground2="$imagesPath/welcome_start_background2.png";
+
 }

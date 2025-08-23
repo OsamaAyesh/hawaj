@@ -2,6 +2,7 @@ import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.
 import 'package:app_mobile/features/common/auth/presentation/pages/otp_login_screen.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/success_login_screen.dart';
 import 'package:app_mobile/features/common/choose_language/presentation/pages/choose_language_screen.dart';
+import 'package:app_mobile/features/common/hawaj_welcome_start/presentation/pages/hawaj_welcome_start_screen.dart';
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:app_mobile/features/common/profile/presentation/pages/contact_us_screen.dart';
 import 'package:app_mobile/features/common/profile/presentation/pages/edit_profile_screen.dart';
@@ -53,6 +54,7 @@ class Routes {
   static const String mapScreen = '/map_screen';
   static const String editProfileScreen = '/edit_profile_screen';
   static const String contactUsScreen = '/contact_us_screen';
+  static const String hawajWelcomeStartScreen = '/hawaj_welcome_start_screen';
 
 
 
@@ -98,7 +100,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       case Routes.contactUsScreen:
         return MaterialPageRoute(builder: (_) => const ContactUsScreen());
-
+      case Routes.hawajWelcomeStartScreen:
+        return MaterialPageRoute(builder: (_) => const HawajWelcomeStartScreen());
       default:
         return unDefinedRoute();
     }
