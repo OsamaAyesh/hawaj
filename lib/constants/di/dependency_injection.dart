@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,6 +12,7 @@ import '../../core/internet_checker/interent_checker.dart';
 import '../../core/network/app_api.dart';
 import '../../core/network/dio_factory.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
+import '../../features/common/map/presenation/controller/map_controller.dart';
 
 final instance = GetIt.instance;
 

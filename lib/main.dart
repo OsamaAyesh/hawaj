@@ -13,6 +13,8 @@ import 'core/resources/manager_translation.dart';
 import 'core/routes/routes.dart';
 import 'core/util/size_util.dart';
 import 'package:device_preview/device_preview.dart';
+
+import 'features/common/map/domain/di/di.dart';
 void main() async {
   await initModule();
   runApp(
@@ -40,6 +42,7 @@ class MyApp extends StatelessWidget {
       // Use builder only if you need to use library outside ScreenUtilInit context
       builder: (_, child) {
         return GetMaterialApp(
+          initialBinding: MapBindings(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           defaultGlobalState: dotenv.env[EnvConstants.debug].onNullBool(),
@@ -47,7 +50,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner:
               dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.manageListOfferProviderScreen,
+          initialRoute: Routes.mapScreen,
           theme: ThemeData(
             useMaterial3: true,
           ),

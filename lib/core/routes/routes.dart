@@ -2,6 +2,8 @@ import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.
 import 'package:app_mobile/features/common/auth/presentation/pages/otp_login_screen.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/success_login_screen.dart';
 import 'package:app_mobile/features/common/choose_language/presentation/pages/choose_language_screen.dart';
+import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
+import 'package:app_mobile/features/common/profile/presentation/pages/profile_screen.dart';
 import 'package:app_mobile/features/providers/offers_provider/add_offer/presentation/pages/add_offer_provider_screen.dart';
 import 'package:app_mobile/features/providers/offers_provider/register_company_offer_provider/presentation/pages/register_company_offer_provider_screen.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/presentation/pages/success_subscription_offer_provider_screen.dart';
@@ -42,6 +44,13 @@ class Routes {
   static const String addOfferProviderScreen = '/add_offer_provider_screen';
   static const String manageListOfferProviderScreen = '/manage_list_offer_provider_screen';
 
+
+
+  ///Common Screens
+  static const String profileScreen = '/profile_screen';
+  static const String mapScreen = '/mapp_screen';
+
+
 }
 
 class RouteGenerator {
@@ -75,6 +84,11 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const AddOfferProviderScreen());
       case Routes.manageListOfferProviderScreen:
         return MaterialPageRoute(builder: (_) => const ManageListOfferProviderScreen());
+      case Routes.profileScreen:
+        return MaterialPageRoute(builder: (_) => const ProfileScreen());
+      case Routes.mapScreen:
+        return MaterialPageRoute(builder: (_) => const MapScreen());
+
       default:
         return unDefinedRoute();
     }

@@ -30,4 +30,9 @@ class ManagerIcons {
   static const String editIconWidget="$iconsPath/edit_icon_widget.png";
 
 
+
+  static const String menuIcon="$iconsPath/menu_icon.png";
+  static const String notficationIcon="$iconsPath/notfication.png";
+
+
 }
