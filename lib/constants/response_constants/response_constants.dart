@@ -10,4 +10,5 @@ class ResponseConstants {
   static const String screenImage = "screen_image";
   static const String screenDescription = "screen_description";
   static const String error = "error";
+  static const String code = "code";
 }
