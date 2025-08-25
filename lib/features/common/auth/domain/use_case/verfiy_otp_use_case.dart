@@ -4,18 +4,19 @@ import 'package:app_mobile/features/common/auth/data/repository/verfiy_otp_repos
 import 'package:app_mobile/features/common/auth/data/request/send_otp_request.dart';
 import 'package:app_mobile/features/common/auth/data/request/verfiy_otp_request.dart';
 import 'package:app_mobile/features/common/auth/domain/model/send_otp_model.dart';
+import 'package:app_mobile/features/common/auth/domain/model/verfiy_otp_model.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../../core/error_handler/failure.dart';
 import '../../../../../core/usecase/base_usecase.dart';
 
-class VerfiyUseCase implements BaseUseCase<VerfiyOtpRequest, WithOutDataModel> {
+class VerfiyOtpUseCase implements BaseUseCase<VerfiyOtpRequest, VerfiyOtpModel> {
   final VerfiyOtpRepository _repository;
 
-  VerfiyUseCase(this._repository);
+  VerfiyOtpUseCase(this._repository);
 
   @override
-  Future<Either<Failure, WithOutDataModel>> execute(
+  Future<Either<Failure, VerfiyOtpModel>> execute(
       VerfiyOtpRequest request) async {
     return await _repository.verfiyOtp(request);
   }

@@ -1,10 +1,13 @@
 import 'package:app_mobile/features/common/auth/data/data_source/send_otp_data_source.dart';
+import 'package:app_mobile/features/common/auth/data/data_source/verfiy_otp_data_source.dart';
 import 'package:app_mobile/features/common/auth/data/repository/send_otp_repository.dart';
+import 'package:app_mobile/features/common/auth/data/repository/verfiy_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/domain/use_case/send_otp_use_case.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../constants/di/dependency_injection.dart';
 import '../../../../../core/network/app_api.dart';
+import '../use_case/verfiy_otp_use_case.dart';
 
 initSendOtpRequest() {
   if (!GetIt.I.isRegistered<SendOtpDataSource>()) {
@@ -48,5 +51,50 @@ void initSendOtp() {
 
 void disposeSendOtp() {
   disposeSendOtpRequest();
+  // Get.delete<LoginController>();
+}
+
+initVerfiyOtpRequest() {
+  if (!GetIt.I.isRegistered<VerfiyOtpDataSource>()) {
+    instance.registerLazySingleton<VerfiyOtpDataSource>(
+            () => VerfiyOtpDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!GetIt.I.isRegistered<VerfiyOtpRepository>()) {
+    instance.registerLazySingleton<VerfiyOtpRepository>(
+            () => VerfiyOtpRepositoryImplement(instance(), instance()));
+  }
+
+  if (!GetIt.I.isRegistered<VerfiyOtpUseCase>()) {
+    instance.registerFactory<VerfiyOtpUseCase>(
+            () => VerfiyOtpUseCase(instance<VerfiyOtpRepository>()));
+  }
+}
+
+disposeVerfiyOtpRRequest() {
+  if (GetIt.I.isRegistered<VerfiyOtpDataSource>()) {
+    instance.unregister<VerfiyOtpDataSource>();
+  }
+
+  if (GetIt.I.isRegistered<VerfiyOtpRepository>()) {
+    instance.unregister<VerfiyOtpRepository>();
+  }
+
+  if (GetIt.I.isRegistered<VerfiyOtpUseCase>()) {
+    instance.unregister<VerfiyOtpUseCase>();
+  }
+}
+
+void initVerfiyOtpR() {
+  initVerfiyOtpRequest();
+
+  // Get.put(LoginController(
+  //   instance<LoginUseCase>(),
+  //   instance<AppSettingsPrefs>(),
+  // ));
+}
+
+void disposeVerfiyOtpR() {
+  disposeVerfiyOtpRRequest();
   // Get.delete<LoginController>();
 }

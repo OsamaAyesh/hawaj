@@ -6,6 +6,7 @@ import 'package:retrofit/retrofit.dart';
 import '../../constants/env/env_constants.dart';
 import '../../constants/request_constants/request_constants.dart';
 import '../../constants/request_constants/request_constants_endpoints.dart';
+import '../../features/common/auth/data/response/verfiy_otp_response.dart';
 import '../service/env_service.dart';
 
 part 'app_api.g.dart';
@@ -34,7 +35,7 @@ abstract class AppService {
 
   ///==== Verfiy Otp Request
   @POST(RequestConstantsEndpoints.verfiyOtp)
-  Future<WithOutDataResponse> verfiyOtp(
+  Future<VerfiyOtpResponse> verfiyOtp(
       @Field(RequestConstants.phone) String phone,
       @Field(RequestConstants.otp) String otp,
       );
