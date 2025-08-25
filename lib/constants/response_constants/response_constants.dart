@@ -11,4 +11,8 @@ class ResponseConstants {
   static const String screenDescription = "screen_description";
   static const String error = "error";
   static const String code = "code";
+  static const String planName = "plan_name";
+  static const String planPrice = "plan_price";
+  static const String planFeatures = "plan_features";
+  static const String days = "days";
 }
