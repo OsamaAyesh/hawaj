@@ -9,10 +9,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../core/internet_checker/interent_checker.dart';
+import '../../core/locale/locale_controller.dart';
 import '../../core/network/app_api.dart';
 import '../../core/network/dio_factory.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
 import '../../features/common/map/presenation/controller/map_controller.dart';
+import '../../features/splash_and_boarding/domain/di/di.dart';
 
 final instance = GetIt.instance;
 
@@ -56,4 +58,6 @@ initModule() async {
   if (!GetIt.I.isRegistered<AppService>()) {
     instance.registerLazySingleton<AppService>(() => AppService(dio));
   }
+  initGetOnBoarding();
+  Get.put(LocaleController());
 }

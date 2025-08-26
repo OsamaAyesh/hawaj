@@ -82,4 +82,20 @@ class AppSettingsPrefs {
   String getToken() {
     return _sharedPreferences.getString(SharedPrefsConstants.token).onNull();
   }
+  /// Set Viewed Selected Lang.
+  Future<void> setViewedChooseLanguage() async {
+    await _sharedPreferences.setBool(
+      SharedPrefsConstants.viewedChooseLanguage,
+      true,
+    );
+  }
+
+  bool getViewedChooseLanguage() {
+    return _sharedPreferences
+        .getBool(
+      SharedPrefsConstants.viewedChooseLanguage,
+    )
+        .onNull();
+  }
+
 }

@@ -1,5 +1,6 @@
 import 'package:app_mobile/core/response/with_out_data_response.dart';
 import 'package:app_mobile/features/common/auth/data/response/send_otp_response.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
@@ -23,7 +24,7 @@ abstract class AppService {
   }
 
   ///On Boarding Request
-  @GET(RequestConstantsEndpoints.login)
+  @GET(RequestConstantsEndpoints.getOnBoarding)
   Future<OnBoardingResponse> getOnBoardingData(
       );
 
@@ -38,6 +39,12 @@ abstract class AppService {
   Future<VerfiyOtpResponse> verfiyOtp(
       @Field(RequestConstants.phone) String phone,
       @Field(RequestConstants.otp) String otp,
+      );
+
+  ///=> Offer Provider
+  ///===== Get Plan Request
+  @GET(RequestConstantsEndpoints.getPlans)
+  Future<PlanResponse> getPlansOfferProvider(
       );
 
 }

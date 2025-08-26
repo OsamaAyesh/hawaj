@@ -1,12 +1,17 @@
-import 'package:app_mobile/core/resources/manager_height.dart';
-import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'package:get/get.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
+import '../../../../constants/di/dependency_injection.dart';
 import '../../../../core/config/app_config.dart';
 import '../../../../core/resources/manager_colors.dart';
 import '../../../../core/resources/manager_font_size.dart';
+import '../../../../core/resources/manager_height.dart';
 import '../../../../core/resources/manager_styles.dart';
+import '../../../../core/routes/routes.dart';
+import '../../../../core/storage/local/app_settings_prefs.dart';
+import '../../domain/use_case/on_boarding_use_case.dart';
+import '../controller/get_on_boarding_controller.dart';
 import '../widgets/logo_in_splash_widget.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -27,23 +32,56 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Fade animation
+    _initAnimations();
+    _startSplashLogic();
+  }
+
+  /// تهيئة الأنيميشن
+  void _initAnimations() {
     _fadeController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _fadeAnimation =
         CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut);
 
-    // Slide animation
     _slideController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.2), // يبدأ تحت قليلاً
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOut),
+    );
 
-    // تشغيل الأنيميشن
     _fadeController.forward();
     _slideController.forward();
+  }
+
+  ///===== Run Splash Logic (Load + Move)
+  Future<void> _startSplashLogic() async {
+    /// ======== 1. Preload OnBoarding Data + Images
+    final preloadController = Get.put(
+      OnBoardingPreloadController(instance<OnBoardingUseCase>()),
+    );
+    await preloadController.preloadOnBoarding();
+
+    /// ====== 2. Wait for the Splash period.
+    await Future.delayed(const Duration(seconds: 2));
+
+    ///=== 3. Navigate by user status
+    final prefs = instance<AppSettingsPrefs>();
+    final hasChosenLang = prefs.getViewedChooseLanguage();
+    final hasSeenOnboarding = prefs.getOutBoardingScreenViewed();
+    final isLoggedIn = prefs.getUserLoggedIn();
+
+    if (!hasChosenLang) {
+      Get.offAllNamed(Routes.chooseLanguageScreen);
+    } else if (!hasSeenOnboarding) {
+      Get.offAllNamed(Routes.onBoardingScreen);
+    } else if (isLoggedIn) {
+      // Get.offAllNamed(Routes.homeScreen);
+    } else {
+      Get.offAllNamed(Routes.loginScreen);
+    }
   }
 
   @override
@@ -60,7 +98,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: Stack(
         alignment: Alignment.center,
         children: [
-          // Logo with animation
+          /// Logo + Animations
           FadeTransition(
             opacity: _fadeAnimation,
             child: SlideTransition(
@@ -69,19 +107,19 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
 
-          // Circle Progress Indicator
+          /// Loader
           Positioned(
-            top: ManagerHeight.h710,
+            bottom: ManagerHeight.h90,
             child: const CircularProgressIndicator(
               color: ManagerColors.secondColor,
             ),
           ),
 
-          // Version Application
+          /// Version Text
           Positioned(
             bottom: ManagerHeight.h20,
             child: Text(
-              AppConfig.version,
+              "v${AppConfig.version}",
               style: getBoldTextStyle(
                 fontSize: ManagerFontSize.s14,
                 color: ManagerColors.secondColor,

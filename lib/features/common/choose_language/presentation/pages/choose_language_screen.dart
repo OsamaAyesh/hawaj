@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
@@ -8,6 +9,12 @@ import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:get/get.dart';
+
+import '../../../../../constants/di/dependency_injection.dart';
+import '../../../../../core/locale/locale_controller.dart';
+import '../../../../../core/routes/routes.dart';
+import '../../../../../core/storage/local/app_settings_prefs.dart';
 
 class ChooseLanguageScreen extends StatefulWidget {
   const ChooseLanguageScreen({super.key});
@@ -17,18 +24,39 @@ class ChooseLanguageScreen extends StatefulWidget {
 }
 
 class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
-  String selectedLang = "ar"; // الافتراضي
+  String? selectedLang;
 
-  void _selectLanguage(String lang) {
+  /// يغير اللغة مباشرة لما المستخدم يختار
+  Future<void> _selectLanguage(String lang) async {
     setState(() {
       selectedLang = lang;
     });
 
-    // MyAppLocalizations.load(Locale(lang));
-    // Get.updateLocale(Locale(lang));
+    final localeController = Get.find<LocaleController>();
+    await localeController.changeLanguage(lang);
 
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // await prefs.setString("app_language", lang);
+    /// حفظ اللغة مباشرة
+    // await instance<AppSettingsPrefs>().setLocale(lang);
+  }
+
+  Future<void> _confirmLanguage() async {
+    if (selectedLang == null) {
+      AppSnackbar.warning("يجب اختيار اللغة");
+      return;
+    }
+
+    /// تعليم أن المستخدم شاف شاشة اختيار اللغة
+    await instance<AppSettingsPrefs>().setViewedChooseLanguage();
+
+    /// الانتقال بعد التأكيد
+    Get.offAllNamed(Routes.onBoardingScreen);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final prefs = instance<AppSettingsPrefs>();
+    selectedLang = prefs.getLocale() ?? "ar";
   }
 
   @override
@@ -106,14 +134,11 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
             delay: 900,
           ),
 
-          SizedBox(height: ManagerHeight.h42),
+          const Spacer(),
 
-          /// زر تأكيد الاختيار
+          /// Confirm Button
           ElevatedButton(
-            onPressed: () {
-              // هنا ممكن تروح لواجهة تالية أو تطبق اللغة
-              debugPrint("Language selected: $selectedLang");
-            },
+            onPressed: _confirmLanguage,
             style: ElevatedButton.styleFrom(
               backgroundColor: ManagerColors.primaryColor,
               padding: EdgeInsets.symmetric(
@@ -125,13 +150,15 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
               ),
             ),
             child: Text(
-              "Continue",
+              selectedLang == "ar" ? "متابعة" : "Continue",
               style: getBoldTextStyle(
                 fontSize: ManagerFontSize.s14,
                 color: Colors.white,
               ),
             ),
           ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.3, end: 0),
+
+          SizedBox(height: ManagerHeight.h24),
         ],
       ),
     );
@@ -186,9 +213,9 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
                   ),
                   Text(
                     subtitle,
-                    style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s14,
-                      color: textColor,
+                    style: getRegularTextStyle(
+                      fontSize: ManagerFontSize.s12,
+                      color: textColor.withOpacity(0.9),
                     ),
                   ),
                 ],
@@ -204,7 +231,8 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
       )
           .animate()
           .fadeIn(delay: delay.ms, duration: 500.ms)
-          .slideX(begin: lang == "ar" ? -0.3 : 0.3, end: 0, curve: Curves.easeOut),
+          .slideX(
+          begin: lang == "ar" ? -0.3 : 0.3, end: 0, curve: Curves.easeOut),
     );
   }
 }

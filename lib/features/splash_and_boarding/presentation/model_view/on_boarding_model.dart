@@ -1,4 +1,4 @@
-class OnBoardingModel {
+class OnBoardingPageModel {
   final String image;
   final String title;
   final String subtitle;
@@ -7,7 +7,7 @@ class OnBoardingModel {
   final double heightSizeBoxBeforeImage;
   final double heightSizeBoxBeforeTextAfterImage;
 
-  OnBoardingModel({
+  OnBoardingPageModel({
     required this.image,
     required this.title,
     required this.subtitle,

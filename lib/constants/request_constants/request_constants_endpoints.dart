@@ -7,4 +7,5 @@ class RequestConstantsEndpoints {
   static const String getOnBoarding = '$apiUrlBase/getwelcomescreens';
   static const String sendOtp = '$apiUrlBase/otpsend';
   static const String verfiyOtp = '$apiUrlBase/otpverify';
+  static const String getPlans = '$apiUrlBase/offers/getplans';
 }

@@ -2,7 +2,7 @@ class OnBoardingItemModel {
   int id;
   String mainTitle;
   String screenName;
-  String screenOrder;
+  int screenOrder;
   String screenImage;
   String screenDescription;
 

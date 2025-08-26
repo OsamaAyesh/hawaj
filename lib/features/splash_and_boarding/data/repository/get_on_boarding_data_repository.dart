@@ -27,7 +27,9 @@ class GetOnBoardingDataRepositoryImplement implements GetOnBoardingDataRepositor
       final response = await remoteDataSource.getOnBoardingData();
       return Right(response.toDomain());
     } catch (e) {
+      print("مشكلة كبيرة الحقو");
       return Left(ErrorHandler.handle(e).failure);
+
     }
     // } else {
     //   return Left(

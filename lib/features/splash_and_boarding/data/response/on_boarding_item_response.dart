@@ -7,16 +7,18 @@ part 'on_boarding_item_response.g.dart';
 class OnBoardingItemResponse {
   @JsonKey(name: ResponseConstants.id)
   int? id;
-  @JsonKey(name: ResponseConstants.mainTitle)
-  String? mainTitle;
   @JsonKey(name: ResponseConstants.screenName)
   String? screenName;
-  @JsonKey(name: ResponseConstants.screenOrder)
-  String? screenOrder;
   @JsonKey(name: ResponseConstants.screenImage)
   String? screenImage;
+  @JsonKey(name: ResponseConstants.mainTitle)
+  String? mainTitle;
   @JsonKey(name: ResponseConstants.screenDescription)
   String? screenDescription;
+  @JsonKey(name: ResponseConstants.screenOrder)
+  int? screenOrder;
+
+
 
   OnBoardingItemResponse({
     this.id,

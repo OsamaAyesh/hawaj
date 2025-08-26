@@ -21,8 +21,8 @@ void main() async {
     EasyLocalization(
       supportedLocales: localeSettings.locales,
       path: translationPath,
-      fallbackLocale: const Locale("ar"),
-      startLocale: const Locale("ar"),
+      fallbackLocale: localeSettings.defaultLocale,
+      startLocale: localeSettings.defaultLocale,
       child: const MyApp(),
     ),
   );
@@ -42,15 +42,16 @@ class MyApp extends StatelessWidget {
       // Use builder only if you need to use library outside ScreenUtilInit context
       builder: (_, child) {
         return GetMaterialApp(
-          initialBinding: MapBindings(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           defaultGlobalState: dotenv.env[EnvConstants.debug].onNullBool(),
-          locale: const Locale("ar"),
+          // locale: const Locale("en"),
+          locale: localeSettings.defaultLocale,
           debugShowCheckedModeBanner:
-              dotenv.env[EnvConstants.debug].onNullBool(),
+          dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.onBoardingScreen,
+          initialRoute: Routes.splash,
+          navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,
           ),
