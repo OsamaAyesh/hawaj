@@ -1,26 +1,28 @@
 import 'dart:async';
-
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_icons.dart';
-import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
-import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
 
-import '../../../../../core/resources/manager_opacity.dart';
-import '../../../../../core/routes/custom_transitions.dart';
+import '../controller/send_otp_controller.dart';
 import '../widgets/sub_title_text_auth_widget.dart';
 import '../widgets/title_auth_text_widget.dart';
 
 class OtpLoginScreen extends StatefulWidget {
-  const OtpLoginScreen({super.key});
+  final String phoneNumber;
+
+  const OtpLoginScreen({
+    super.key,
+    required this.phoneNumber,
+  });
 
   @override
   State<OtpLoginScreen> createState() => _OtpLoginScreenState();
@@ -31,6 +33,12 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   int _seconds = 59;
   bool _isTimerFinished = false;
 
+  /// Controller for OTP input
+  final TextEditingController otpController = TextEditingController();
+
+  /// GetX Controller
+  final SendOtpController authController = Get.find<SendOtpController>();
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +48,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   @override
   void dispose() {
     _timer?.cancel();
+    otpController.dispose();
     super.dispose();
   }
 
@@ -73,178 +82,166 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ManagerColors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: ManagerHeight.h146),
+      body: Stack(
+        children: [
+          /// Main Content
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(height: ManagerHeight.h146),
 
-            ///This Icon Otp Verfication
-            Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: ManagerWidth.w14,
-                vertical: ManagerHeight.h14,
-              ),
-              height: ManagerHeight.h64,
-              width: ManagerWidth.w64,
-              decoration: BoxDecoration(
-                color: ManagerColors.primaryColor
-                    .withOpacity(ManagerOpacity.op0_14),
-                borderRadius: BorderRadius.circular(ManagerRadius.r24),
-              ),
-              child: Image.asset(
-                ManagerIcons.otpIcon,
-                width: ManagerWidth.w36,
-                height: ManagerHeight.h36,
-              ),
-            ),
-
-            SizedBox(height: ManagerHeight.h16),
-
-            ///Title Otp Screen
-            TitleAuthTextWidget(
-              title: ManagerStrings.otpTitle,
-            ),
-            SizedBox(height: ManagerHeight.h6),
-
-            ///Subtitle Otp Screen
-            SubTitleTextAuthWidget(
-              subTitle: ManagerStrings.otpSubtitle,
-            ),
-            SizedBox(height: ManagerHeight.h4),
-
-            ///Phone Number Text Widget
-            Text(
-              "966597450057+",
-              style: getRegularTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: ManagerColors.black,
-              ),
-            ),
-            SizedBox(height: ManagerHeight.h42),
-
-            ///Otp Widget
-            Directionality(
-              textDirection: TextDirection.ltr,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
-                child: Pinput(
-                  controller: TextEditingController(),
-                  length: 6,
-                  defaultPinTheme: PinTheme(
-                    width: ManagerWidth.w56,
-                    height: ManagerHeight.h56,
-                    textStyle: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s20,
-                      color: ManagerColors.black,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(ManagerRadius.r8),
-                      border: Border.all(
-                        color: ManagerColors.primaryColor.withOpacity(
-                          0.5,
-                        ),
-                      ),
-                    ),
+                /// OTP Icon
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: ManagerWidth.w14,
+                    vertical: ManagerHeight.h14,
                   ),
-                  focusedPinTheme: PinTheme(
-                    width: ManagerWidth.w56,
-                    height: ManagerHeight.h56,
-                    textStyle: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s20,
-                      color: ManagerColors.black,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(ManagerRadius.r8),
-                      border: Border.all(
-                        color: ManagerColors.primaryColor,
-                        width: 1,
-                      ),
-                    ),
+                  height: ManagerHeight.h64,
+                  width: ManagerWidth.w64,
+                  decoration: BoxDecoration(
+                    color: ManagerColors.primaryColor.withOpacity(0.14),
+                    borderRadius: BorderRadius.circular(ManagerRadius.r24),
                   ),
-                  submittedPinTheme: PinTheme(
-                    width: ManagerWidth.w56,
-                    height: ManagerHeight.h56,
-                    textStyle: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s20,
-                      color: ManagerColors.black,
-                    ),
-                    decoration: BoxDecoration(
-                      color: ManagerColors.backgroundColorOtp.withOpacity(0.24),
-                      borderRadius: BorderRadius.circular(ManagerRadius.r8),
-                      border: Border.all(color: ManagerColors.primaryColor),
-                    ),
+                  child: Image.asset(
+                    ManagerIcons.otpIcon,
+                    width: ManagerWidth.w36,
+                    height: ManagerHeight.h36,
                   ),
-                  followingPinTheme: PinTheme(
-                    width: ManagerWidth.w56,
-                    height: ManagerHeight.h56,
-                    textStyle: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s20,
-                      color: ManagerColors.black.withOpacity(0.5),
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(ManagerRadius.r8),
-                      border: Border.all(
-                        color: ManagerColors.greyWithColor.withOpacity(0.3),
-                      ),
+                ),
+
+                SizedBox(height: ManagerHeight.h16),
+
+                /// Title
+                TitleAuthTextWidget(title: ManagerStrings.otpTitle),
+                SizedBox(height: ManagerHeight.h6),
+
+                /// Subtitle
+                SubTitleTextAuthWidget(subTitle: ManagerStrings.otpSubtitle),
+                SizedBox(height: ManagerHeight.h4),
+
+                /// Phone Number Text
+                Text(
+                  widget.phoneNumber,
+                  style: getRegularTextStyle(
+                    fontSize: ManagerFontSize.s14,
+                    color: ManagerColors.black,
+                  ),
+                ),
+                SizedBox(height: ManagerHeight.h42),
+
+                /// OTP Input
+                Directionality(
+                  textDirection: TextDirection.ltr,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+                    child: Pinput(
+                      controller: otpController,
+                      length: 6,
+                      defaultPinTheme: _pinTheme(),
+                      focusedPinTheme: _pinTheme(focused: true),
+                      submittedPinTheme: _pinTheme(submitted: true),
+                      followingPinTheme: _pinTheme(following: true),
                     ),
                   ),
                 ),
-              ),
-            ),
-            SizedBox(height: ManagerHeight.h20),
+                SizedBox(height: ManagerHeight.h20),
 
-            ///Timer Widget
-            Text(
-              timerText,
-              style: getRegularTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: ManagerColors.black,
-              ),
-            ),
-            SizedBox(height: ManagerHeight.h8),
-
-            ///Show I didn't get code Resend It
-            if (_isTimerFinished)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    ManagerStrings.otpDidNotReceive,
-                    style: getRegularTextStyle(
-                      fontSize: ManagerFontSize.s12,
-                      color: ManagerColors.black,
-                    ),
+                /// Timer
+                Text(
+                  timerText,
+                  style: getRegularTextStyle(
+                    fontSize: ManagerFontSize.s14,
+                    color: ManagerColors.black,
                   ),
-                  SizedBox(width: ManagerWidth.w4),
-                  GestureDetector(
-                    onTap: () {
-                      startTimer();
-                    },
-                    child: Text(
-                      ManagerStrings.otpResend,
-                      style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s12,
-                        color: ManagerColors.gery1OnBoarding,
-                        // decoration: TextDecoration.underline,
+                ),
+                SizedBox(height: ManagerHeight.h8),
+
+                /// Resend
+                if (_isTimerFinished)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        ManagerStrings.otpDidNotReceive,
+                        style: getRegularTextStyle(
+                          fontSize: ManagerFontSize.s12,
+                          color: ManagerColors.black,
+                        ),
                       ),
-                    ),
+                      SizedBox(width: ManagerWidth.w4),
+                      GestureDetector(
+                        onTap: () {
+                          startTimer();
+                          authController.sendOtp(widget.phoneNumber);
+                        },
+                        child: Text(
+                          ManagerStrings.otpResend,
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s12,
+                            color: ManagerColors.gery1OnBoarding,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            SizedBox(
-              height: ManagerHeight.h32,
-            ),
+                SizedBox(height: ManagerHeight.h32),
 
-            ///Button Verfied Text
-            ButtonApp(
-              title: ManagerStrings.otpVerifyButton,
-              onPressed: () {},
-              paddingWidth: ManagerWidth.w12,
+                /// Verify Button
+                ButtonApp(
+                  title: ManagerStrings.otpVerifyButton,
+                  onPressed: () {
+                    authController.verifyOtp(
+                      widget.phoneNumber,
+                      otpController.text,
+                    );
+                  },
+                  paddingWidth: ManagerWidth.w12,
+                ),
+              ],
             ),
-          ],
+          ),
+
+          /// 🔹 Loading Overlay
+          Obx(() {
+            return authController.isLoading.value
+                ? Container(
+              color: Colors.black.withOpacity(0.3),
+              child: const Center(
+                child: CircularProgressIndicator(
+                  color: ManagerColors.primaryColor,
+                ),
+              ),
+            )
+                : const SizedBox.shrink();
+          }),
+        ],
+      ),
+    );
+  }
+
+
+  PinTheme _pinTheme({bool focused = false, bool submitted = false, bool following = false}) {
+    return PinTheme(
+      width: ManagerWidth.w56,
+      height: ManagerHeight.h56,
+      textStyle: getBoldTextStyle(
+        fontSize: ManagerFontSize.s20,
+        color: focused ? ManagerColors.primaryColor : ManagerColors.black,
+      ),
+      decoration: BoxDecoration(
+        color: submitted
+            ? ManagerColors.backgroundColorOtp.withOpacity(0.24)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(ManagerRadius.r8),
+        border: Border.all(
+          color: focused
+              ? ManagerColors.primaryColor
+              : following
+              ? ManagerColors.greyWithColor.withOpacity(0.3)
+              : ManagerColors.primaryColor.withOpacity(0.5),
+          width: focused ? 1.5 : 1,
         ),
       ),
     );
   }
 }
-

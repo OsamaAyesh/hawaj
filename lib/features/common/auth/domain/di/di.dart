@@ -3,10 +3,13 @@ import 'package:app_mobile/features/common/auth/data/data_source/verfiy_otp_data
 import 'package:app_mobile/features/common/auth/data/repository/send_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/data/repository/verfiy_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/domain/use_case/send_otp_use_case.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../constants/di/dependency_injection.dart';
 import '../../../../../core/network/app_api.dart';
+import '../../presentation/controller/send_otp_controller.dart';
 import '../use_case/verfiy_otp_use_case.dart';
 
 initSendOtpRequest() {
@@ -42,16 +45,16 @@ disposeSendOtpRequest() {
 
 void initSendOtp() {
   initSendOtpRequest();
-
-  // Get.put(LoginController(
-  //   instance<LoginUseCase>(),
-  //   instance<AppSettingsPrefs>(),
-  // ));
+  initVerfiyOtp();
+  Get.put(SendOtpController(
+    instance<SendOtpUseCase>(),
+    instance<VerfiyOtpUseCase>(),
+  ));
 }
 
 void disposeSendOtp() {
   disposeSendOtpRequest();
-  // Get.delete<LoginController>();
+  Get.delete<SendOtpController>();
 }
 
 initVerfiyOtpRequest() {
@@ -85,7 +88,7 @@ disposeVerfiyOtpRRequest() {
   }
 }
 
-void initVerfiyOtpR() {
+void initVerfiyOtp() {
   initVerfiyOtpRequest();
 
   // Get.put(LoginController(
@@ -94,7 +97,7 @@ void initVerfiyOtpR() {
   // ));
 }
 
-void disposeVerfiyOtpR() {
+void disposeVerfiyOtp() {
   disposeVerfiyOtpRRequest();
   // Get.delete<LoginController>();
 }

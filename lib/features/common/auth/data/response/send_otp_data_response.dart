@@ -7,7 +7,7 @@ part 'send_otp_data_response.g.dart';
 @JsonSerializable()
 class SendOtpDataResponse {
   @JsonKey(name: ResponseConstants.code)
-  String? code;
+  int? code;
 
 
   SendOtpDataResponse({

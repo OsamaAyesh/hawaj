@@ -71,9 +71,9 @@ class RouteGenerator {
       case Routes.onBoardingScreen:
         return MaterialPageRoute(builder: (_) => const OnBoardingScreen());
       case Routes.loginScreen:
-        return MaterialPageRoute(builder: (_) => const LoginScreen());
+        return MaterialPageRoute(builder: (_) =>  LoginScreen());
       case Routes.otpLoginScreen:
-        return MaterialPageRoute(builder: (_) => const OtpLoginScreen());
+        return MaterialPageRoute(builder: (_) => const OtpLoginScreen(phoneNumber: '',));
       case Routes.successLoginScreen:
         return MaterialPageRoute(builder: (_) => const SuccessLoginScreen());
       case Routes.completeInformationScreen:

@@ -68,9 +68,7 @@ class SuccessLoginScreen extends StatelessWidget {
           ButtonApp(
             title: ManagerStrings.completeProfileButton,
             onPressed: () {
-              Navigator.of(context).push(
-                fadeRoute(const LoginScreen()),
-              );
+
             },
             paddingWidth: ManagerWidth.w24,
           ),

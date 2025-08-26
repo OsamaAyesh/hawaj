@@ -1,5 +1,5 @@
 class SendOtpDataModel {
-  String code;
+  int code;
 
   SendOtpDataModel({
     required this.code,

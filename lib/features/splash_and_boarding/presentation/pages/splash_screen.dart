@@ -58,28 +58,41 @@ class _SplashScreenState extends State<SplashScreen>
 
   ///===== Run Splash Logic (Load + Move)
   Future<void> _startSplashLogic() async {
-    /// ======== 1. Preload OnBoarding Data + Images
-    final preloadController = Get.put(
-      OnBoardingPreloadController(instance<OnBoardingUseCase>()),
-    );
-    await preloadController.preloadOnBoarding();
+    try {
+      /// ======== 1. Preload OnBoarding Data + Images (with timeout)
+      final preloadController = Get.put(
+        OnBoardingPreloadController(instance<OnBoardingUseCase>()),
+      );
 
-    /// ====== 2. Wait for the Splash period.
-    await Future.delayed(const Duration(seconds: 2));
+      await preloadController
+          .preloadOnBoarding()
+          .timeout(const Duration(seconds: 5), onTimeout: () {
+        // ⚠️ If API or cache loading takes more than 5s, continue anyway
+        print("⚠️ Preload onboarding timed out, continue...");
+      });
 
-    ///=== 3. Navigate by user status
-    final prefs = instance<AppSettingsPrefs>();
-    final hasChosenLang = prefs.getViewedChooseLanguage();
-    final hasSeenOnboarding = prefs.getOutBoardingScreenViewed();
-    final isLoggedIn = prefs.getUserLoggedIn();
+      /// ====== 2. Wait for splash animation period
+      await Future.delayed(const Duration(seconds: 2));
 
-    if (!hasChosenLang) {
-      Get.offAllNamed(Routes.chooseLanguageScreen);
-    } else if (!hasSeenOnboarding) {
-      Get.offAllNamed(Routes.onBoardingScreen);
-    } else if (isLoggedIn) {
-      // Get.offAllNamed(Routes.homeScreen);
-    } else {
+      ///=== 3. Navigate by user status
+      final prefs = instance<AppSettingsPrefs>();
+      final hasChosenLang = prefs.getViewedChooseLanguage();
+      final hasSeenOnboarding = prefs.getOutBoardingScreenViewed();
+      final isLoggedIn = prefs.getUserLoggedIn();
+
+      if (!hasChosenLang) {
+        Get.offAllNamed(Routes.chooseLanguageScreen);
+      } else if (!hasSeenOnboarding) {
+        Get.offAllNamed(Routes.onBoardingScreen);
+      } else if (isLoggedIn) {
+        print("Success");
+        // Get.offAllNamed(Routes.homeScreen); // ✅ لازم يكون في Navigation هنا
+      } else {
+        Get.offAllNamed(Routes.loginScreen);
+      }
+    } catch (e) {
+      print("❌ Error in splash logic: $e");
+      // Fallback to login screen in case of any error
       Get.offAllNamed(Routes.loginScreen);
     }
   }

@@ -14,66 +14,76 @@ class OnBoardingPreloadController extends GetxController {
   static const String _baseUrl = "https://hawaj.lezaz.org/storage/";
   static const String _cacheKey = "on_boarding_cache";
 
-  ///=== List of items that will appear in the OnBoarding UI
+  /// List of onboarding items
   var items = <OnBoardingItemModel>[].obs;
 
-  ///=== Return the full image link
+  /// Build full image URL
   String getImageUrl(OnBoardingItemModel item) => _baseUrl + item.screenImage;
 
-  /// Load data (from cache or API) + Download images from cache
+  /// Load data (from cache or API) + prefetch images
   Future<void> preloadOnBoarding() async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-// 1. Get cash if available
-    final cachedJson = prefs.getString(_cacheKey);
-    if (cachedJson != null) {
-      final List<dynamic> data = json.decode(cachedJson);
+      // 1. Check cache first
+      final cachedJson = prefs.getString(_cacheKey);
+      if (cachedJson != null) {
+        final List<dynamic> data = json.decode(cachedJson);
 
-      items.assignAll(
-        data.map((e) => OnBoardingItemModel(
-              id: e["id"],
-              mainTitle: e["mainTitle"],
-              screenName: e["screenName"],
-              screenOrder: e["screenOrder"],
-              screenImage: e["screenImage"],
-              screenDescription: e["screenDescription"],
-            )),
-      );
-
-      // Prefetch images
-      for (var item in items) {
-        await DefaultCacheManager().downloadFile(getImageUrl(item));
-      }
-      return;
-    }
-
-// 2. If there is no cash → API call
-    final result = await _useCase.execute();
-    result.fold(
-      (failure) {},
-      (data) async {
-        items.assignAll(data.data.data);
-
-// Store them as JSON in SharedPreferences
-        prefs.setString(
-          _cacheKey,
-          json.encode(items
-              .map((e) => {
-                    "id": e.id,
-                    "mainTitle": e.mainTitle,
-                    "screenName": e.screenName,
-                    "screenOrder": e.screenOrder,
-                    "screenImage": e.screenImage,
-                    "screenDescription": e.screenDescription,
-                  })
-              .toList()),
+        items.assignAll(
+          data.map((e) => OnBoardingItemModel(
+            id: e["id"],
+            mainTitle: e["mainTitle"],
+            screenName: e["screenName"],
+            screenOrder: e["screenOrder"],
+            screenImage: e["screenImage"],
+            screenDescription: e["screenDescription"],
+          )),
         );
 
-// Prefetch images
-        for (var item in items) {
-          await DefaultCacheManager().downloadFile(getImageUrl(item));
-        }
-      },
-    );
+        // Prefetch all images in parallel
+        await Future.wait(
+          items.map((item) =>
+              DefaultCacheManager().downloadFile(getImageUrl(item))),
+        );
+
+        return; // ✅ Done from cache, no need for API
+      }
+
+      // 2. If no cache → call API
+      final result = await _useCase.execute();
+      result.fold(
+            (failure) {
+          // handle silently or log
+        },
+            (data) async {
+          items.assignAll(data.data.data);
+
+          // Save JSON in cache
+          await prefs.setString(
+            _cacheKey,
+            json.encode(items
+                .map((e) => {
+              "id": e.id,
+              "mainTitle": e.mainTitle,
+              "screenName": e.screenName,
+              "screenOrder": e.screenOrder,
+              "screenImage": e.screenImage,
+              "screenDescription": e.screenDescription,
+            })
+                .toList()),
+          );
+
+          // Prefetch all images in parallel
+          await Future.wait(
+            items.map((item) =>
+                DefaultCacheManager().downloadFile(getImageUrl(item))),
+          );
+        },
+      );
+    } catch (e) {
+      // Prevent app from being stuck
+      print("Error in preloadOnBoarding: $e");
+    }
   }
 }

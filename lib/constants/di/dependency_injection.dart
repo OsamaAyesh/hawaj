@@ -13,6 +13,7 @@ import '../../core/locale/locale_controller.dart';
 import '../../core/network/app_api.dart';
 import '../../core/network/dio_factory.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
+import '../../features/common/auth/domain/di/di.dart';
 import '../../features/common/map/presenation/controller/map_controller.dart';
 import '../../features/splash_and_boarding/domain/di/di.dart';
 
@@ -59,5 +60,6 @@ initModule() async {
     instance.registerLazySingleton<AppService>(() => AppService(dio));
   }
   initGetOnBoarding();
+  initSendOtp();
   Get.put(LocaleController());
 }

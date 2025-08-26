@@ -110,7 +110,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                         Navigator.pushReplacementNamed(context, Routes.loginScreen);
                         prefs.setOutBoardingScreenViewed();
                       }
-                      Navigator.of(context).pushReplacement(fadeSlideFromBottom(const LoginScreen()));
+                      Navigator.of(context).pushReplacement(fadeSlideFromBottom( LoginScreen()));
                       Get.offAllNamed(Routes.loginScreen);
                     } else {
                       _pageController.nextPage(
@@ -129,7 +129,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                           final prefs = instance<AppSettingsPrefs>();
                           Navigator.pushReplacementNamed(context, Routes.loginScreen);
                           prefs.setOutBoardingScreenViewed();
-                          Navigator.of(context).pushReplacement(fadeSlideFromBottom(const LoginScreen()));
+                          Navigator.of(context).pushReplacement(fadeSlideFromBottom( LoginScreen()));
                         },
                       ),
                 SizedBox(height: ManagerHeight.h12),
