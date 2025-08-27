@@ -93,7 +93,6 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
           focusNode: widget.focusNode,
           textInputAction: widget.textInputAction,
 
-          /// 🔹 هنا أضفنا استدعاء onChanged اللي جاي من الخارج
           onChanged: (val) {
             if (widget.isPhoneField) {
               setState(() {

@@ -62,5 +62,6 @@ initModule() async {
   }
   initGetOnBoarding();
   initSendOtp();
+  initRegisterMyCompanyOfferProvider();
   Get.put(LocaleController());
 }
