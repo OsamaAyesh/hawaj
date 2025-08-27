@@ -152,17 +152,17 @@ class CompleteInformationScreen extends StatelessWidget {
               SizedBox(height: ManagerHeight.h14),
 
               /// Upload Image Profile Widget
-              UploadProfileImageField(
-                label: ManagerStrings.profileImageLabel,
-                hint: ManagerStrings.profileImageHint,
-                note: ManagerStrings.profileImageNote,
-                onTap: () {
-                  // Action Upload Image
-                },
-              )
-                  .animate()
-                  .fadeIn(duration: 600.ms, delay: 750.ms)
-                  .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
+              // UploadProfileImageField(
+              //   label: ManagerStrings.profileImageLabel,
+              //   hint: ManagerStrings.profileImageHint,
+              //   note: ManagerStrings.profileImageNote,
+              //   onTap: () {
+              //     // Action Upload Image
+              //   },
+              // )
+              //     .animate()
+              //     .fadeIn(duration: 600.ms, delay: 750.ms)
+              //     .scale(begin: const Offset(0.8, 0.8), end: const Offset(1, 1)),
 
               SizedBox(height: ManagerHeight.h48),
 

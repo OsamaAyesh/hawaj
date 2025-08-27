@@ -8,4 +8,5 @@ class RequestConstantsEndpoints {
   static const String sendOtp = '$apiUrlBase/otpsend';
   static const String verfiyOtp = '$apiUrlBase/otpverify';
   static const String getPlans = '$apiUrlBase/offers/getplans';
+  static const String registerMyCompanyOfferProvider = '$apiUrlBase/setorganizations';
 }

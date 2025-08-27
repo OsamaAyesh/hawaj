@@ -47,4 +47,12 @@ abstract class AppService {
   Future<PlanResponse> getPlansOfferProvider(
       );
 
+
+  ///==== Register My Company Custom Offer Provider
+  @POST(RequestConstantsEndpoints.registerMyCompanyOfferProvider)
+  @MultiPart()
+  Future<WithOutDataResponse> registerMyCompanyOfferProviderRequest(
+      @Body() FormData formData
+      );
+
 }

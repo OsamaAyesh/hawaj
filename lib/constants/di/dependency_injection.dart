@@ -15,6 +15,7 @@ import '../../core/network/dio_factory.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
 import '../../features/common/auth/domain/di/di.dart';
 import '../../features/common/map/presenation/controller/map_controller.dart';
+import '../../features/providers/offers_provider/register_company_offer_provider/domain/di/di.dart';
 import '../../features/splash_and_boarding/domain/di/di.dart';
 
 final instance = GetIt.instance;

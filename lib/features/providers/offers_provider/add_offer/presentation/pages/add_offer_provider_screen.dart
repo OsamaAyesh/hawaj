@@ -76,14 +76,14 @@ class _AddOfferProviderScreenState extends State<AddOfferProviderScreen> {
               const SizedBoxBetweenFieldWidgets(),
 
               /// ======== Upload File Widget=================
-              UploadProfileImageField(
-                label: ManagerStrings.offerProductImages,
-                hint: ManagerStrings.offerProductImagesHint,
-                note: ManagerStrings.offerProductImagesHint2,
-                onTap: () {
-                  // Action Upload Image
-                },
-              ),
+              // UploadProfileImageField(
+              //   label: ManagerStrings.offerProductImages,
+              //   hint: ManagerStrings.offerProductImagesHint,
+              //   note: ManagerStrings.offerProductImagesHint2,
+              //   onTap: () {
+              //     // Action Upload Image
+              //   },
+              // ),
 
               const SizedBoxBetweenFieldWidgets(),
 

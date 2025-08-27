@@ -28,6 +28,9 @@ class LabeledTextField extends StatefulWidget {
   final bool isPhoneField;
   final bool isEmailField;
 
+  /// 🔹 الحل: أضف هنا onChanged
+  final Function(String)? onChanged;
+
   const LabeledTextField({
     super.key,
     this.label,
@@ -47,6 +50,7 @@ class LabeledTextField extends StatefulWidget {
     this.onFieldSubmitted,
     this.isPhoneField = false,
     this.isEmailField = false,
+    this.onChanged, // ✅ أضفها هنا
   });
 
   @override
@@ -88,6 +92,8 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
           controller: widget.controller,
           focusNode: widget.focusNode,
           textInputAction: widget.textInputAction,
+
+          /// 🔹 هنا أضفنا استدعاء onChanged اللي جاي من الخارج
           onChanged: (val) {
             if (widget.isPhoneField) {
               setState(() {
@@ -99,7 +105,12 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
                 isValidEmail = _validateEmail(val);
               });
             }
+
+            if (widget.onChanged != null) {
+              widget.onChanged!(val); // ✅ يستدعي الفنكشن من الشاشة
+            }
           },
+
           onFieldSubmitted: widget.onFieldSubmitted ??
                   (_) {
                 if (widget.nextFocusNode != null) {
@@ -145,23 +156,48 @@ class _LabeledTextFieldState extends State<LabeledTextField> {
                 height: ManagerHeight.h48,
               ),
               child: Padding(
-                padding: EdgeInsets.only(top: ManagerHeight.h4,bottom: ManagerHeight.h4,right:Get.locale?.languageCode == 'en'?ManagerWidth.w4:0,left: Get.locale?.languageCode == 'ar'?ManagerWidth.w4:0, ),
+                padding: EdgeInsets.only(
+                  top: ManagerHeight.h4,
+                  bottom: ManagerHeight.h4,
+                  right: Get.locale?.languageCode == 'en'
+                      ? ManagerWidth.w4
+                      : 0,
+                  left: Get.locale?.languageCode == 'ar'
+                      ? ManagerWidth.w4
+                      : 0,
+                ),
                 child: ElevatedButton(
-                    onPressed: widget.onButtonTap,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ManagerColors.primaryColor,
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Get.locale?.languageCode == 'ar'? Radius.circular(ManagerRadius.r4):Radius.circular(0),
-                          bottomLeft:  Get.locale?.languageCode == 'ar'?Radius.circular(ManagerRadius.r4):Radius.circular(0),
-                          bottomRight: Get.locale?.languageCode == 'en'? Radius.circular(ManagerRadius.r4):Radius.circular(0),
-                          topRight:  Get.locale?.languageCode == 'en'? Radius.circular(ManagerRadius.r4):Radius.circular(0),
-                        ),
+                  onPressed: widget.onButtonTap,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ManagerColors.primaryColor,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft:
+                        Get.locale?.languageCode == 'ar'
+                            ? Radius.circular(
+                            ManagerRadius.r4)
+                            : const Radius.circular(0),
+                        bottomLeft:
+                        Get.locale?.languageCode == 'ar'
+                            ? Radius.circular(
+                            ManagerRadius.r4)
+                            : const Radius.circular(0),
+                        topRight:
+                        Get.locale?.languageCode == 'en'
+                            ? Radius.circular(
+                            ManagerRadius.r4)
+                            : const Radius.circular(0),
+                        bottomRight:
+                        Get.locale?.languageCode == 'en'
+                            ? Radius.circular(
+                            ManagerRadius.r4)
+                            : const Radius.circular(0),
                       ),
-                      elevation: 0,
                     ),
-                    child: widget.buttonWidget
+                    elevation: 0,
+                  ),
+                  child: widget.buttonWidget,
                 ),
               ),
             )

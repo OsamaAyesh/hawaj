@@ -85,8 +85,7 @@ class _SplashScreenState extends State<SplashScreen>
       } else if (!hasSeenOnboarding) {
         Get.offAllNamed(Routes.onBoardingScreen);
       } else if (isLoggedIn) {
-        print("Success");
-        // Get.offAllNamed(Routes.homeScreen); // ✅ لازم يكون في Navigation هنا
+        Get.offAllNamed(Routes.hawajWelcomeStartScreen); // ✅ لازم يكون في Navigation هنا
       } else {
         Get.offAllNamed(Routes.loginScreen);
       }
