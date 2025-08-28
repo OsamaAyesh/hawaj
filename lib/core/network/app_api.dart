@@ -55,12 +55,21 @@ abstract class AppService {
       @Body() FormData formData
       );
 
+
   ///==== Create Offer Provider
   @POST(RequestConstantsEndpoints.createOfferProvider)
   @MultiPart()
   Future<WithOutDataResponse> createOfferProvider(
       @Body() FormData formData
       );
+
+  ///====== Set Subscription Offer Provider Request.
+  @POST(RequestConstantsEndpoints.setSubscriptionOfferProvider)
+  Future<WithOutDataResponse> setSubscriptionOfferProvider(
+      @Field(RequestConstants.organizationsId) int organizationsId,
+      @Field(RequestConstants.plansId) int plansId,
+      );
+
 
 
 }

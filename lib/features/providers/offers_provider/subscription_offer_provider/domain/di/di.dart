@@ -1,6 +1,9 @@
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/data_source/get_plans_data_source.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/data_source/set_subscription_offer_provider_data_source.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/repository/get_plan_repository.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/repository/set_subscription_offer_provider_repository.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/use_case/get_plans_use_case.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/use_case/set_subscription_offer_provider_use_case.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
@@ -48,5 +51,50 @@ void initGetPlan() {
 
 void disposeGetPlan() {
   disposeGetPlanRequest();
+  // Get.delete<LoginController>();
+}
+
+initSetSubscriptionOfferProviderRequest() {
+  if (!GetIt.I.isRegistered<SetSubscriptionOfferProviderDataSource>()) {
+    instance.registerLazySingleton<SetSubscriptionOfferProviderDataSource>(
+            () => SetSubscriptionOfferProviderDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!GetIt.I.isRegistered<SetSubscriptionOfferProviderRepository>()) {
+    instance.registerLazySingleton<SetSubscriptionOfferProviderRepository>(
+            () => SetSubscriptionOfferProviderRepositoryImplement(instance(), instance()));
+  }
+
+  if (!GetIt.I.isRegistered<SetSubscriptionOfferProviderUseCase>()) {
+    instance.registerFactory<SetSubscriptionOfferProviderUseCase>(
+            () => SetSubscriptionOfferProviderUseCase(instance<SetSubscriptionOfferProviderRepository>()));
+  }
+}
+
+disposeSetSubscriptionOfferProviderRequest() {
+  if (GetIt.I.isRegistered<SetSubscriptionOfferProviderDataSource>()) {
+    instance.unregister<SetSubscriptionOfferProviderDataSource>();
+  }
+
+  if (GetIt.I.isRegistered<SetSubscriptionOfferProviderRepository>()) {
+    instance.unregister<SetSubscriptionOfferProviderRepository>();
+  }
+
+  if (GetIt.I.isRegistered<SetSubscriptionOfferProviderUseCase>()) {
+    instance.unregister<SetSubscriptionOfferProviderUseCase>();
+  }
+}
+
+void initSetSubscriptionOfferProvider() {
+  initSetSubscriptionOfferProviderRequest();
+
+  // Get.put(LoginController(
+  //   instance<LoginUseCase>(),
+  //   instance<AppSettingsPrefs>(),
+  // ));
+}
+
+void disposeSetSubscriptionOfferProvider() {
+  disposeSetSubscriptionOfferProviderRequest();
   // Get.delete<LoginController>();
 }
