@@ -55,4 +55,12 @@ abstract class AppService {
       @Body() FormData formData
       );
 
+  ///==== Create Offer Provider
+  @POST(RequestConstantsEndpoints.createOfferProvider)
+  @MultiPart()
+  Future<WithOutDataResponse> createOfferProvider(
+      @Body() FormData formData
+      );
+
+
 }
