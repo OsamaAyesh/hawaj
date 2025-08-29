@@ -4,7 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import '../../../../../../constants/response_constants/response_constants.dart';
 import 'offer_data_response.dart';
 
-part 'offer_item_response.g.dart';
+part 'offer_response.g.dart';
 
 @JsonSerializable()
 class OfferResponse {
