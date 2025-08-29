@@ -2,15 +2,18 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../../../../core/resources/manager_colors.dart';
 import '../../../../../core/resources/manager_font_size.dart';
 import '../../../../../core/resources/manager_styles.dart';
 import '../../../../../core/widgets/loading_widget.dart';
 import '../controller/map_controller.dart';
+import '../widgets/location_error_widget.dart';
 import '../widgets/menu_icon_button.dart';
 import '../widgets/notfication_icon_button.dart';
 
@@ -28,7 +31,49 @@ class _MapScreenState extends State<MapScreen> {
   @override
   void initState() {
     super.initState();
-    _initMarkers();
+    _checkAndLoadLocation();
+  }
+
+  /// ====== Check permissions and request them if necessary
+  Future<void> _checkAndLoadLocation() async {
+    final hasPermission = await _handleLocationPermission();
+    if (hasPermission) {
+      await controller.loadCurrentLocation();
+      _initMarkers();
+    }
+  }
+
+  Future<bool> _handleLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    /// ====== Make sure GPS is enabled
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      AppSnackbar.warning("رجاءً قم بتفعيل خدمة الموقع من الإعدادات.",
+          englishMessage: "Please enable location services from settings.");
+      return false;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
+            englishMessage:
+                "The map cannot be used without location permission.");
+        return false;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
+          englishMessage:
+              "Please enable location permission manually from the phone settings.");
+      return false;
+    }
+
+    return true;
   }
 
   Future<void> _initMarkers() async {
@@ -68,14 +113,13 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  // 🔹 تحويل CustomMapMarker ل BitmapDescriptor
+ /// Create a custom marker
   Future<BitmapDescriptor> _createCustomMarker(
       IconData icon, Color background) async {
     final ui.PictureRecorder recorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(recorder);
     const double size = 120;
 
-    // Drop pin path
     final Paint paint = Paint()..color = background;
     final Path path = Path();
     path.moveTo(size / 2, size);
@@ -83,11 +127,9 @@ class _MapScreenState extends State<MapScreen> {
     path.quadraticBezierTo(0, size * 0.6, size / 2, size);
     canvas.drawPath(path, paint);
 
-    // دائرة بيضاء
     final Paint whiteCircle = Paint()..color = Colors.white;
     canvas.drawCircle(Offset(size / 2, size * 0.45), size * 0.18, whiteCircle);
 
-    // الأيقونة
     final textPainter = TextPainter(
       text: TextSpan(
         text: String.fromCharCode(icon.codePoint),
@@ -124,17 +166,8 @@ class _MapScreenState extends State<MapScreen> {
 
         final location = controller.currentLocation.value;
         if (location == null) {
-          return Center(
-            child: GestureDetector(
-              onTap: controller.loadCurrentLocation,
-              child: Text(
-                "فشل في تحميل الموقع الحالي - اضغط للمحاولة مجددًا",
-                style: getRegularTextStyle(
-                  fontSize: ManagerFontSize.s12,
-                  color: ManagerColors.black,
-                ),
-              ),
-            ),
+          return LocationErrorWidget(
+            onRetry: _checkAndLoadLocation,
           );
         }
 
@@ -150,11 +183,11 @@ class _MapScreenState extends State<MapScreen> {
                   zoom: 14,
                 ),
                 myLocationEnabled: true,
+                markers: customMarkers,
                 trafficEnabled: false,
                 compassEnabled: false,
                 buildingsEnabled: false,
                 mapToolbarEnabled: false,
-                markers: customMarkers,
                 myLocationButtonEnabled: false,
                 onMapCreated: (GoogleMapController mapController) async {
                   String style = await DefaultAssetBundle.of(context)
@@ -169,14 +202,13 @@ class _MapScreenState extends State<MapScreen> {
                   top: ManagerHeight.h24,
                 ),
                 child: Row(
-                  children: [ MenuIconButton(
-                    onPressed: (){},
-                  ),
-                    Spacer(),
-                    NotificationIconButton(onPressed: () {  },
+                  children: [
+                    MenuIconButton(onPressed: () {}),
+                    const Spacer(),
+                    NotificationIconButton(
+                      onPressed: () {},
                       showDot: true,
                     ),
-
                   ],
                 ),
               ),
@@ -212,7 +244,6 @@ class _MapScreenState extends State<MapScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // شريط علوي فيه إغلاق وتوسيع
               const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -221,8 +252,6 @@ class _MapScreenState extends State<MapScreen> {
                 ],
               ),
               const SizedBox(height: 12),
-
-              // النص
               Text(
                 "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
                 style: getRegularTextStyle(
@@ -231,8 +260,6 @@ class _MapScreenState extends State<MapScreen> {
                 ),
               ),
               const Spacer(),
-
-              // زر مايكروفون داخلي صغير
               const Center(child: SiriMicButton(size: 60)),
             ],
           ),
@@ -281,7 +308,7 @@ class _SiriMicButtonState extends State<SiriMicButton>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // الموجات (دوائر متحركة مثل Siri)
+              /// ===== Waves (animated circles like Siri)
               ...List.generate(3, (index) {
                 double progress =
                     (_controller.value + (index * 0.3)) % 1.0; // waves offset
@@ -301,7 +328,7 @@ class _SiriMicButtonState extends State<SiriMicButton>
                 );
               }),
 
-              // زر الميكروفون الأساسي
+              /// ============ Main microphone button
               Container(
                 width: widget.size,
                 height: widget.size,

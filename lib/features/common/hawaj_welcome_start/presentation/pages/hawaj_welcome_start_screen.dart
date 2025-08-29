@@ -1,3 +1,4 @@
+import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -7,6 +8,10 @@ import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart' show Get;
+
+import '../../../map/domain/di/di.dart';
 
 class HawajWelcomeStartScreen extends StatefulWidget {
   const HawajWelcomeStartScreen({super.key});
@@ -178,6 +183,7 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                     ElevatedButton(
                       onPressed: () {
                         // Start Listening Logic
+                        Get.to(() => MapScreen(), binding: MapBindings());
                       },
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
