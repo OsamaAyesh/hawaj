@@ -1,191 +1,119 @@
-// import 'dart:typed_data';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_audio_capture/flutter_audio_capture.dart';
-// import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
-// import 'package:google_speech/google_speech.dart' hide StreamingRecognitionConfig;
-// import 'package:google_speech/config/streaming_recognition_config.dart' as speech_config;
-//
-// import '../../../core/service/google_speech_service.dart';
-//
-// class SpeechScreen extends StatefulWidget {
-//   const SpeechScreen({super.key});
-//
-//   @override
-//   State<SpeechScreen> createState() => _SpeechScreenState();
-// }
-//
-// class _SpeechScreenState extends State<SpeechScreen> {
-//   final FlutterAudioCapture _audioCapture = FlutterAudioCapture();
-//   bool _isListening = false;
-//   String _recognizedText = '';
-//   String _selectedLanguage = 'en-US';
-//
-//   Stream<StreamingRecognizeResponse>? _responseStream;
-//
-//   /// بدء الاستماع
-//   Future<void> _startListening() async {
-//     final speechToText = await GoogleSpeechService.init();
-//
-//     final streamingConfig = speech_config.StreamingRecognitionConfig(
-//       config: GoogleSpeechService.config(languageCode: _selectedLanguage),
-//       interimResults: true,
-//     );
-//
-//     // 🎙️ نحول الـ callback إلى StreamController
-//     final controller = StreamController<List<int>>();
-//
-//     await _audioCapture.start(
-//           (Uint8List data) {
-//         controller.add(data); // نرسل البيانات مباشرة للـ Stream
-//       },
-//       sampleRate: 16000,
-//       bufferSize: 3000,
-//     );
-//
-//     _responseStream = speechToText.streamingRecognize(
-//       streamingConfig,
-//       controller.stream,
-//     );
-//
-//     _responseStream!.listen((response) {
-//       for (var result in response.results) {
-//         if (result.alternatives.isNotEmpty) {
-//           setState(() {
-//             _recognizedText = result.alternatives.first.transcript;
-//           });
-//         }
-//       }
-//     }, onError: (e) {
-//       debugPrint("❌ Error: $e");
-//     }, onDone: () {
-//       setState(() => _isListening = false);
-//     });
-//
-//     setState(() => _isListening = true);
-//   }
-//
-//   /// إيقاف الاستماع
-//   Future<void> _stopListening() async {
-//     await _audioCapture.stop();
-//     setState(() => _isListening = false);
-//   }
-//
-//   @override
-//   void dispose() {
-//     _stopListening();
-//     super.dispose();
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.grey[50],
-//       appBar: AppBar(
-//         title: const Text("🎤 Smart Speech Assistant"),
-//         centerTitle: true,
-//         backgroundColor: Colors.teal,
-//         foregroundColor: Colors.white,
-//         elevation: 2,
-//         actions: [
-//           DropdownButton<String>(
-//             value: _selectedLanguage,
-//             dropdownColor: Colors.white,
-//             underline: const SizedBox(),
-//             icon: const Icon(Icons.language, color: Colors.white),
-//             items: const [
-//               DropdownMenuItem(
-//                 value: 'en-US',
-//                 child: Text('English (US)'),
-//               ),
-//               DropdownMenuItem(
-//                 value: 'ar-SA',
-//                 child: Text('العربية (السعودية)'),
-//               ),
-//               DropdownMenuItem(
-//                 value: 'ar-EG',
-//                 child: Text('العربية (مصر)'),
-//               ),
-//             ],
-//             onChanged: (value) {
-//               setState(() {
-//                 _selectedLanguage = value!;
-//               });
-//               if (_isListening) {
-//                 _stopListening().then((_) => _startListening());
-//               }
-//             },
-//           ),
-//         ],
-//       ),
-//       body: SafeArea(
-//         child: Padding(
-//           padding: const EdgeInsets.all(16.0),
-//           child: Column(
-//             children: [
-//               const SizedBox(height: 24),
-//               Expanded(
-//                 child: Container(
-//                   width: double.infinity,
-//                   padding: const EdgeInsets.all(16),
-//                   decoration: BoxDecoration(
-//                     color: Colors.white,
-//                     borderRadius: BorderRadius.circular(16),
-//                     boxShadow: [
-//                       BoxShadow(
-//                         color: Colors.black.withOpacity(0.05),
-//                         blurRadius: 8,
-//                         spreadRadius: 2,
-//                       ),
-//                     ],
-//                   ),
-//                   child: SingleChildScrollView(
-//                     reverse: true,
-//                     child: Text(
-//                       _recognizedText.isEmpty
-//                           ? 'اختر لغة وتحدث...'
-//                           : _recognizedText,
-//                       style: const TextStyle(
-//                         fontSize: 20,
-//                         height: 1.4,
-//                       ),
-//                       textAlign: _selectedLanguage.startsWith('ar')
-//                           ? TextAlign.right
-//                           : TextAlign.left,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(height: 32),
-//               GestureDetector(
-//                 onTap: _isListening ? _stopListening : _startListening,
-//                 child: AnimatedContainer(
-//                   duration: const Duration(milliseconds: 300),
-//                   width: 80,
-//                   height: 80,
-//                   decoration: BoxDecoration(
-//                     shape: BoxShape.circle,
-//                     color: _isListening ? Colors.redAccent : Colors.teal,
-//                     boxShadow: [
-//                       BoxShadow(
-//                         color: (_isListening ? Colors.redAccent : Colors.teal)
-//                             .withOpacity(0.4),
-//                         blurRadius: 16,
-//                         spreadRadius: 4,
-//                       ),
-//                     ],
-//                   ),
-//                   child: Icon(
-//                     _isListening ? Icons.stop : Icons.mic,
-//                     color: Colors.white,
-//                     size: 40,
-//                   ),
-//                 ),
-//               ),
-//               const SizedBox(height: 24),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:flutter/material.dart';
+import "package:permission_handler/permission_handler.dart";
+class ArabicSpeechToText extends StatefulWidget {
+  @override
+  _ArabicSpeechToTextState createState() => _ArabicSpeechToTextState();
+}
+
+class _ArabicSpeechToTextState extends State<ArabicSpeechToText> {
+  final SpeechToText _speechToText = SpeechToText(
+
+  );
+  bool _speechEnabled = false;
+  bool _isListening = false;
+  String _wordsSpoken = "";
+  double _confidenceLevel = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    initSpeech();
+  }
+
+  void initSpeech() async {
+    // Request microphone permission
+    await Permission.microphone.request();
+
+    _speechEnabled = await _speechToText.initialize();
+    setState(() {});
+  }
+
+  void _startListening() async {
+    await _speechToText.listen(
+      onResult: _onSpeechResult,
+      localeId: "ar-SA", // Arabic (Saudi Arabia)
+      // You can also use:
+      // "ar-EG" for Egyptian Arabic
+      // "ar-AE" for UAE Arabic
+      // "ar" for general Arabic
+    );
+    setState(() {
+      _isListening = true;
+    });
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(result) {
+    setState(() {
+      _wordsSpoken = result.recognizedWords;
+      _confidenceLevel = result.confidence;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text('تحويل الكلام إلى نص'),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.all(16),
+              child: Text(
+                _speechEnabled
+                    ? 'اضغط على الميكروفون للبدء في التحدث...'
+                    : 'التعرف على الكلام غير متاح',
+                style: TextStyle(fontSize: 20.0),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(16),
+                child: Text(
+                  _wordsSpoken,
+                  style: const TextStyle(
+                    fontSize: 25,
+                    fontWeight: FontWeight.w300,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
+            if (_speechToText.isNotListening && _confidenceLevel > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 100),
+                child: Text(
+                  "مستوى الثقة: ${(_confidenceLevel * 100.0).toStringAsFixed(1)}%",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w200,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _speechToText.isListening ? _stopListening : _startListening,
+        tooltip: 'استمع',
+        child: Icon(
+          _speechToText.isNotListening ? Icons.mic_off : Icons.mic,
+          color: Colors.white,
+        ),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+}

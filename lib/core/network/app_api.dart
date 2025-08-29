@@ -4,6 +4,7 @@ import 'package:app_mobile/features/common/profile/data/response/get_profile_res
 import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/data/response/offer_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
+import 'package:app_mobile/features/users/offer_user/list_offers/data/response/offer_user_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 import '../../constants/env/env_constants.dart';
@@ -95,5 +96,10 @@ abstract class AppService {
   Future<GetProfileResponse> getProfile(
       );
 
+
+  ///===== Get Offers Data
+  @GET(RequestConstantsEndpoints.getOffers)
+  Future<OfferUserResponse> getOffers(
+      );
 
 }

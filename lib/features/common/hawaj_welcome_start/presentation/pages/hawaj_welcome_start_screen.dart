@@ -1,6 +1,8 @@
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
@@ -9,7 +11,6 @@ import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart' show Get;
 
 import '../../../map/domain/di/di.dart';
 
@@ -26,27 +27,141 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
   late AnimationController _glowController;
   late AnimationController _waveController;
 
+  /// Speech to Text
+  final SpeechToText _speechToText = SpeechToText();
+  bool _speechEnabled = false;
+  bool _isListening = false;
+  String _wordsSpoken = "";
+  double _confidenceLevel = 0;
+  bool _permissionGranted = false;
+
   @override
   void initState() {
     super.initState();
 
-    // Glow effect
+    // Animations
     _glowController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat(reverse: true);
 
-    // Wave effect
     _waveController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat();
+
+    // Speech
+    _initSpeech();
+  }
+
+  /// Initialize Speech Recognition
+  Future<void> _initSpeech() async {
+    // طلب إذن الميكروفون أولاً
+    final status = await Permission.microphone.request();
+
+    if (status.isGranted) {
+      setState(() {
+        _permissionGranted = true;
+      });
+
+      // تهيئة التعرف على الكلام بعد الحصول على الإذن
+      _speechEnabled = await _speechToText.initialize(
+        onStatus: (status) {
+          print('Speech recognition status: $status');
+        },
+        onError: (error) {
+          print('Speech recognition error: $error');
+        },
+      );
+
+      setState(() {});
+    } else {
+      // إذا لم يتم منح الإذن
+      print('Microphone permission denied');
+      // يمكنك إضافة رسالة للمستخدم هنا
+    }
+  }
+
+  Future<void> _startListening() async {
+    if (!_permissionGranted) {
+      // إذا لم يكن لدينا إذن، نطلبه مرة أخرى
+      final status = await Permission.microphone.request();
+      if (!status.isGranted) {
+        // إعلام المستخدم أنه بحاجة إلى منح الإذن
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('يجب منح إذن استخدام الميكروفون للتمكن من التحدث'),
+            ),
+          );
+        }
+        return;
+      } else {
+        setState(() {
+          _permissionGranted = true;
+        });
+
+        // تهيئة التعرف على الكلام بعد الحصول على الإذن
+        _speechEnabled = await _speechToText.initialize(
+          onStatus: (status) {
+            print('Speech recognition status: $status');
+          },
+          onError: (error) {
+            print('Speech recognition error: $error');
+          },
+        );
+      }
+    }
+
+    if (_speechEnabled) {
+      await _speechToText.listen(
+        onResult: _onSpeechResult,
+        localeId: "ar-SA", // تقدر تبدل حسب اللهجة
+        listenMode: ListenMode.confirmation,
+      );
+      setState(() {
+        _isListening = true;
+      });
+    } else {
+      // إعادة تهيئة التعرف على الكلام إذا لزم الأمر
+      await _initSpeech();
+      if (_speechEnabled) {
+        await _startListening();
+      }
+    }
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+    });
+  }
+
+  void _onSpeechResult(result) {
+    setState(() {
+      _wordsSpoken = result.recognizedWords;
+      _confidenceLevel = result.confidence;
+
+      // إذا كان هناك كلام معترف به، يمكننا إضافة رد تلقائي
+      if (_wordsSpoken.isNotEmpty && _wordsSpoken.length > 3) {
+        // إضافة رد تلقائي بعد ثانية واحدة
+        Future.delayed(const Duration(seconds: 1), () {
+          if (mounted) {
+            setState(() {
+              _wordsSpoken = "حوّاج: سأساعدك في العثور على $_wordsSpoken";
+            });
+          }
+        });
+      }
+    });
   }
 
   @override
   void dispose() {
     _glowController.dispose();
     _waveController.dispose();
+    _speechToText.stop();
     super.dispose();
   }
 
@@ -110,7 +225,7 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
 
                 const Spacer(),
 
-                /// Suggestions Card
+                /// Suggestions Card + Spoken Words
                 Container(
                   margin: EdgeInsets.symmetric(
                       horizontal: ManagerWidth.w20,
@@ -138,13 +253,27 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                       ),
                       SizedBox(height: ManagerHeight.h8),
                       Text(
-                        "حوّاج: خليني أنصحك بأفضل عروض الأكل اليوم ",
+                        _wordsSpoken.isNotEmpty
+                            ? _wordsSpoken
+                            : "حوّاج: خليني أنصحك بأفضل عروض الأكل اليوم ",
                         style: getRegularTextStyle(
                           fontSize: ManagerFontSize.s14,
                           color: Colors.black87,
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      if (_speechToText.isNotListening &&
+                          _confidenceLevel > 0)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: Text(
+                            "مستوى الثقة: ${(_confidenceLevel * 100.0).toStringAsFixed(1)}%",
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -168,7 +297,8 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                         height: 120,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: ManagerColors.primaryColor.withOpacity(0.1),
+                          color:
+                          ManagerColors.primaryColor.withOpacity(0.1),
                         ),
                       ),
                     ),
@@ -181,26 +311,44 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
 
                     // Main Mic button
                     ElevatedButton(
-                      onPressed: () {
-                        // Start Listening Logic
-                        Get.to(() => MapScreen(), binding: MapBindings());
-                      },
+                      onPressed: _speechToText.isListening
+                          ? _stopListening
+                          : _startListening,
                       style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(),
                         padding: const EdgeInsets.all(28),
-                        backgroundColor: ManagerColors.primaryColor,
-                        shadowColor:
-                        ManagerColors.primaryColor.withOpacity(0.5),
+                        backgroundColor: _permissionGranted
+                            ? ManagerColors.primaryColor
+                            : Colors.grey,
+                        shadowColor: _permissionGranted
+                            ? ManagerColors.primaryColor.withOpacity(0.5)
+                            : Colors.grey.withOpacity(0.5),
                         elevation: 12,
                       ),
-                      child: const Icon(
-                        Icons.mic,
+                      child: Icon(
+                        _speechToText.isListening
+                            ? Icons.mic
+                            : Icons.mic_none,
                         size: 40,
                         color: Colors.white,
                       ),
                     ),
                   ],
                 ),
+
+                // إضافة رسالة إذا لم يتم منح الإذن
+                if (!_permissionGranted)
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'يجب منح إذن استخدام الميكروفون للتمكن من التحدث',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: ManagerFontSize.s14,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
 
                 const Spacer(),
               ],

@@ -55,6 +55,7 @@ class Routes {
   static const String editProfileScreen = '/edit_profile_screen';
   static const String contactUsScreen = '/contact_us_screen';
   static const String hawajWelcomeStartScreen = '/hawaj_welcome_start_screen';
+  static const String testScreen = '/test_screen';
 
 
 
@@ -102,6 +103,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const ContactUsScreen());
       case Routes.hawajWelcomeStartScreen:
         return MaterialPageRoute(builder: (_) => const HawajWelcomeStartScreen());
+      case Routes.testScreen:
+        return MaterialPageRoute(builder: (_) =>  ArabicSpeechToText());
+
       default:
         return unDefinedRoute();
     }
