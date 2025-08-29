@@ -1,5 +1,6 @@
 import 'package:app_mobile/core/response/with_out_data_response.dart';
 import 'package:app_mobile/features/common/auth/data/response/send_otp_response.dart';
+import 'package:app_mobile/features/common/profile/data/response/get_profile_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/data/response/offer_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
@@ -89,6 +90,10 @@ abstract class AppService {
       @Body() FormData formData
       );
 
+  ///=====Get Profile Request
+  @GET(RequestConstantsEndpoints.getProfile)
+  Future<GetProfileResponse> getProfile(
+      );
 
 
 }

@@ -25,5 +25,9 @@ class ResponseConstants {
   static const String offerEndDate = "offer_end_date";
   static const String offerDescription = "offer_description";
   static const String organizationId = "organization_id";
+  static const String name = "name";
   static const String offerStatus = "offer_status";
+  static const String phone = "phone";
+  static const String createdAt = "created_at";
+  static const String updatedAt = "updated_at";
 }
