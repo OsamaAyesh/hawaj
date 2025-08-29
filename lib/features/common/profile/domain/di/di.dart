@@ -20,7 +20,7 @@ initUpdateProfileRequest() {
 
   if (!GetIt.I.isRegistered<UpdateProfileUseCase>()) {
     instance.registerFactory<UpdateProfileUseCase>(
-            () => UpdateProfileUseCase(instance<UpdateProfileUseCase>()));
+            () => UpdateProfileUseCase(instance<UpdateProfileRepository>()));
   }
 }
 
