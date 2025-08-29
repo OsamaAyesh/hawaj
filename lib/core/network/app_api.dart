@@ -82,6 +82,12 @@ abstract class AppService {
       @Query(RequestConstants.name) String? name,
       );
 
+  ///====== Update Avatar =====
+  @POST(RequestConstantsEndpoints.updateAvatar)
+  @MultiPart()
+  Future<WithOutDataResponse> updateAvatar(
+      @Body() FormData formData
+      );
 
 
 
