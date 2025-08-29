@@ -76,6 +76,12 @@ abstract class AppService {
   Future<OfferResponse> getMyOffer(
       );
 
+  ///===== Update Profile ======\
+  @PUT(RequestConstantsEndpoints.getMyOffer)
+  Future<WithOutDataResponse> updateProfile(
+      @Query(RequestConstants.name) String? name,
+      );
+
 
 
 
