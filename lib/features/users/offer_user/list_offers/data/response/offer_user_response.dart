@@ -13,7 +13,7 @@ class OfferUserResponse {
   @JsonKey(name: ResponseConstants.message)
   String? message;
   @JsonKey(name: ResponseConstants.data)
-  OfferDataResponse? data;
+  OfferUserDataResponse? data;
 
 
 

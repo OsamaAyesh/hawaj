@@ -2,6 +2,7 @@ import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/data/mapper/offer_data_mapper.dart';
 import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/data/response/offer_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/domain/model/offer_model.dart';
+import 'package:app_mobile/features/users/offer_user/list_offers/data/mapper/offer_user_data_mapper.dart';
 
 import '../../domain/model/offer_user_model.dart';
 import '../response/offer_user_response.dart';
