@@ -15,4 +15,15 @@ class ResponseConstants {
   static const String planPrice = "plan_price";
   static const String planFeatures = "plan_features";
   static const String days = "days";
+  static const String productName = "product_name";
+  static const String productDescription = "product_description";
+  static const String productImages = "product_images";
+  static const String productPrice = "product_price";
+  static const String offerType = "offer_type";
+  static const String offerPrice = "offer_price";
+  static const String offerStartDate = "offer_start_date";
+  static const String offerEndDate = "offer_end_date";
+  static const String offerDescription = "offer_description";
+  static const String organizationId = "organization_id";
+  static const String offerStatus = "offer_status";
 }

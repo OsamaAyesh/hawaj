@@ -1,5 +1,6 @@
 import 'package:app_mobile/core/response/with_out_data_response.dart';
 import 'package:app_mobile/features/common/auth/data/response/send_otp_response.dart';
+import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/data/response/offer_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
 import 'package:dio/dio.dart';
@@ -69,6 +70,12 @@ abstract class AppService {
       @Field(RequestConstants.organizationsId) int organizationsId,
       @Field(RequestConstants.plansId) int plansId,
       );
+
+  ///=== Get My Offer
+  @GET(RequestConstantsEndpoints.getMyOffer)
+  Future<OfferResponse> getMyOffer(
+      );
+
 
 
 
