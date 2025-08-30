@@ -8,10 +8,13 @@ import 'package:app_mobile/features/common/profile/data/repository/update_profil
 import 'package:app_mobile/features/common/profile/domain/use_case/get_profile_use_case.dart';
 import 'package:app_mobile/features/common/profile/domain/use_case/update_avatar_use_case.dart';
 import 'package:app_mobile/features/common/profile/domain/use_case/update_profile_use_case.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../constants/di/dependency_injection.dart';
 import '../../../../../core/network/app_api.dart';
+import '../../presentation/controller/get_profile_controller.dart';
 
 initUpdateProfileRequest() {
   if (!GetIt.I.isRegistered<UpdateProfileDataSource>()) {
@@ -134,13 +137,12 @@ disposeGetProfileRequest() {
 
 void initGetProfile() {
   initGetProfileRequest();
-  // Get.put(SendOtpController(
-  //   instance<SendOtpUseCase>(),
-  //   instance<VerfiyOtpUseCase>(),
-  // ));
+  Get.put(ProfileController(
+    instance<GetProfileUseCase>(),
+  ));
 }
 
 void disposeGetProfile() {
   disposeGetProfileRequest();
-  // Get.delete<SendOtpController>();
+  Get.delete<ProfileController>();
 }

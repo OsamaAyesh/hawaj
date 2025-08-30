@@ -1,6 +1,10 @@
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_icons.dart';
+import 'package:app_mobile/features/common/profile/presentation/pages/profile_screen.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
+import '../../../profile/domain/di/di.dart';
 import 'drawer_widget.dart';
 
 /// Constant keys for features (must match the JSON keys used in localization).
@@ -68,7 +72,10 @@ class DrawerVisibilityManager {
         return DrawerItemModel(
           iconPath: ManagerIcons.userProfileIcon,
           title: ManagerStrings.userProfile,
-          onTap: () => print("Open user profile"),
+          onTap: () {
+            initGetProfile();
+            Get.to(ProfileScreen());
+          },
         );
       case DrawerFeatures.userDailyOffers:
         return DrawerItemModel(
