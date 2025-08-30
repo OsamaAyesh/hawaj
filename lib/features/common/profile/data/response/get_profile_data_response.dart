@@ -10,6 +10,8 @@ class GetProfileDataResponse {
   int? id;
   @JsonKey(name: ResponseConstants.name)
   String? name;
+  @JsonKey(name: ResponseConstants.avatar)
+  String? avatar;
   @JsonKey(name: ResponseConstants.phone)
   String? phone;
   @JsonKey(name: ResponseConstants.createdAt)
@@ -20,6 +22,7 @@ class GetProfileDataResponse {
   GetProfileDataResponse({
     this.id,
     this.name,
+    this.avatar,
     this.phone,
     this.createdAt,
     this.updatedAt,

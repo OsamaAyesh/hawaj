@@ -7,6 +7,7 @@ extension GetProfileDataMapper on GetProfileDataResponse{
   GetProfileDataModel toDomain() {
   return  GetProfileDataModel(id: id.onNull(),
         name: name.onNull(),
+        avatar: avatar.onNull(),
         phone: phone.onNull(),
         createdAt: createdAt.onNull(),
         updatedAt: updatedAt.onNull(),);

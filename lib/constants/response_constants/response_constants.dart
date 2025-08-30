@@ -30,4 +30,5 @@ class ResponseConstants {
   static const String phone = "phone";
   static const String createdAt = "created_at";
   static const String updatedAt = "updated_at";
+  static const String avatar = "avatar";
 }
