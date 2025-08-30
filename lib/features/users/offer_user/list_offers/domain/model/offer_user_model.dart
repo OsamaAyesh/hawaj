@@ -6,10 +6,10 @@ class OfferUserModel {
   bool error;
   String message;
   OfferUserDataModel data;
+
   OfferUserModel({
     required this.error,
     required this.message,
     required this.data,
-});
-
+  });
 }

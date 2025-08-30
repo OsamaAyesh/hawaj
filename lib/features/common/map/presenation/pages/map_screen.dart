@@ -9,6 +9,9 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:confetti/confetti.dart';
 
 import '../../../../../core/resources/manager_colors.dart';
 import '../../../../../core/resources/manager_font_size.dart';
@@ -27,17 +30,31 @@ class MapScreen extends StatefulWidget {
   State<MapScreen> createState() => _MapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   final controller = Get.find<MapController>();
-  final GlobalKey<SliderDrawerState> _sliderKey =
-      GlobalKey<SliderDrawerState>();
+  final GlobalKey<SliderDrawerState> _sliderKey = GlobalKey<SliderDrawerState>();
+  final SpeechToText _speechToText = SpeechToText();
+  final ConfettiController _confettiController = ConfettiController(duration: const Duration(seconds: 2));
 
   Set<Marker> customMarkers = {};
+  bool _isListening = false;
+  bool _speechEnabled = false;
+  bool _permissionGranted = false;
+  String _recognizedText = "";
+  double _audioLevel = 0.0;
+  List<double> _audioLevels = List.generate(20, (index) => 0.0);
+  late AnimationController _waveController;
+  bool _showVoiceAssistant = false;
 
   @override
   void initState() {
     super.initState();
+    _waveController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat();
     _checkAndLoadLocation();
+    _initSpeech();
   }
 
   /// ====== Check permissions and request them if necessary
@@ -67,7 +84,7 @@ class _MapScreenState extends State<MapScreen> {
       if (permission == LocationPermission.denied) {
         AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
             englishMessage:
-                "The map cannot be used without location permission.");
+            "The map cannot be used without location permission.");
         return false;
       }
     }
@@ -75,11 +92,111 @@ class _MapScreenState extends State<MapScreen> {
     if (permission == LocationPermission.deniedForever) {
       AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
           englishMessage:
-              "Please enable location permission manually from the phone settings.");
+          "Please enable location permission manually from the phone settings.");
       return false;
     }
 
     return true;
+  }
+
+  /// Initialize Speech Recognition
+  Future<void> _initSpeech() async {
+    final status = await Permission.microphone.request();
+    if (status.isGranted) {
+      setState(() {
+        _permissionGranted = true;
+      });
+
+      _speechEnabled = await _speechToText.initialize(
+        onStatus: (status) {
+          print('Speech recognition status: $status');
+          if (status == 'notListening' && _isListening) {
+            setState(() {
+              _isListening = false;
+              if (_recognizedText.isNotEmpty) {
+                _confettiController.play();
+              }
+            });
+          }
+        },
+        onError: (error) {
+          print('Speech recognition error: $error');
+        },
+      );
+      setState(() {});
+    } else {
+      print('Microphone permission denied');
+    }
+  }
+
+  Future<void> _startListening() async {
+    if (!_permissionGranted) {
+      final status = await Permission.microphone.request();
+      if (!status.isGranted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('يجب منح إذن استخدام الميكروفون للتمكن من التحدث'),
+            ),
+          );
+        }
+        return;
+      } else {
+        setState(() {
+          _permissionGranted = true;
+        });
+        await _initSpeech();
+      }
+    }
+
+    setState(() {
+      _recognizedText = "";
+      _showVoiceAssistant = true;
+    });
+
+    if (_speechEnabled) {
+      await _speechToText.listen(
+        onResult: (result) {
+          setState(() {
+            _recognizedText = result.recognizedWords;
+          });
+        },
+        localeId: "ar-SA",
+        listenMode: ListenMode.confirmation,
+        onSoundLevelChange: (level) {
+          setState(() {
+            _audioLevel = level;
+            _audioLevels.removeAt(0);
+            _audioLevels.add(level);
+          });
+        },
+      );
+      setState(() {
+        _isListening = true;
+      });
+    } else {
+      await _initSpeech();
+      if (_speechEnabled) {
+        await _startListening();
+      }
+    }
+  }
+
+  void _stopListening() async {
+    await _speechToText.stop();
+    setState(() {
+      _isListening = false;
+      if (_recognizedText.isNotEmpty) {
+        _confettiController.play();
+      }
+    });
+  }
+
+  void _closeVoiceAssistant() {
+    setState(() {
+      _showVoiceAssistant = false;
+    });
+    _stopListening();
   }
 
   Future<void> _initMarkers() async {
@@ -87,9 +204,9 @@ class _MapScreenState extends State<MapScreen> {
     if (location == null) return;
 
     final restaurantIcon =
-        await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
+    await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
     final cafeIcon =
-        await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
+    await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
     final storeIcon = await _createCustomMarker(Icons.store, Colors.deepPurple);
 
     setState(() {
@@ -97,21 +214,21 @@ class _MapScreenState extends State<MapScreen> {
         Marker(
           markerId: const MarkerId("restaurant"),
           position:
-              LatLng(location.latitude + 0.001, location.longitude + 0.001),
+          LatLng(location.latitude + 0.001, location.longitude + 0.001),
           icon: restaurantIcon,
           infoWindow: const InfoWindow(title: "مطعم شرقي"),
         ),
         Marker(
           markerId: const MarkerId("cafe"),
           position:
-              LatLng(location.latitude - 0.001, location.longitude - 0.001),
+          LatLng(location.latitude - 0.001, location.longitude - 0.001),
           icon: cafeIcon,
           infoWindow: const InfoWindow(title: "مقهى"),
         ),
         Marker(
           markerId: const MarkerId("store"),
           position:
-              LatLng(location.latitude + 0.002, location.longitude - 0.001),
+          LatLng(location.latitude + 0.002, location.longitude - 0.001),
           icon: storeIcon,
           infoWindow: const InfoWindow(title: "سوبر ماركت"),
         ),
@@ -155,11 +272,19 @@ class _MapScreenState extends State<MapScreen> {
             (size * 0.45 - textPainter.height / 2)));
 
     final img =
-        await recorder.endRecording().toImage(size.toInt(), size.toInt());
+    await recorder.endRecording().toImage(size.toInt(), size.toInt());
     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
     final Uint8List pngBytes = byteData!.buffer.asUint8List();
 
     return BitmapDescriptor.fromBytes(pngBytes);
+  }
+
+  @override
+  void dispose() {
+    _waveController.dispose();
+    _confettiController.dispose();
+    _speechToText.stop();
+    super.dispose();
   }
 
   @override
@@ -169,7 +294,6 @@ class _MapScreenState extends State<MapScreen> {
       sliderOpenSize: 250,
       appBar: null,
       backgroundColor: ManagerColors.white,
-
       slideDirection: SlideDirection.rightToLeft,
       slider: AppDrawer(
         sliderKey: _sliderKey,
@@ -225,101 +349,191 @@ class _MapScreenState extends State<MapScreen> {
           }
 
           final LatLng currentLatLng =
-              LatLng(location.latitude, location.longitude);
+          LatLng(location.latitude, location.longitude);
 
-          return SafeArea(
-            child: Stack(
-              children: [
-                GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: currentLatLng,
-                    zoom: 14,
-                  ),
-                  myLocationEnabled: true,
-                  markers: customMarkers,
-                  trafficEnabled: false,
-                  compassEnabled: false,
-                  buildingsEnabled: false,
-                  mapToolbarEnabled: false,
-                  myLocationButtonEnabled: false,
-                  onMapCreated: (GoogleMapController mapController) async {
-                    String style = await DefaultAssetBundle.of(context)
-                        .loadString('assets/json/style_map.json');
-                    mapController.setMapStyle(style);
-                  },
+          return Stack(
+            children: [
+              GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: currentLatLng,
+                  zoom: 14,
                 ),
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: ManagerWidth.w16,
-                    right: ManagerWidth.w16,
-                    top: ManagerHeight.h24,
-                  ),
-                  child: Row(
-                    children: [
-                      MenuIconButton(
-                        onPressed: () {
-                          _sliderKey.currentState?.toggle(); // 🟢 يفتح أو يغلق الـ Drawer
-                        },
-                      ),
-                      const Spacer(),
-                      NotificationIconButton(
-                        onPressed: () {},
-                        showDot: true,
-                      ),
-                    ],
-                  ),
+                myLocationEnabled: true,
+                markers: customMarkers,
+                trafficEnabled: false,
+                compassEnabled: false,
+                buildingsEnabled: false,
+                mapToolbarEnabled: false,
+                myLocationButtonEnabled: false,
+                onMapCreated: (GoogleMapController mapController) async {
+                  String style = await DefaultAssetBundle.of(context)
+                      .loadString('assets/json/style_map.json');
+                  mapController.setMapStyle(style);
+                },
+              ),
+              Padding(
+                padding: EdgeInsets.only(
+                  left: ManagerWidth.w16,
+                  right: ManagerWidth.w16,
+                  top: ManagerHeight.h24,
                 ),
-                Positioned(
-                  bottom: 24,
-                  left: 0,
-                  right: 0,
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () => _openVoiceAssistant(context),
-                      child: const SiriMicButton(),
+                child: Row(
+                  children: [
+                    MenuIconButton(
+                      onPressed: () {
+                        _sliderKey.currentState?.toggle();
+                      },
+                    ),
+                    const Spacer(),
+                    NotificationIconButton(
+                      onPressed: () {},
+                      showDot: true,
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                bottom: 24,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: GestureDetector(
+                    onTap: _startListening,
+                    child: VoiceAssistantButton(
+                      isListening: _isListening,
+                      audioLevels: _audioLevels,
+                      waveController: _waveController,
+                      onTap: _startListening,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  colors: const [
+                    Colors.green,
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple
+                  ],
+                ),
+              ),
+
+              // Voice Assistant Panel that appears when mic is pressed
+              if (_showVoiceAssistant)
+                Positioned.fill(
+                  child: GestureDetector(
+                    onTap: _closeVoiceAssistant,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.4),
+                      child: DraggableScrollableSheet(
+                        initialChildSize: 0.7,
+                        minChildSize: 0.5,
+                        maxChildSize: 0.9,
+                        builder: (context, scrollController) {
+                          return VoiceAssistantPanel(
+                            isListening: _isListening,
+                            recognizedText: _recognizedText,
+                            audioLevels: _audioLevels,
+                            waveController: _waveController,
+                            onStartListening: _startListening,
+                            onStopListening: _stopListening,
+                            onClose: _closeVoiceAssistant,
+                            scrollController: scrollController,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+            ],
           );
         }),
       ),
     );
   }
+}
 
-  void _openVoiceAssistant(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: ManagerColors.primaryColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) {
-        return Container(
-          padding: const EdgeInsets.all(16),
-          height: 220,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.close, color: Colors.white),
-                  Icon(Icons.open_in_full, color: Colors.white),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Text(
-                "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
-                style: getRegularTextStyle(
-                  fontSize: ManagerFontSize.s12,
-                  color: Colors.white,
+class VoiceAssistantButton extends StatelessWidget {
+  final bool isListening;
+  final List<double> audioLevels;
+  final AnimationController waveController;
+  final VoidCallback onTap;
+
+  const VoiceAssistantButton({
+    super.key,
+    required this.isListening,
+    required this.audioLevels,
+    required this.waveController,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: waveController,
+      builder: (context, child) {
+        return GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: ManagerColors.primaryColor,
+              boxShadow: [
+                BoxShadow(
+                  color: ManagerColors.primaryColor.withOpacity(0.4),
+                  blurRadius: 10,
+                  spreadRadius: isListening ? 5 : 0,
                 ),
-              ),
-              const Spacer(),
-              const Center(child: SiriMicButton(size: 60)),
-            ],
+              ],
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Waves based on audio level
+                ...List.generate(3, (index) {
+                  final progress = ((waveController.value + (index * 0.3)) % 1.0);
+                  final waveSize = 80 + (progress * 40) + (isListening ? audioLevels.isNotEmpty ? audioLevels.last * 0.5 : 0 : 0);
+
+                  return Container(
+                    width: waveSize,
+                    height: waveSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: ManagerColors.primaryColor.withOpacity((1 - progress) * 0.3),
+                        width: 2,
+                      ),
+                    ),
+                  );
+                }),
+
+                // Main icon
+                Icon(
+                  isListening ? Icons.mic : Icons.mic_none,
+                  color: Colors.white,
+                  size: 36,
+                ),
+
+                // Pulsating circle when listening
+                if (isListening)
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: ManagerColors.primaryColor.withOpacity(0.2),
+                    ),
+                  ),
+              ],
+            ),
           ),
         );
       },
@@ -327,21 +541,241 @@ class _MapScreenState extends State<MapScreen> {
   }
 }
 
+class VoiceAssistantPanel extends StatefulWidget {
+  final bool isListening;
+  final String recognizedText;
+  final List<double> audioLevels;
+  final AnimationController waveController;
+  final VoidCallback onStartListening;
+  final VoidCallback onStopListening;
+  final VoidCallback onClose;
+  final ScrollController scrollController;
+
+  const VoiceAssistantPanel({
+    super.key,
+    required this.isListening,
+    required this.recognizedText,
+    required this.audioLevels,
+    required this.waveController,
+    required this.onStartListening,
+    required this.onStopListening,
+    required this.onClose,
+    required this.scrollController,
+  });
+
+  @override
+  State<VoiceAssistantPanel> createState() => _VoiceAssistantPanelState();
+}
+
+class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: ManagerColors.primaryColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Drag handle
+          Center(
+            child: Container(
+              width: 40,
+              height: 5,
+              margin: const EdgeInsets.only(bottom: 16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.close, color: Colors.white),
+                onPressed: widget.onClose,
+              ),
+              Text(
+                "المساعد الصوتي",
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s18,
+                  color: Colors.white,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.open_in_full, color: Colors.white),
+                onPressed: () {},
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                children: [
+                  if (widget.recognizedText.isNotEmpty)
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: widget.scrollController,
+                        child: Text(
+                          widget.recognizedText,
+                          style: getRegularTextStyle(
+                            fontSize: ManagerFontSize.s16,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  else
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: widget.scrollController,
+                        child: Text(
+                          "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
+                          style: getRegularTextStyle(
+                            fontSize: ManagerFontSize.s14,
+                            color: Colors.white,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  // Visual audio level indicator
+                  if (widget.isListening)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(10, (index) {
+                        final level = widget.audioLevels.isNotEmpty
+                            ? widget.audioLevels[widget.audioLevels.length - 1 - (index % widget.audioLevels.length)]
+                            : 0.0;
+                        final height = 10 + (level * 0.5);
+
+                        return Container(
+                          width: 4,
+                          height: height,
+                          margin: const EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        );
+                      }),
+                    ),
+
+                  const SizedBox(height: 20),
+
+                  // Animated mic button
+                  GestureDetector(
+                    onTap: widget.isListening ? widget.onStopListening : widget.onStartListening,
+                    child: AnimatedBuilder(
+                      animation: widget.waveController,
+                      builder: (context, child) {
+                        return Container(
+                          width: 80,
+                          height: 80,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.white.withOpacity(0.4),
+                                blurRadius: 10,
+                                spreadRadius: widget.isListening ? 8 : 0,
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Waves based on audio level
+                              if (widget.isListening)
+                                ...List.generate(3, (index) {
+                                  final progress = ((widget.waveController.value + (index * 0.3)) % 1.0);
+                                  final waveSize = 80 + (progress * 60) + (widget.audioLevels.isNotEmpty ? widget.audioLevels.last * 0.8 : 0);
+
+                                  return Container(
+                                    width: waveSize,
+                                    height: waveSize,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white.withOpacity((1 - progress) * 0.2),
+                                        width: 2,
+                                      ),
+                                    ),
+                                  );
+                                }),
+
+                              Icon(
+                                widget.isListening ? Icons.mic : Icons.mic_none,
+                                color: ManagerColors.primaryColor,
+                                size: 36,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  Text(
+                    widget.isListening ? "جاري الاستماع..." : "انقر للتحدث",
+                    style: getRegularTextStyle(
+                      fontSize: ManagerFontSize.s14,
+                      color: Colors.white,
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 // import 'dart:typed_data';
 // import 'dart:ui' as ui;
 // import 'package:app_mobile/core/resources/manager_height.dart';
+// import 'package:app_mobile/core/resources/manager_icons.dart';
 // import 'package:app_mobile/core/resources/manager_width.dart';
 // import 'package:app_mobile/core/util/snack_bar.dart';
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:geolocator/geolocator.dart';
+// import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+// import 'package:speech_to_text/speech_to_text.dart';
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:confetti/confetti.dart';
 //
 // import '../../../../../core/resources/manager_colors.dart';
 // import '../../../../../core/resources/manager_font_size.dart';
 // import '../../../../../core/resources/manager_styles.dart';
 // import '../../../../../core/widgets/loading_widget.dart';
 // import '../controller/map_controller.dart';
+// import '../widgets/drawer_widget.dart';
 // import '../widgets/location_error_widget.dart';
 // import '../widgets/menu_icon_button.dart';
 // import '../widgets/notfication_icon_button.dart';
@@ -353,14 +787,30 @@ class _MapScreenState extends State<MapScreen> {
 //   State<MapScreen> createState() => _MapScreenState();
 // }
 //
-// class _MapScreenState extends State<MapScreen> {
+// class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 //   final controller = Get.find<MapController>();
+//   final GlobalKey<SliderDrawerState> _sliderKey = GlobalKey<SliderDrawerState>();
+//   final SpeechToText _speechToText = SpeechToText();
+//   final ConfettiController _confettiController = ConfettiController(duration: const Duration(seconds: 2));
+//
 //   Set<Marker> customMarkers = {};
+//   bool _isListening = false;
+//   bool _speechEnabled = false;
+//   bool _permissionGranted = false;
+//   String _recognizedText = "";
+//   double _audioLevel = 0.0;
+//   List<double> _audioLevels = List.generate(20, (index) => 0.0);
+//   late AnimationController _waveController;
 //
 //   @override
 //   void initState() {
 //     super.initState();
+//     _waveController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 800),
+//     )..repeat();
 //     _checkAndLoadLocation();
+//     _initSpeech();
 //   }
 //
 //   /// ====== Check permissions and request them if necessary
@@ -390,7 +840,7 @@ class _MapScreenState extends State<MapScreen> {
 //       if (permission == LocationPermission.denied) {
 //         AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
 //             englishMessage:
-//                 "The map cannot be used without location permission.");
+//             "The map cannot be used without location permission.");
 //         return false;
 //       }
 //     }
@@ -398,11 +848,103 @@ class _MapScreenState extends State<MapScreen> {
 //     if (permission == LocationPermission.deniedForever) {
 //       AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
 //           englishMessage:
-//               "Please enable location permission manually from the phone settings.");
+//           "Please enable location permission manually from the phone settings.");
 //       return false;
 //     }
 //
 //     return true;
+//   }
+//
+//   /// Initialize Speech Recognition
+//   Future<void> _initSpeech() async {
+//     final status = await Permission.microphone.request();
+//     if (status.isGranted) {
+//       setState(() {
+//         _permissionGranted = true;
+//       });
+//
+//       _speechEnabled = await _speechToText.initialize(
+//         onStatus: (status) {
+//           print('Speech recognition status: $status');
+//           if (status == 'notListening' && _isListening) {
+//             setState(() {
+//               _isListening = false;
+//               if (_recognizedText.isNotEmpty) {
+//                 _confettiController.play();
+//               }
+//             });
+//           }
+//         },
+//         onError: (error) {
+//           print('Speech recognition error: $error');
+//         },
+//       );
+//       setState(() {});
+//     } else {
+//       print('Microphone permission denied');
+//     }
+//   }
+//
+//   Future<void> _startListening() async {
+//     if (!_permissionGranted) {
+//       final status = await Permission.microphone.request();
+//       if (!status.isGranted) {
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(
+//               content: Text('يجب منح إذن استخدام الميكروفون للتمكن من التحدث'),
+//             ),
+//           );
+//         }
+//         return;
+//       } else {
+//         setState(() {
+//           _permissionGranted = true;
+//         });
+//         await _initSpeech();
+//       }
+//     }
+//
+//     setState(() {
+//       _recognizedText = "";
+//     });
+//
+//     if (_speechEnabled) {
+//       await _speechToText.listen(
+//         onResult: (result) {
+//           setState(() {
+//             _recognizedText = result.recognizedWords;
+//           });
+//         },
+//         localeId: "ar-SA",
+//         listenMode: ListenMode.confirmation,
+//         onSoundLevelChange: (level) {
+//           setState(() {
+//             _audioLevel = level;
+//             _audioLevels.removeAt(0);
+//             _audioLevels.add(level);
+//           });
+//         },
+//       );
+//       setState(() {
+//         _isListening = true;
+//       });
+//     } else {
+//       await _initSpeech();
+//       if (_speechEnabled) {
+//         await _startListening();
+//       }
+//     }
+//   }
+//
+//   void _stopListening() async {
+//     await _speechToText.stop();
+//     setState(() {
+//       _isListening = false;
+//       if (_recognizedText.isNotEmpty) {
+//         _confettiController.play();
+//       }
+//     });
 //   }
 //
 //   Future<void> _initMarkers() async {
@@ -410,9 +952,9 @@ class _MapScreenState extends State<MapScreen> {
 //     if (location == null) return;
 //
 //     final restaurantIcon =
-//         await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
+//     await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
 //     final cafeIcon =
-//         await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
+//     await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
 //     final storeIcon = await _createCustomMarker(Icons.store, Colors.deepPurple);
 //
 //     setState(() {
@@ -420,21 +962,21 @@ class _MapScreenState extends State<MapScreen> {
 //         Marker(
 //           markerId: const MarkerId("restaurant"),
 //           position:
-//               LatLng(location.latitude + 0.001, location.longitude + 0.001),
+//           LatLng(location.latitude + 0.001, location.longitude + 0.001),
 //           icon: restaurantIcon,
 //           infoWindow: const InfoWindow(title: "مطعم شرقي"),
 //         ),
 //         Marker(
 //           markerId: const MarkerId("cafe"),
 //           position:
-//               LatLng(location.latitude - 0.001, location.longitude - 0.001),
+//           LatLng(location.latitude - 0.001, location.longitude - 0.001),
 //           icon: cafeIcon,
 //           infoWindow: const InfoWindow(title: "مقهى"),
 //         ),
 //         Marker(
 //           markerId: const MarkerId("store"),
 //           position:
-//               LatLng(location.latitude + 0.002, location.longitude - 0.001),
+//           LatLng(location.latitude + 0.002, location.longitude - 0.001),
 //           icon: storeIcon,
 //           infoWindow: const InfoWindow(title: "سوبر ماركت"),
 //         ),
@@ -442,7 +984,7 @@ class _MapScreenState extends State<MapScreen> {
 //     });
 //   }
 //
-//  /// Create a custom marker
+//   /// Create a custom marker
 //   Future<BitmapDescriptor> _createCustomMarker(
 //       IconData icon, Color background) async {
 //     final ui.PictureRecorder recorder = ui.PictureRecorder();
@@ -478,7 +1020,7 @@ class _MapScreenState extends State<MapScreen> {
 //             (size * 0.45 - textPainter.height / 2)));
 //
 //     final img =
-//         await recorder.endRecording().toImage(size.toInt(), size.toInt());
+//     await recorder.endRecording().toImage(size.toInt(), size.toInt());
 //     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
 //     final Uint8List pngBytes = byteData!.buffer.asUint8List();
 //
@@ -486,25 +1028,78 @@ class _MapScreenState extends State<MapScreen> {
 //   }
 //
 //   @override
+//   void dispose() {
+//     _waveController.dispose();
+//     _confettiController.dispose();
+//     _speechToText.stop();
+//     super.dispose();
+//   }
+//
+//   @override
 //   Widget build(BuildContext context) {
-//     return Scaffold(
-//       body: Obx(() {
-//         if (controller.isLoading.value) {
-//           return const LoadingWidget();
-//         }
+//     return SliderDrawer(
+//       key: _sliderKey,
+//       sliderOpenSize: 250,
+//       appBar: null,
+//       backgroundColor: ManagerColors.white,
+//       slideDirection: SlideDirection.rightToLeft,
+//       slider: AppDrawer(
+//         sliderKey: _sliderKey,
+//         userName: "Osama Ayesh",
+//         role: "مستخدم جديد",
+//         phone: "0599999999",
+//         userItems: [
+//           DrawerItemModel(
+//             iconPath: ManagerIcons.dollarIcon,
+//             title: "المدفوعات",
+//             onTap: () => print("فتح المدفوعات"),
+//           ),
+//           DrawerItemModel(
+//             iconPath: ManagerIcons.dollarIcon,
+//             title: "الطلبات",
+//             onTap: () => print("فتح الطلبات"),
+//           ),
+//         ],
+//         providers: [
+//           ProviderSection(
+//             name: "مقدم خدمة - أحمد",
+//             items: [
+//               DrawerItemModel(
+//                 iconPath: ManagerIcons.dollarIcon,
+//                 title: "الخدمات",
+//                 onTap: () => print("خدمات أحمد"),
+//               ),
+//             ],
+//           ),
+//           ProviderSection(
+//             name: "مقدم خدمة - محمد",
+//             items: [
+//               DrawerItemModel(
+//                 iconPath: ManagerIcons.dollarIcon,
+//                 title: "الملف",
+//                 onTap: () => print("ملف محمد"),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//       child: Scaffold(
+//         body: Obx(() {
+//           if (controller.isLoading.value) {
+//             return const LoadingWidget();
+//           }
 //
-//         final location = controller.currentLocation.value;
-//         if (location == null) {
-//           return LocationErrorWidget(
-//             onRetry: _checkAndLoadLocation,
-//           );
-//         }
+//           final location = controller.currentLocation.value;
+//           if (location == null) {
+//             return LocationErrorWidget(
+//               onRetry: _checkAndLoadLocation,
+//             );
+//           }
 //
-//         final LatLng currentLatLng =
-//             LatLng(location.latitude, location.longitude);
+//           final LatLng currentLatLng =
+//           LatLng(location.latitude, location.longitude);
 //
-//         return SafeArea(
-//           child: Stack(
+//           return Stack(
 //             children: [
 //               GoogleMap(
 //                 initialCameraPosition: CameraPosition(
@@ -532,9 +1127,11 @@ class _MapScreenState extends State<MapScreen> {
 //                 ),
 //                 child: Row(
 //                   children: [
-//                     MenuIconButton(onPressed: () {
-//
-//                     }),
+//                     MenuIconButton(
+//                       onPressed: () {
+//                         _sliderKey.currentState?.toggle();
+//                       },
+//                     ),
 //                     const Spacer(),
 //                     NotificationIconButton(
 //                       onPressed: () {},
@@ -550,14 +1147,34 @@ class _MapScreenState extends State<MapScreen> {
 //                 child: Center(
 //                   child: GestureDetector(
 //                     onTap: () => _openVoiceAssistant(context),
-//                     child: const SiriMicButton(),
+//                     child: VoiceAssistantButton(
+//                       isListening: _isListening,
+//                       audioLevels: _audioLevels,
+//                       waveController: _waveController,
+//                       onTap: _isListening ? _stopListening : _startListening,
+//                     ),
 //                   ),
 //                 ),
 //               ),
+//               Align(
+//                 alignment: Alignment.topCenter,
+//                 child: ConfettiWidget(
+//                   confettiController: _confettiController,
+//                   blastDirectionality: BlastDirectionality.explosive,
+//                   shouldLoop: false,
+//                   colors: const [
+//                     Colors.green,
+//                     Colors.blue,
+//                     Colors.pink,
+//                     Colors.orange,
+//                     Colors.purple
+//                   ],
+//                 ),
+//               ),
 //             ],
-//           ),
-//         );
-//       }),
+//           );
+//         }),
+//       ),
 //     );
 //   }
 //
@@ -568,31 +1185,96 @@ class _MapScreenState extends State<MapScreen> {
 //       shape: const RoundedRectangleBorder(
 //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
 //       ),
+//       isScrollControlled: true,
 //       builder: (context) {
-//         return Container(
-//           padding: const EdgeInsets.all(16),
-//           height: 220,
-//           child: Column(
-//             crossAxisAlignment: CrossAxisAlignment.start,
-//             children: [
-//               const Row(
-//                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                 children: [
-//                   Icon(Icons.close, color: Colors.white),
-//                   Icon(Icons.open_in_full, color: Colors.white),
-//                 ],
-//               ),
-//               const SizedBox(height: 12),
-//               Text(
-//                 "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
-//                 style: getRegularTextStyle(
-//                   fontSize: ManagerFontSize.s12,
-//                   color: Colors.white,
+//         return VoiceAssistantPanel(
+//           isListening: _isListening,
+//           recognizedText: _recognizedText,
+//           audioLevels: _audioLevels,
+//           waveController: _waveController,
+//           onStartListening: _startListening,
+//           onStopListening: _stopListening,
+//         );
+//       },
+//     );
+//   }
+// }
+//
+// class VoiceAssistantButton extends StatelessWidget {
+//   final bool isListening;
+//   final List<double> audioLevels;
+//   final AnimationController waveController;
+//   final VoidCallback onTap;
+//
+//   const VoiceAssistantButton({
+//     super.key,
+//     required this.isListening,
+//     required this.audioLevels,
+//     required this.waveController,
+//     required this.onTap,
+//   });
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return AnimatedBuilder(
+//       animation: waveController,
+//       builder: (context, child) {
+//         return GestureDetector(
+//           onTap: onTap,
+//           child: Container(
+//             width: 80,
+//             height: 80,
+//             decoration: BoxDecoration(
+//               shape: BoxShape.circle,
+//               color: ManagerColors.primaryColor,
+//               boxShadow: [
+//                 BoxShadow(
+//                   color: ManagerColors.primaryColor.withOpacity(0.4),
+//                   blurRadius: 10,
+//                   spreadRadius: isListening ? 5 : 0,
 //                 ),
-//               ),
-//               const Spacer(),
-//               const Center(child: SiriMicButton(size: 60)),
-//             ],
+//               ],
+//             ),
+//             child: Stack(
+//               alignment: Alignment.center,
+//               children: [
+//                 // Waves based on audio level
+//                 ...List.generate(3, (index) {
+//                   final progress = ((waveController.value + (index * 0.3)) % 1.0);
+//                   final waveSize = 80 + (progress * 40) + (isListening ? audioLevels.isNotEmpty ? audioLevels.last * 0.5 : 0 : 0);
+//
+//                   return Container(
+//                     width: waveSize,
+//                     height: waveSize,
+//                     decoration: BoxDecoration(
+//                       shape: BoxShape.circle,
+//                       border: Border.all(
+//                         color: ManagerColors.primaryColor.withOpacity((1 - progress) * 0.3),
+//                         width: 2,
+//                       ),
+//                     ),
+//                   );
+//                 }),
+//
+//                 // Main icon
+//                 Icon(
+//                   isListening ? Icons.mic : Icons.mic_none,
+//                   color: Colors.white,
+//                   size: 36,
+//                 ),
+//
+//                 // Pulsating circle when listening
+//                 if (isListening)
+//                   Container(
+//                     width: 80,
+//                     height: 80,
+//                     decoration: BoxDecoration(
+//                       shape: BoxShape.circle,
+//                       color: ManagerColors.primaryColor.withOpacity(0.2),
+//                     ),
+//                   ),
+//               ],
+//             ),
 //           ),
 //         );
 //       },
@@ -600,79 +1282,871 @@ class _MapScreenState extends State<MapScreen> {
 //   }
 // }
 //
-class SiriMicButton extends StatefulWidget {
-  final double size;
-
-  const SiriMicButton({super.key, this.size = 80});
-
-  @override
-  State<SiriMicButton> createState() => _SiriMicButtonState();
-}
-
-class _SiriMicButtonState extends State<SiriMicButton>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 2),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _controller,
-      builder: (context, child) {
-        return SizedBox(
-          width: widget.size * 2,
-          height: widget.size * 2,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              /// ===== Waves (animated circles like Siri)
-              ...List.generate(3, (index) {
-                double progress =
-                    (_controller.value + (index * 0.3)) % 1.0; // waves offset
-                double scale = 1 + (progress * 1.5);
-                double opacity = (1 - progress).clamp(0.0, 1.0);
-
-                return Opacity(
-                  opacity: opacity,
-                  child: Container(
-                    width: widget.size * scale,
-                    height: widget.size * scale,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: ManagerColors.primaryColor.withOpacity(0.3),
-                    ),
-                  ),
-                );
-              }),
-
-              /// ============ Main microphone button
-              Container(
-                width: widget.size,
-                height: widget.size,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: ManagerColors.primaryColor,
-                ),
-                child: const Icon(Icons.mic, color: Colors.white, size: 36),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
+// class VoiceAssistantPanel extends StatefulWidget {
+//   final bool isListening;
+//   final String recognizedText;
+//   final List<double> audioLevels;
+//   final AnimationController waveController;
+//   final VoidCallback onStartListening;
+//   final VoidCallback onStopListening;
+//
+//   const VoiceAssistantPanel({
+//     super.key,
+//     required this.isListening,
+//     required this.recognizedText,
+//     required this.audioLevels,
+//     required this.waveController,
+//     required this.onStartListening,
+//     required this.onStopListening,
+//   });
+//
+//   @override
+//   State<VoiceAssistantPanel> createState() => _VoiceAssistantPanelState();
+// }
+//
+// class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Container(
+//       padding: const EdgeInsets.all(24),
+//       height: MediaQuery.of(context).size.height * 0.7,
+//       decoration: BoxDecoration(
+//         color: ManagerColors.primaryColor,
+//         borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             children: [
+//               IconButton(
+//                 icon: const Icon(Icons.close, color: Colors.white),
+//                 onPressed: () => Navigator.pop(context),
+//               ),
+//               Text(
+//                 "المساعد الصوتي",
+//                 style: getBoldTextStyle(
+//                   fontSize: ManagerFontSize.s18,
+//                   color: Colors.white,
+//                 ),
+//               ),
+//               IconButton(
+//                 icon: const Icon(Icons.open_in_full, color: Colors.white),
+//                 onPressed: () {},
+//               ),
+//             ],
+//           ),
+//
+//           const SizedBox(height: 20),
+//
+//           Expanded(
+//             child: Container(
+//               padding: const EdgeInsets.all(16),
+//               decoration: BoxDecoration(
+//                 color: Colors.white.withOpacity(0.1),
+//                 borderRadius: BorderRadius.circular(16),
+//               ),
+//               child: Column(
+//                 children: [
+//                   if (widget.recognizedText.isNotEmpty)
+//                     Text(
+//                       widget.recognizedText,
+//                       style: getRegularTextStyle(
+//                         fontSize: ManagerFontSize.s16,
+//                         color: Colors.white,
+//                       ),
+//                       textAlign: TextAlign.center,
+//                     )
+//                   else
+//                     Text(
+//                       "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
+//                       style: getRegularTextStyle(
+//                         fontSize: ManagerFontSize.s14,
+//                         color: Colors.white,
+//                       ),
+//                       textAlign: TextAlign.center,
+//                     ),
+//
+//                   const Spacer(),
+//
+//                   // Visual audio level indicator
+//                   if (widget.isListening)
+//                     Row(
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       children: List.generate(10, (index) {
+//                         final level = widget.audioLevels.isNotEmpty
+//                             ? widget.audioLevels[widget.audioLevels.length - 1 - (index % widget.audioLevels.length)]
+//                             : 0.0;
+//                         final height = 10 + (level * 0.5);
+//
+//                         return Container(
+//                           width: 4,
+//                           height: height,
+//                           margin: const EdgeInsets.symmetric(horizontal: 2),
+//                           decoration: BoxDecoration(
+//                             color: Colors.white,
+//                             borderRadius: BorderRadius.circular(2),
+//                           ),
+//                         );
+//                       }),
+//                     ),
+//
+//                   const SizedBox(height: 20),
+//
+//                   // Animated mic button
+//                   GestureDetector(
+//                     onTap: widget.isListening ? widget.onStopListening : widget.onStartListening,
+//                     child: AnimatedBuilder(
+//                       animation: widget.waveController,
+//                       builder: (context, child) {
+//                         return Container(
+//                           width: 80,
+//                           height: 80,
+//                           decoration: BoxDecoration(
+//                             shape: BoxShape.circle,
+//                             color: Colors.white,
+//                             boxShadow: [
+//                               BoxShadow(
+//                                 color: Colors.white.withOpacity(0.4),
+//                                 blurRadius: 10,
+//                                 spreadRadius: widget.isListening ? 8 : 0,
+//                               ),
+//                             ],
+//                           ),
+//                           child: Stack(
+//                             alignment: Alignment.center,
+//                             children: [
+//                               // Waves based on audio level
+//                               if (widget.isListening)
+//                                 ...List.generate(3, (index) {
+//                                   final progress = ((widget.waveController.value + (index * 0.3)) % 1.0);
+//                                   final waveSize = 80 + (progress * 60) + (widget.audioLevels.isNotEmpty ? widget.audioLevels.last * 0.8 : 0);
+//
+//                                   return Container(
+//                                     width: waveSize,
+//                                     height: waveSize,
+//                                     decoration: BoxDecoration(
+//                                       shape: BoxShape.circle,
+//                                       border: Border.all(
+//                                         color: Colors.white.withOpacity((1 - progress) * 0.2),
+//                                         width: 2,
+//                                       ),
+//                                     ),
+//                                   );
+//                                 }),
+//
+//                               Icon(
+//                                 widget.isListening ? Icons.mic : Icons.mic_none,
+//                                 color: ManagerColors.primaryColor,
+//                                 size: 36,
+//                               ),
+//                             ],
+//                           ),
+//                         );
+//                       },
+//                     ),
+//                   ),
+//
+//                   const SizedBox(height: 16),
+//
+//                   Text(
+//                     widget.isListening ? "جاري الاستماع..." : "انقر للتحدث",
+//                     style: getRegularTextStyle(
+//                       fontSize: ManagerFontSize.s14,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+//
+//
+//
+//
+// // import 'dart:typed_data';
+// // import 'dart:ui' as ui;
+// // import 'package:app_mobile/core/resources/manager_height.dart';
+// // import 'package:app_mobile/core/resources/manager_icons.dart';
+// // import 'package:app_mobile/core/resources/manager_width.dart';
+// // import 'package:app_mobile/core/util/snack_bar.dart';
+// // import 'package:flutter/material.dart';
+// // import 'package:get/get.dart';
+// // import 'package:google_maps_flutter/google_maps_flutter.dart';
+// // import 'package:geolocator/geolocator.dart';
+// // import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
+// //
+// // import '../../../../../core/resources/manager_colors.dart';
+// // import '../../../../../core/resources/manager_font_size.dart';
+// // import '../../../../../core/resources/manager_styles.dart';
+// // import '../../../../../core/widgets/loading_widget.dart';
+// // import '../controller/map_controller.dart';
+// // import '../widgets/drawer_widget.dart';
+// // import '../widgets/location_error_widget.dart';
+// // import '../widgets/menu_icon_button.dart';
+// // import '../widgets/notfication_icon_button.dart';
+// //
+// // class MapScreen extends StatefulWidget {
+// //   const MapScreen({super.key});
+// //
+// //   @override
+// //   State<MapScreen> createState() => _MapScreenState();
+// // }
+// //
+// // class _MapScreenState extends State<MapScreen> {
+// //   final controller = Get.find<MapController>();
+// //   final GlobalKey<SliderDrawerState> _sliderKey =
+// //       GlobalKey<SliderDrawerState>();
+// //
+// //   Set<Marker> customMarkers = {};
+// //
+// //   @override
+// //   void initState() {
+// //     super.initState();
+// //     _checkAndLoadLocation();
+// //   }
+// //
+// //   /// ====== Check permissions and request them if necessary
+// //   Future<void> _checkAndLoadLocation() async {
+// //     final hasPermission = await _handleLocationPermission();
+// //     if (hasPermission) {
+// //       await controller.loadCurrentLocation();
+// //       _initMarkers();
+// //     }
+// //   }
+// //
+// //   Future<bool> _handleLocationPermission() async {
+// //     bool serviceEnabled;
+// //     LocationPermission permission;
+// //
+// //     /// ====== Make sure GPS is enabled
+// //     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+// //     if (!serviceEnabled) {
+// //       AppSnackbar.warning("رجاءً قم بتفعيل خدمة الموقع من الإعدادات.",
+// //           englishMessage: "Please enable location services from settings.");
+// //       return false;
+// //     }
+// //
+// //     permission = await Geolocator.checkPermission();
+// //     if (permission == LocationPermission.denied) {
+// //       permission = await Geolocator.requestPermission();
+// //       if (permission == LocationPermission.denied) {
+// //         AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
+// //             englishMessage:
+// //                 "The map cannot be used without location permission.");
+// //         return false;
+// //       }
+// //     }
+// //
+// //     if (permission == LocationPermission.deniedForever) {
+// //       AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
+// //           englishMessage:
+// //               "Please enable location permission manually from the phone settings.");
+// //       return false;
+// //     }
+// //
+// //     return true;
+// //   }
+// //
+// //   Future<void> _initMarkers() async {
+// //     final location = controller.currentLocation.value;
+// //     if (location == null) return;
+// //
+// //     final restaurantIcon =
+// //         await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
+// //     final cafeIcon =
+// //         await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
+// //     final storeIcon = await _createCustomMarker(Icons.store, Colors.deepPurple);
+// //
+// //     setState(() {
+// //       customMarkers = {
+// //         Marker(
+// //           markerId: const MarkerId("restaurant"),
+// //           position:
+// //               LatLng(location.latitude + 0.001, location.longitude + 0.001),
+// //           icon: restaurantIcon,
+// //           infoWindow: const InfoWindow(title: "مطعم شرقي"),
+// //         ),
+// //         Marker(
+// //           markerId: const MarkerId("cafe"),
+// //           position:
+// //               LatLng(location.latitude - 0.001, location.longitude - 0.001),
+// //           icon: cafeIcon,
+// //           infoWindow: const InfoWindow(title: "مقهى"),
+// //         ),
+// //         Marker(
+// //           markerId: const MarkerId("store"),
+// //           position:
+// //               LatLng(location.latitude + 0.002, location.longitude - 0.001),
+// //           icon: storeIcon,
+// //           infoWindow: const InfoWindow(title: "سوبر ماركت"),
+// //         ),
+// //       };
+// //     });
+// //   }
+// //
+// //   /// Create a custom marker
+// //   Future<BitmapDescriptor> _createCustomMarker(
+// //       IconData icon, Color background) async {
+// //     final ui.PictureRecorder recorder = ui.PictureRecorder();
+// //     final Canvas canvas = Canvas(recorder);
+// //     const double size = 120;
+// //
+// //     final Paint paint = Paint()..color = background;
+// //     final Path path = Path();
+// //     path.moveTo(size / 2, size);
+// //     path.quadraticBezierTo(size, size * 0.6, size / 2, 0);
+// //     path.quadraticBezierTo(0, size * 0.6, size / 2, size);
+// //     canvas.drawPath(path, paint);
+// //
+// //     final Paint whiteCircle = Paint()..color = Colors.white;
+// //     canvas.drawCircle(Offset(size / 2, size * 0.45), size * 0.18, whiteCircle);
+// //
+// //     final textPainter = TextPainter(
+// //       text: TextSpan(
+// //         text: String.fromCharCode(icon.codePoint),
+// //         style: TextStyle(
+// //           fontSize: size * 0.25,
+// //           fontFamily: icon.fontFamily,
+// //           color: background,
+// //           package: icon.fontPackage,
+// //         ),
+// //       ),
+// //       textDirection: TextDirection.ltr,
+// //     );
+// //     textPainter.layout();
+// //     textPainter.paint(
+// //         canvas,
+// //         Offset((size - textPainter.width) / 2,
+// //             (size * 0.45 - textPainter.height / 2)));
+// //
+// //     final img =
+// //         await recorder.endRecording().toImage(size.toInt(), size.toInt());
+// //     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+// //     final Uint8List pngBytes = byteData!.buffer.asUint8List();
+// //
+// //     return BitmapDescriptor.fromBytes(pngBytes);
+// //   }
+// //
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return SliderDrawer(
+// //       key: _sliderKey,
+// //       sliderOpenSize: 250,
+// //       appBar: null,
+// //       backgroundColor: ManagerColors.white,
+// //
+// //       slideDirection: SlideDirection.rightToLeft,
+// //       slider: AppDrawer(
+// //         sliderKey: _sliderKey,
+// //         userName: "Osama Ayesh",
+// //         role: "مستخدم جديد",
+// //         phone: "0599999999",
+// //         userItems: [
+// //           DrawerItemModel(
+// //             iconPath: ManagerIcons.dollarIcon,
+// //             title: "المدفوعات",
+// //             onTap: () => print("فتح المدفوعات"),
+// //           ),
+// //           DrawerItemModel(
+// //             iconPath: ManagerIcons.dollarIcon,
+// //             title: "الطلبات",
+// //             onTap: () => print("فتح الطلبات"),
+// //           ),
+// //         ],
+// //         providers: [
+// //           ProviderSection(
+// //             name: "مقدم خدمة - أحمد",
+// //             items: [
+// //               DrawerItemModel(
+// //                 iconPath: ManagerIcons.dollarIcon,
+// //                 title: "الخدمات",
+// //                 onTap: () => print("خدمات أحمد"),
+// //               ),
+// //             ],
+// //           ),
+// //           ProviderSection(
+// //             name: "مقدم خدمة - محمد",
+// //             items: [
+// //               DrawerItemModel(
+// //                 iconPath: ManagerIcons.dollarIcon,
+// //                 title: "الملف",
+// //                 onTap: () => print("ملف محمد"),
+// //               ),
+// //             ],
+// //           ),
+// //         ],
+// //       ),
+// //       child: Scaffold(
+// //         body: Obx(() {
+// //           if (controller.isLoading.value) {
+// //             return const LoadingWidget();
+// //           }
+// //
+// //           final location = controller.currentLocation.value;
+// //           if (location == null) {
+// //             return LocationErrorWidget(
+// //               onRetry: _checkAndLoadLocation,
+// //             );
+// //           }
+// //
+// //           final LatLng currentLatLng =
+// //               LatLng(location.latitude, location.longitude);
+// //
+// //           return SafeArea(
+// //             child: Stack(
+// //               children: [
+// //                 GoogleMap(
+// //                   initialCameraPosition: CameraPosition(
+// //                     target: currentLatLng,
+// //                     zoom: 14,
+// //                   ),
+// //                   myLocationEnabled: true,
+// //                   markers: customMarkers,
+// //                   trafficEnabled: false,
+// //                   compassEnabled: false,
+// //                   buildingsEnabled: false,
+// //                   mapToolbarEnabled: false,
+// //                   myLocationButtonEnabled: false,
+// //                   onMapCreated: (GoogleMapController mapController) async {
+// //                     String style = await DefaultAssetBundle.of(context)
+// //                         .loadString('assets/json/style_map.json');
+// //                     mapController.setMapStyle(style);
+// //                   },
+// //                 ),
+// //                 Padding(
+// //                   padding: EdgeInsets.only(
+// //                     left: ManagerWidth.w16,
+// //                     right: ManagerWidth.w16,
+// //                     top: ManagerHeight.h24,
+// //                   ),
+// //                   child: Row(
+// //                     children: [
+// //                       MenuIconButton(
+// //                         onPressed: () {
+// //                           _sliderKey.currentState?.toggle();
+// //                         },
+// //                       ),
+// //                       const Spacer(),
+// //                       NotificationIconButton(
+// //                         onPressed: () {},
+// //                         showDot: true,
+// //                       ),
+// //                     ],
+// //                   ),
+// //                 ),
+// //                 Positioned(
+// //                   bottom: 24,
+// //                   left: 0,
+// //                   right: 0,
+// //                   child: Center(
+// //                     child: GestureDetector(
+// //                       onTap: () => _openVoiceAssistant(context),
+// //                       child: const SiriMicButton(),
+// //                     ),
+// //                   ),
+// //                 ),
+// //               ],
+// //             ),
+// //           );
+// //         }),
+// //       ),
+// //     );
+// //   }
+// //
+// //   void _openVoiceAssistant(BuildContext context) {
+// //     showModalBottomSheet(
+// //       context: context,
+// //       backgroundColor: ManagerColors.primaryColor,
+// //       shape: const RoundedRectangleBorder(
+// //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+// //       ),
+// //       builder: (context) {
+// //         return Container(
+// //           padding: const EdgeInsets.all(16),
+// //           height: 220,
+// //           child: Column(
+// //             crossAxisAlignment: CrossAxisAlignment.start,
+// //             children: [
+// //               const Row(
+// //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// //                 children: [
+// //                   Icon(Icons.close, color: Colors.white),
+// //                   Icon(Icons.open_in_full, color: Colors.white),
+// //                 ],
+// //               ),
+// //               const SizedBox(height: 12),
+// //               Text(
+// //                 "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
+// //                 style: getRegularTextStyle(
+// //                   fontSize: ManagerFontSize.s12,
+// //                   color: Colors.white,
+// //                 ),
+// //               ),
+// //               const Spacer(),
+// //               const Center(child: SiriMicButton(size: 60)),
+// //             ],
+// //           ),
+// //         );
+// //       },
+// //     );
+// //   }
+// // }
+// //
+// //
+// // class SiriMicButton extends StatefulWidget {
+// //   final double size;
+// //
+// //   const SiriMicButton({super.key, this.size = 80});
+// //
+// //   @override
+// //   State<SiriMicButton> createState() => _SiriMicButtonState();
+// // }
+// //
+// // class _SiriMicButtonState extends State<SiriMicButton>
+// //     with SingleTickerProviderStateMixin {
+// //   late AnimationController _controller;
+// //
+// //   @override
+// //   void initState() {
+// //     super.initState();
+// //     _controller = AnimationController(
+// //       vsync: this,
+// //       duration: const Duration(seconds: 2),
+// //     )..repeat();
+// //   }
+// //
+// //   @override
+// //   void dispose() {
+// //     _controller.dispose();
+// //     super.dispose();
+// //   }
+// //
+// //   @override
+// //   Widget build(BuildContext context) {
+// //     return AnimatedBuilder(
+// //       animation: _controller,
+// //       builder: (context, child) {
+// //         return SizedBox(
+// //           width: widget.size * 2,
+// //           height: widget.size * 2,
+// //           child: Stack(
+// //             alignment: Alignment.center,
+// //             children: [
+// //               /// ===== Waves (animated circles like Siri)
+// //               ...List.generate(3, (index) {
+// //                 double progress =
+// //                     (_controller.value + (index * 0.3)) % 1.0; // waves offset
+// //                 double scale = 1 + (progress * 1.5);
+// //                 double opacity = (1 - progress).clamp(0.0, 1.0);
+// //
+// //                 return Opacity(
+// //                   opacity: opacity,
+// //                   child: Container(
+// //                     width: widget.size * scale,
+// //                     height: widget.size * scale,
+// //                     decoration: BoxDecoration(
+// //                       shape: BoxShape.circle,
+// //                       color: ManagerColors.primaryColor.withOpacity(0.3),
+// //                     ),
+// //                   ),
+// //                 );
+// //               }),
+// //
+// //               /// ============ Main microphone button
+// //               Container(
+// //                 width: widget.size,
+// //                 height: widget.size,
+// //                 decoration: const BoxDecoration(
+// //                   shape: BoxShape.circle,
+// //                   color: ManagerColors.primaryColor,
+// //                 ),
+// //                 child: const Icon(Icons.mic, color: Colors.white, size: 36),
+// //               ),
+// //             ],
+// //           ),
+// //         );
+// //       },
+// //     );
+// //   }
+// // }
+// // // import 'dart:typed_data';
+// // // import 'dart:ui' as ui;
+// // // import 'package:app_mobile/core/resources/manager_height.dart';
+// // // import 'package:app_mobile/core/resources/manager_width.dart';
+// // // import 'package:app_mobile/core/util/snack_bar.dart';
+// // // import 'package:flutter/material.dart';
+// // // import 'package:get/get.dart';
+// // // import 'package:google_maps_flutter/google_maps_flutter.dart';
+// // // import 'package:geolocator/geolocator.dart';
+// // //
+// // // import '../../../../../core/resources/manager_colors.dart';
+// // // import '../../../../../core/resources/manager_font_size.dart';
+// // // import '../../../../../core/resources/manager_styles.dart';
+// // // import '../../../../../core/widgets/loading_widget.dart';
+// // // import '../controller/map_controller.dart';
+// // // import '../widgets/location_error_widget.dart';
+// // // import '../widgets/menu_icon_button.dart';
+// // // import '../widgets/notfication_icon_button.dart';
+// // //
+// // // class MapScreen extends StatefulWidget {
+// // //   const MapScreen({super.key});
+// // //
+// // //   @override
+// // //   State<MapScreen> createState() => _MapScreenState();
+// // // }
+// // //
+// // // class _MapScreenState extends State<MapScreen> {
+// // //   final controller = Get.find<MapController>();
+// // //   Set<Marker> customMarkers = {};
+// // //
+// // //   @override
+// // //   void initState() {
+// // //     super.initState();
+// // //     _checkAndLoadLocation();
+// // //   }
+// // //
+// // //   /// ====== Check permissions and request them if necessary
+// // //   Future<void> _checkAndLoadLocation() async {
+// // //     final hasPermission = await _handleLocationPermission();
+// // //     if (hasPermission) {
+// // //       await controller.loadCurrentLocation();
+// // //       _initMarkers();
+// // //     }
+// // //   }
+// // //
+// // //   Future<bool> _handleLocationPermission() async {
+// // //     bool serviceEnabled;
+// // //     LocationPermission permission;
+// // //
+// // //     /// ====== Make sure GPS is enabled
+// // //     serviceEnabled = await Geolocator.isLocationServiceEnabled();
+// // //     if (!serviceEnabled) {
+// // //       AppSnackbar.warning("رجاءً قم بتفعيل خدمة الموقع من الإعدادات.",
+// // //           englishMessage: "Please enable location services from settings.");
+// // //       return false;
+// // //     }
+// // //
+// // //     permission = await Geolocator.checkPermission();
+// // //     if (permission == LocationPermission.denied) {
+// // //       permission = await Geolocator.requestPermission();
+// // //       if (permission == LocationPermission.denied) {
+// // //         AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
+// // //             englishMessage:
+// // //                 "The map cannot be used without location permission.");
+// // //         return false;
+// // //       }
+// // //     }
+// // //
+// // //     if (permission == LocationPermission.deniedForever) {
+// // //       AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
+// // //           englishMessage:
+// // //               "Please enable location permission manually from the phone settings.");
+// // //       return false;
+// // //     }
+// // //
+// // //     return true;
+// // //   }
+// // //
+// // //   Future<void> _initMarkers() async {
+// // //     final location = controller.currentLocation.value;
+// // //     if (location == null) return;
+// // //
+// // //     final restaurantIcon =
+// // //         await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
+// // //     final cafeIcon =
+// // //         await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
+// // //     final storeIcon = await _createCustomMarker(Icons.store, Colors.deepPurple);
+// // //
+// // //     setState(() {
+// // //       customMarkers = {
+// // //         Marker(
+// // //           markerId: const MarkerId("restaurant"),
+// // //           position:
+// // //               LatLng(location.latitude + 0.001, location.longitude + 0.001),
+// // //           icon: restaurantIcon,
+// // //           infoWindow: const InfoWindow(title: "مطعم شرقي"),
+// // //         ),
+// // //         Marker(
+// // //           markerId: const MarkerId("cafe"),
+// // //           position:
+// // //               LatLng(location.latitude - 0.001, location.longitude - 0.001),
+// // //           icon: cafeIcon,
+// // //           infoWindow: const InfoWindow(title: "مقهى"),
+// // //         ),
+// // //         Marker(
+// // //           markerId: const MarkerId("store"),
+// // //           position:
+// // //               LatLng(location.latitude + 0.002, location.longitude - 0.001),
+// // //           icon: storeIcon,
+// // //           infoWindow: const InfoWindow(title: "سوبر ماركت"),
+// // //         ),
+// // //       };
+// // //     });
+// // //   }
+// // //
+// // //  /// Create a custom marker
+// // //   Future<BitmapDescriptor> _createCustomMarker(
+// // //       IconData icon, Color background) async {
+// // //     final ui.PictureRecorder recorder = ui.PictureRecorder();
+// // //     final Canvas canvas = Canvas(recorder);
+// // //     const double size = 120;
+// // //
+// // //     final Paint paint = Paint()..color = background;
+// // //     final Path path = Path();
+// // //     path.moveTo(size / 2, size);
+// // //     path.quadraticBezierTo(size, size * 0.6, size / 2, 0);
+// // //     path.quadraticBezierTo(0, size * 0.6, size / 2, size);
+// // //     canvas.drawPath(path, paint);
+// // //
+// // //     final Paint whiteCircle = Paint()..color = Colors.white;
+// // //     canvas.drawCircle(Offset(size / 2, size * 0.45), size * 0.18, whiteCircle);
+// // //
+// // //     final textPainter = TextPainter(
+// // //       text: TextSpan(
+// // //         text: String.fromCharCode(icon.codePoint),
+// // //         style: TextStyle(
+// // //           fontSize: size * 0.25,
+// // //           fontFamily: icon.fontFamily,
+// // //           color: background,
+// // //           package: icon.fontPackage,
+// // //         ),
+// // //       ),
+// // //       textDirection: TextDirection.ltr,
+// // //     );
+// // //     textPainter.layout();
+// // //     textPainter.paint(
+// // //         canvas,
+// // //         Offset((size - textPainter.width) / 2,
+// // //             (size * 0.45 - textPainter.height / 2)));
+// // //
+// // //     final img =
+// // //         await recorder.endRecording().toImage(size.toInt(), size.toInt());
+// // //     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+// // //     final Uint8List pngBytes = byteData!.buffer.asUint8List();
+// // //
+// // //     return BitmapDescriptor.fromBytes(pngBytes);
+// // //   }
+// // //
+// // //   @override
+// // //   Widget build(BuildContext context) {
+// // //     return Scaffold(
+// // //       body: Obx(() {
+// // //         if (controller.isLoading.value) {
+// // //           return const LoadingWidget();
+// // //         }
+// // //
+// // //         final location = controller.currentLocation.value;
+// // //         if (location == null) {
+// // //           return LocationErrorWidget(
+// // //             onRetry: _checkAndLoadLocation,
+// // //           );
+// // //         }
+// // //
+// // //         final LatLng currentLatLng =
+// // //             LatLng(location.latitude, location.longitude);
+// // //
+// // //         return SafeArea(
+// // //           child: Stack(
+// // //             children: [
+// // //               GoogleMap(
+// // //                 initialCameraPosition: CameraPosition(
+// // //                   target: currentLatLng,
+// // //                   zoom: 14,
+// // //                 ),
+// // //                 myLocationEnabled: true,
+// // //                 markers: customMarkers,
+// // //                 trafficEnabled: false,
+// // //                 compassEnabled: false,
+// // //                 buildingsEnabled: false,
+// // //                 mapToolbarEnabled: false,
+// // //                 myLocationButtonEnabled: false,
+// // //                 onMapCreated: (GoogleMapController mapController) async {
+// // //                   String style = await DefaultAssetBundle.of(context)
+// // //                       .loadString('assets/json/style_map.json');
+// // //                   mapController.setMapStyle(style);
+// // //                 },
+// // //               ),
+// // //               Padding(
+// // //                 padding: EdgeInsets.only(
+// // //                   left: ManagerWidth.w16,
+// // //                   right: ManagerWidth.w16,
+// // //                   top: ManagerHeight.h24,
+// // //                 ),
+// // //                 child: Row(
+// // //                   children: [
+// // //                     MenuIconButton(onPressed: () {
+// // //
+// // //                     }),
+// // //                     const Spacer(),
+// // //                     NotificationIconButton(
+// // //                       onPressed: () {},
+// // //                       showDot: true,
+// // //                     ),
+// // //                   ],
+// // //                 ),
+// // //               ),
+// // //               Positioned(
+// // //                 bottom: 24,
+// // //                 left: 0,
+// // //                 right: 0,
+// // //                 child: Center(
+// // //                   child: GestureDetector(
+// // //                     onTap: () => _openVoiceAssistant(context),
+// // //                     child: const SiriMicButton(),
+// // //                   ),
+// // //                 ),
+// // //               ),
+// // //             ],
+// // //           ),
+// // //         );
+// // //       }),
+// // //     );
+// // //   }
+// // //
+// // //   void _openVoiceAssistant(BuildContext context) {
+// // //     showModalBottomSheet(
+// // //       context: context,
+// // //       backgroundColor: ManagerColors.primaryColor,
+// // //       shape: const RoundedRectangleBorder(
+// // //         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+// // //       ),
+// // //       builder: (context) {
+// // //         return Container(
+// // //           padding: const EdgeInsets.all(16),
+// // //           height: 220,
+// // //           child: Column(
+// // //             crossAxisAlignment: CrossAxisAlignment.start,
+// // //             children: [
+// // //               const Row(
+// // //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+// // //                 children: [
+// // //                   Icon(Icons.close, color: Colors.white),
+// // //                   Icon(Icons.open_in_full, color: Colors.white),
+// // //                 ],
+// // //               ),
+// // //               const SizedBox(height: 12),
+// // //               Text(
+// // //                 "تمام، خليني أضبطلك الأطيب.. بس قبل هيك بتحب تختار من الجري والسلطات، ولا نفسك بالأكل الشرقي المشبع؟",
+// // //                 style: getRegularTextStyle(
+// // //                   fontSize: ManagerFontSize.s12,
+// // //                   color: Colors.white,
+// // //                 ),
+// // //               ),
+// // //               const Spacer(),
+// // //               const Center(child: SiriMicButton(size: 60)),
+// // //             ],
+// // //           ),
+// // //         );
+// // //       },
+// // //     );
+// // //   }
+// // // }
+// // //

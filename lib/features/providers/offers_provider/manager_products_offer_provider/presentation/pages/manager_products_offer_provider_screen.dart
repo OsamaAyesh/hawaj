@@ -9,9 +9,9 @@ import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../constants/di/dependency_injection.dart';
-import '../../../../../core/storage/local/app_settings_prefs.dart';
-import '../../../../../core/widgets/quick_access_widget.dart';
+import '../../../../../../constants/di/dependency_injection.dart';
+import '../../../../../../core/storage/local/app_settings_prefs.dart';
+import '../../../../../../core/widgets/quick_access_widget.dart';
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
   const ManagerProductsOfferProviderScreen({super.key});

@@ -16,7 +16,7 @@ import 'package:flutter/material.dart';
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
 import '../../features/common/test/test_hawaj_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
-import '../../features/providers/offers_provider/manager_products_offer_provider/pages/manager_products_offer_provider_screen.dart';
+import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
 import '../resources/manager_strings.dart';

@@ -1,0 +1,390 @@
+
+// import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
+// import 'package:flutter/material.dart';
+// import 'dart:math' as math;
+// import 'package:permission_handler/permission_handler.dart';
+// import 'package:speech_to_text/speech_to_text.dart';
+//
+// import 'package:app_mobile/core/resources/manager_colors.dart';
+// import 'package:app_mobile/core/resources/manager_font_size.dart';
+// import 'package:app_mobile/core/resources/manager_height.dart';
+// import 'package:app_mobile/core/resources/manager_images.dart';
+// import 'package:app_mobile/core/resources/manager_styles.dart';
+// import 'package:app_mobile/core/resources/manager_width.dart';
+// import 'package:get/get.dart';
+//
+// import '../../../map/domain/di/di.dart';
+//
+// class HawajWelcomeStartScreen extends StatefulWidget {
+//   const HawajWelcomeStartScreen({super.key});
+//
+//   @override
+//   State<HawajWelcomeStartScreen> createState() =>
+//       _HawajWelcomeStartScreenState();
+// }
+//
+// class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
+//     with TickerProviderStateMixin {
+//   late AnimationController _glowController;
+//   late AnimationController _waveController;
+//
+//   /// Speech to Text
+//   final SpeechToText _speechToText = SpeechToText();
+//   bool _speechEnabled = false;
+//   bool _isListening = false;
+//   String _wordsSpoken = "";
+//   double _confidenceLevel = 0;
+//   bool _permissionGranted = false;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//
+//     // Animations
+//     _glowController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(seconds: 2),
+//     )..repeat(reverse: true);
+//
+//     _waveController = AnimationController(
+//       vsync: this,
+//       duration: const Duration(milliseconds: 1500),
+//     )..repeat();
+//
+//     // Speech
+//     _initSpeech();
+//   }
+//
+//   /// Initialize Speech Recognition
+//   Future<void> _initSpeech() async {
+//     // طلب إذن الميكروفون أولاً
+//     final status = await Permission.microphone.request();
+//
+//     if (status.isGranted) {
+//       setState(() {
+//         _permissionGranted = true;
+//       });
+//
+//       // تهيئة التعرف على الكلام بعد الحصول على الإذن
+//       _speechEnabled = await _speechToText.initialize(
+//         onStatus: (status) {
+//           print('Speech recognition status: $status');
+//         },
+//         onError: (error) {
+//           print('Speech recognition error: $error');
+//         },
+//       );
+//
+//       setState(() {});
+//     } else {
+//       // إذا لم يتم منح الإذن
+//       print('Microphone permission denied');
+//       // يمكنك إضافة رسالة للمستخدم هنا
+//     }
+//   }
+//
+//   Future<void> _startListening() async {
+//     if (!_permissionGranted) {
+//       // إذا لم يكن لدينا إذن، نطلبه مرة أخرى
+//       final status = await Permission.microphone.request();
+//       if (!status.isGranted) {
+//         // إعلام المستخدم أنه بحاجة إلى منح الإذن
+//         if (mounted) {
+//           ScaffoldMessenger.of(context).showSnackBar(
+//             const SnackBar(
+//               content: Text('يجب منح إذن استخدام الميكروفون للتمكن من التحدث'),
+//             ),
+//           );
+//         }
+//         return;
+//       } else {
+//         setState(() {
+//           _permissionGranted = true;
+//         });
+//
+//         // تهيئة التعرف على الكلام بعد الحصول على الإذن
+//         _speechEnabled = await _speechToText.initialize(
+//           onStatus: (status) {
+//             print('Speech recognition status: $status');
+//           },
+//           onError: (error) {
+//             print('Speech recognition error: $error');
+//           },
+//         );
+//       }
+//     }
+//
+//     if (_speechEnabled) {
+//       await _speechToText.listen(
+//         onResult: _onSpeechResult,
+//         localeId: "ar-SA", // تقدر تبدل حسب اللهجة
+//         listenMode: ListenMode.confirmation,
+//       );
+//       setState(() {
+//         _isListening = true;
+//       });
+//     } else {
+//       // إعادة تهيئة التعرف على الكلام إذا لزم الأمر
+//       await _initSpeech();
+//       if (_speechEnabled) {
+//         await _startListening();
+//       }
+//     }
+//   }
+//
+//   void _stopListening() async {
+//     await _speechToText.stop();
+//     setState(() {
+//       _isListening = false;
+//     });
+//   }
+//
+//   void _onSpeechResult(result) {
+//     setState(() {
+//       _wordsSpoken = result.recognizedWords;
+//       _confidenceLevel = result.confidence;
+//
+//       // إذا كان هناك كلام معترف به، يمكننا إضافة رد تلقائي
+//       if (_wordsSpoken.isNotEmpty && _wordsSpoken.length > 3) {
+//         // إضافة رد تلقائي بعد ثانية واحدة
+//         Future.delayed(const Duration(seconds: 1), () {
+//           if (mounted) {
+//             setState(() {
+//               _wordsSpoken = "حوّاج: سأساعدك في العثور على $_wordsSpoken";
+//             });
+//           }
+//         });
+//       }
+//     });
+//   }
+//
+//   @override
+//   void dispose() {
+//     _glowController.dispose();
+//     _waveController.dispose();
+//     _speechToText.stop();
+//     super.dispose();
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: Stack(
+//         alignment: Alignment.center,
+//         children: [
+//           /// Background gradient
+//           Container(
+//             decoration: BoxDecoration(
+//               gradient: LinearGradient(
+//                 colors: [
+//                   ManagerColors.primaryColor.withOpacity(0.05),
+//                   Colors.white,
+//                   ManagerColors.primaryColor.withOpacity(0.05),
+//                 ],
+//                 begin: Alignment.topLeft,
+//                 end: Alignment.bottomRight,
+//               ),
+//             ),
+//           ),
+//
+//           /// Main Column
+//           SafeArea(
+//             child: Column(
+//               children: [
+//                 const Spacer(),
+//
+//                 /// Title
+//                 Text(
+//                   "شو بتحب أساعدك فيه اليوم؟",
+//                   style: getRegularTextStyle(
+//                     fontSize: ManagerFontSize.s16,
+//                     color: ManagerColors.primaryColor,
+//                   ),
+//                 ),
+//                 SizedBox(height: ManagerHeight.h12),
+//                 Padding(
+//                   padding:
+//                   EdgeInsets.symmetric(horizontal: ManagerWidth.w28),
+//                   child: Text(
+//                     "حوّاج موجود ليسهل حياتك… يقترح عليك اللي بتحتاجه قبل حتى ما تطلبه ",
+//                     style: getBoldTextStyle(
+//                       fontSize: ManagerFontSize.s18,
+//                       color: ManagerColors.primaryColor,
+//                     ),
+//                     textAlign: TextAlign.center,
+//                   ),
+//                 ),
+//
+//                 const Spacer(),
+//
+//                 /// AI Robot
+//                 Image.asset(
+//                   ManagerImages.welcomeStartImage,
+//                   width: ManagerWidth.w220,
+//                 ),
+//
+//                 const Spacer(),
+//
+//                 /// Suggestions Card + Spoken Words
+//                 Container(
+//                   margin: EdgeInsets.symmetric(
+//                       horizontal: ManagerWidth.w20,
+//                       vertical: ManagerHeight.h12),
+//                   padding: EdgeInsets.all(ManagerWidth.w16),
+//                   decoration: BoxDecoration(
+//                     color: Colors.white,
+//                     borderRadius: BorderRadius.circular(22),
+//                     boxShadow: [
+//                       BoxShadow(
+//                         color: Colors.black.withOpacity(0.07),
+//                         blurRadius: 12,
+//                         offset: const Offset(0, 6),
+//                       ),
+//                     ],
+//                   ),
+//                   child: Column(
+//                     children: [
+//                       Text(
+//                         "اقتراح اليوم",
+//                         style: getBoldTextStyle(
+//                           fontSize: ManagerFontSize.s18,
+//                           color: ManagerColors.primaryColor,
+//                         ),
+//                       ),
+//                       SizedBox(height: ManagerHeight.h8),
+//                       Text(
+//                         _wordsSpoken.isNotEmpty
+//                             ? _wordsSpoken
+//                             : "حوّاج: خليني أنصحك بأفضل عروض الأكل اليوم ",
+//                         style: getRegularTextStyle(
+//                           fontSize: ManagerFontSize.s14,
+//                           color: Colors.black87,
+//                         ),
+//                         textAlign: TextAlign.center,
+//                       ),
+//                       if (_speechToText.isNotListening &&
+//                           _confidenceLevel > 0)
+//                         Padding(
+//                           padding: const EdgeInsets.only(top: 12),
+//                           child: Text(
+//                             "مستوى الثقة: ${(_confidenceLevel * 100.0).toStringAsFixed(1)}%",
+//                             style: TextStyle(
+//                               fontSize: 14,
+//                               color: Colors.grey[600],
+//                             ),
+//                           ),
+//                         ),
+//                     ],
+//                   ),
+//                 ),
+//
+//                 const Spacer(),
+//
+//                 /// Mic button with glow + waves
+//                 Stack(
+//                   alignment: Alignment.center,
+//                   children: [
+//                     // Glowing background
+//                     ScaleTransition(
+//                       scale: Tween(begin: 0.9, end: 1.1).animate(
+//                         CurvedAnimation(
+//                           parent: _glowController,
+//                           curve: Curves.easeInOut,
+//                         ),
+//                       ),
+//                       child: Container(
+//                         width: 120,
+//                         height: 120,
+//                         decoration: BoxDecoration(
+//                           shape: BoxShape.circle,
+//                           color:
+//                           ManagerColors.primaryColor.withOpacity(0.1),
+//                         ),
+//                       ),
+//                     ),
+//
+//                     // Waves around mic
+//                     CustomPaint(
+//                       painter: WavePainter(_waveController),
+//                       size: const Size(180, 180),
+//                     ),
+//
+//                     // Main Mic button
+//                     ElevatedButton(
+//                       onPressed: _speechToText.isListening
+//                           ? _stopListening
+//                           : _startListening,
+//                       style: ElevatedButton.styleFrom(
+//                         shape: const CircleBorder(),
+//                         padding: const EdgeInsets.all(28),
+//                         backgroundColor: _permissionGranted
+//                             ? ManagerColors.primaryColor
+//                             : Colors.grey,
+//                         shadowColor: _permissionGranted
+//                             ? ManagerColors.primaryColor.withOpacity(0.5)
+//                             : Colors.grey.withOpacity(0.5),
+//                         elevation: 12,
+//                       ),
+//                       child: Icon(
+//                         _speechToText.isListening
+//                             ? Icons.mic
+//                             : Icons.mic_none,
+//                         size: 40,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//
+//                 // إضافة رسالة إذا لم يتم منح الإذن
+//                 if (!_permissionGranted)
+//                   Padding(
+//                     padding: const EdgeInsets.all(16.0),
+//                     child: Text(
+//                       'يجب منح إذن استخدام الميكروفون للتمكن من التحدث',
+//                       style: TextStyle(
+//                         color: Colors.red,
+//                         fontSize: ManagerFontSize.s14,
+//                       ),
+//                       textAlign: TextAlign.center,
+//                     ),
+//                   ),
+//
+//                 const Spacer(),
+//               ],
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// /// ====== Wave Painter for Animated Mic ======
+// class WavePainter extends CustomPainter {
+//   final Animation<double> animation;
+//
+//   WavePainter(this.animation) : super(repaint: animation);
+//
+//   @override
+//   void paint(Canvas canvas, Size size) {
+//     final paint = Paint()
+//       ..color = Colors.deepPurple.withOpacity(0.2)
+//       ..style = PaintingStyle.stroke
+//       ..strokeWidth = 2.5;
+//
+//     final center = Offset(size.width / 2, size.height / 2);
+//     final radius = size.width / 4;
+//
+//     for (int i = 0; i < 3; i++) {
+//       final progress = ((animation.value + (i * 0.3)) % 1.0);
+//       final waveRadius = radius + (progress * 60);
+//       paint.color = paint.color.withOpacity((1 - progress).clamp(0.0, 1.0));
+//       canvas.drawCircle(center, waveRadius, paint);
+//     }
+//   }
+//
+//   @override
+//   bool shouldRepaint(covariant WavePainter oldDelegate) => true;
+// }
