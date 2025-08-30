@@ -75,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         // Loading (initial)
         if (profileController.isLoading.value &&
             profileController.profileData.value == null) {
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget();
         }
 
         // Error (no data yet)
