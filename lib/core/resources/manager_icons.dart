@@ -44,4 +44,20 @@ class ManagerIcons {
   static const String profileIcon6="$iconsPath/profile_icon6.png";
 
 
+
+  /// ============Drawer Icons List.
+  /// ======> Provides Icons
+  static const String providerOffersIcon="$iconsPath/providerOffersIcon.png";
+  static const String providerContractsIcon="$iconsPath/providerContractsIcon.png";
+  static const String providerRealEstateIcon="$iconsPath/providerRealEstateIcon.png";
+  static const String providerDeliveryIcon="$iconsPath/providerDeliveryIcon.png";
+  static const String providerJobsIcon="$iconsPath/providerJobsIcon.png";
+  /// ======> User Icons
+  static const String userProfileIcon="$iconsPath/userProfileIcon.png";
+  static const String userDailyOffersIcon="$iconsPath/userDailyOffersIcon.png";
+  static const String userContractsIcon="$iconsPath/userContractsIcon.png";
+  static const String userRealEstateIcon="$iconsPath/userRealEstateIcon.png";
+  static const String userDeliveryIcon="$iconsPath/userDeliveryIcon.png";
+  static const String userJobsIcon="$iconsPath/userJobsIcon.png";
+
 }
