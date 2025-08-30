@@ -1,4 +1,5 @@
 import 'package:app_mobile/core/widgets/loading_widget.dart';
+import 'package:app_mobile/features/common/profile/presentation/pages/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +14,7 @@ import '../../../../../core/resources/manager_width.dart';
 import '../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
 
+import '../../domain/di/di.dart';
 import '../controller/get_profile_controller.dart';
 import '../widgets/info_card.dart';
 import '../widgets/logout_widget.dart';
@@ -227,6 +229,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 icon: ManagerIcons.profileIcon3,
                                 onTap: () {
                                   // TODO
+                                  initUpdateAvatar();
+                                  Get.to(EditProfileScreen());
                                 },
                               ),
                               SettingsTileWidget(

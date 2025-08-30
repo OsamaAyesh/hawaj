@@ -15,6 +15,7 @@ import 'package:get_it/get_it.dart';
 import '../../../../../constants/di/dependency_injection.dart';
 import '../../../../../core/network/app_api.dart';
 import '../../presentation/controller/get_profile_controller.dart';
+import '../../presentation/controller/update_profile_controller.dart';
 
 initUpdateProfileRequest() {
   if (!GetIt.I.isRegistered<UpdateProfileDataSource>()) {
@@ -92,15 +93,17 @@ disposeUpdateAvatarRequest() {
 
 void initUpdateAvatar() {
   initUpdateAvatarRequest();
-  // Get.put(SendOtpController(
-  //   instance<SendOtpUseCase>(),
-  //   instance<VerfiyOtpUseCase>(),
-  // ));
+  initUpdateProfile();
+  Get.put(EditProfileController(
+    instance<UpdateProfileUseCase>(),
+    instance<UpdateAvatarUseCase>(),
+  ));
 }
 
 void disposeUpdateAvatar() {
   disposeUpdateAvatarRequest();
-  // Get.delete<SendOtpController>();
+  disposeUpdateProfile();
+  Get.delete<UpdateAvatarUseCase>();
 }
 
 
