@@ -91,10 +91,12 @@ disposeUpdateAvatarRequest() {
   }
 }
 
-void initUpdateAvatar() {
+void initUpdateAvatar(String name,String networkImage) {
   initUpdateAvatarRequest();
   initUpdateProfile();
   Get.put(EditProfileController(
+    initialName: name,
+    networkAvatarUrl:networkImage ,
     instance<UpdateProfileUseCase>(),
     instance<UpdateAvatarUseCase>(),
   ));

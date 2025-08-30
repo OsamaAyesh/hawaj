@@ -115,6 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         final data = profileController.profileData.value!;
         final name = data.data.name;
         final phone = data.data.phone;
+        // final urlImage = data.data.;
 
         const subscribedCount = '4'; // TODO: replace with API field if available
 
@@ -229,7 +230,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 icon: ManagerIcons.profileIcon3,
                                 onTap: () {
                                   // TODO
-                                  initUpdateAvatar();
+                                  initUpdateAvatar(data.data.name,"");
                                   Get.to(EditProfileScreen());
                                 },
                               ),

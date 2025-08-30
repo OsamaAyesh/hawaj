@@ -10,13 +10,9 @@ import '../../../../../core/resources/manager_icons.dart';
 import '../../../../../core/resources/manager_images.dart';
 import '../../../../../core/resources/manager_width.dart';
 import '../../../../../core/widgets/button_app.dart';
-import '../controller/update_profile_controller.dart'; // EditProfileController
+import '../controller/update_profile_controller.dart';
 import '../widgets/custom_text_field.dart';
 
-/// Edit profile screen (name + optional avatar)
-/// - Uses EditProfileController (GetX)
-/// - Keeps original look & feel (animations, layout)
-/// - Full-screen loading overlay while any operation is running
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
 
@@ -25,30 +21,20 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen>
-    with TickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin {
   late final AnimationController _controller;
   late final List<Animation<Offset>> _slideAnimations;
   late final List<Animation<double>> _fadeAnimations;
 
   late final EditProfileController editController;
 
-  // Only name is editable for now (phone is paused as requested)
-  final nameController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
 
-    // Observe app lifecycle to avoid drawing after surface loss
-    WidgetsBinding.instance.addObserver(this);
-
-    // Get controller instance
+    /// 👇 ربط الـ Controller
     editController = Get.find<EditProfileController>();
 
-    // Seed initial name (if any)
-    nameController.text = editController.name.value;
-
-    // Animations (keep original timing/curves)
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
@@ -61,13 +47,17 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       ).animate(
         CurvedAnimation(
           parent: _controller,
-          curve: Interval(0.1 * index, 0.5 + 0.1 * index, curve: Curves.easeOut),
+          curve:
+              Interval(0.1 * index, 0.5 + 0.1 * index, curve: Curves.easeOut),
         ),
       );
     });
 
     _fadeAnimations = List.generate(3, (index) {
-      return Tween<double>(begin: 0, end: 1).animate(
+      return Tween<double>(
+        begin: 0,
+        end: 1,
+      ).animate(
         CurvedAnimation(
           parent: _controller,
           curve: Interval(0.1 * index, 0.5 + 0.1 * index, curve: Curves.easeIn),
@@ -79,39 +69,21 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Pause/resume the entrance animation to avoid render calls with no surface.
-    if (state == AppLifecycleState.paused) {
-      if (_controller.isAnimating) _controller.stop();
-    } else if (state == AppLifecycleState.resumed) {
-      if (!_controller.isAnimating && _controller.value < 1.0) {
-        _controller.forward();
-      }
-    }
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _controller.dispose();
-    nameController.dispose();
+    editController.nameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final radius = ManagerHeight.h45;
-
     return ScaffoldWithBackButton(
       title: ManagerStrings.personalAccountInfo,
-      onBack: () => Get.back(),
       body: Obx(() {
-        // Single busy flag for a full-screen overlay (pick/save/update)
-        final bool isBusy = editController.isBusy;
+        final isLoading = editController.isLoading.value;
 
         return Stack(
           children: [
-            // ===================== Main Content =====================
             Padding(
               padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
               child: Column(
@@ -119,7 +91,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                 children: [
                   SizedBox(height: ManagerHeight.h20),
 
-                  /// ===== Avatar + edit (picks via file_picker) =====
+                  /// ===== Avatar =====
                   FadeTransition(
                     opacity: _fadeAnimations[0],
                     child: SlideTransition(
@@ -129,25 +101,22 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                           alignment: Alignment.bottomRight,
                           children: [
                             CircleAvatar(
-                              radius: radius,
-                              backgroundImage: editController.pickedAvatar.value != null
-                                  ? FileImage(editController.pickedAvatar.value!)
-                                  : const AssetImage(ManagerImages.imageFoodOneRemove)
-                              as ImageProvider,
+                              radius: ManagerHeight.h45,
+                              backgroundImage: editController
+                                          .avatarFile.value !=
+                                      null
+                                  ? FileImage(editController.avatarFile.value!)
+                                  : AssetImage(ManagerImages.imageFoodOneRemove)
+                                      as ImageProvider,
                             ),
                             Positioned(
                               bottom: 4,
                               right: 4,
                               child: InkWell(
                                 onTap: () async {
-                                  // Pick image using file_picker (gallery/files)
-                                  await editController.pickAvatarWithFilePicker();
-                                  if (!mounted) return;
-                                  final err = editController.avatarError.value;
-                                  if (err != null) {
-                                    Get.snackbar('Error', err,
-                                        backgroundColor: Colors.red.shade100);
-                                  }
+                                  await editController.pickAvatar();
+                                  if (!mounted)
+                                    return; // ⬅️ يمنع استدعاء UI بعد dispose
                                 },
                                 borderRadius: BorderRadius.circular(14),
                                 child: Container(
@@ -176,7 +145,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
                   SizedBox(height: ManagerHeight.h32),
 
-                  /// ===== Name field only (phone is paused) =====
+                  /// ===== Name field =====
                   FadeTransition(
                     opacity: _fadeAnimations[1],
                     child: SlideTransition(
@@ -189,7 +158,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             isRequired: false,
                             iconPath: ManagerIcons.nameIcon,
                             isPasswordField: false,
-                            controller: nameController,
+                            controller: editController.nameController,
                           ),
                         ],
                       ),
@@ -205,33 +174,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                       position: _slideAnimations[2],
                       child: ButtonApp(
                         title: ManagerStrings.edit,
-                        onPressed: isBusy
-                            ? (){}
-                            : () async {
-                          final ok = await editController.saveAll(
-                            newName: nameController.text.trim(),
-                            // If no image is selected, controller will skip avatar update
-                            newAvatar: editController.pickedAvatar.value,
-                          );
-
+                        onPressed: () async {
+                          await editController.saveProfile(context);
                           if (!mounted) return;
-
-                          if (ok) {
-                            // Defer pop to the next frame to avoid "no surface" render issues
-                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                              if (Navigator.of(context).canPop()) {
-                                Get.back();
-                              }
-                            });
-                          } else {
-                            Get.snackbar(
-                              "Error",
-                              editController.profileError.value ??
-                                  editController.avatarError.value ??
-                                  "Something went wrong",
-                              backgroundColor: Colors.red.shade100,
-                            );
-                          }
                         },
                         paddingWidth: 0,
                       ),
@@ -242,8 +187,8 @@ class _EditProfileScreenState extends State<EditProfileScreen>
               ),
             ),
 
-            // ===================== Full-screen Loading Overlay =====================
-            if (isBusy)
+            /// ===== Full-screen Loading =====
+            if (isLoading)
               Positioned.fill(
                 child: AbsorbPointer(
                   absorbing: true,
