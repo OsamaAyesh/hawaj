@@ -177,6 +177,18 @@
   "contact_us_field_hint": "The message you want to send, don’t hesitate to reach out",
   "send_message_button": "Send Message",
 
+  "user_profile": "Profile",
+  "user_daily_offers": "Daily Offers",
+  "user_contracts": "Commercial Contracts",
+  "user_real_estate": "Real Estate Service",
+  "user_delivery": "Delivery Service",
+  "user_jobs": "Job Access Service",
+  "provider_manage_offers": "Manage Offers - My Listed Products",
+  "provider_manage_contracts": "Manage Commercial Contracts",
+  "provider_real_estate_manage": "My Listed Properties & Real Estate Management",
+  "provider_delivery_dashboard": "Delivery Dashboard - My Delivery Requests",
+  "provider_manage_jobs": "My Job Ads - Job Management",
+
 
   "noRouteFound": "No route found",
   "success": "Success",

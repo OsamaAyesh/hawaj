@@ -20,6 +20,7 @@ import '../../../../../core/widgets/loading_widget.dart';
 import '../controller/map_controller.dart';
 import '../widgets/drawer_widget.dart';
 import '../widgets/location_error_widget.dart';
+import '../widgets/manager_drawer_items.dart';
 import '../widgets/menu_icon_button.dart';
 import '../widgets/notfication_icon_button.dart';
 
@@ -286,9 +287,21 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _speechToText.stop();
     super.dispose();
   }
+  final visibilityManager = DrawerVisibilityManager(enabled: {
+    // User features enabled
+    DrawerFeatures.userProfile,
+    DrawerFeatures.userDailyOffers,
+    DrawerFeatures.userDelivery,
+
+    // Provider features enabled
+    DrawerFeatures.providerManageOffers,
+    DrawerFeatures.providerManageContracts,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final userItems = visibilityManager.buildUserItems();
+    final providerItems = visibilityManager.buildProviderItems();
     return SliderDrawer(
       key: _sliderKey,
       sliderOpenSize: 250,
@@ -297,43 +310,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       slideDirection: SlideDirection.rightToLeft,
       slider: AppDrawer(
         sliderKey: _sliderKey,
-        userName: "Osama Ayesh",
+        userName: "عبدالله الدحو/اني",
         role: "مستخدم جديد",
         phone: "0599999999",
-        userItems: [
-          DrawerItemModel(
-            iconPath: ManagerIcons.dollarIcon,
-            title: "المدفوعات",
-            onTap: () => print("فتح المدفوعات"),
-          ),
-          DrawerItemModel(
-            iconPath: ManagerIcons.dollarIcon,
-            title: "الطلبات",
-            onTap: () => print("فتح الطلبات"),
-          ),
-        ],
-        providers: [
-          ProviderSection(
-            name: "مقدم خدمة - أحمد",
-            items: [
-              DrawerItemModel(
-                iconPath: ManagerIcons.dollarIcon,
-                title: "الخدمات",
-                onTap: () => print("خدمات أحمد"),
-              ),
-            ],
-          ),
-          ProviderSection(
-            name: "مقدم خدمة - محمد",
-            items: [
-              DrawerItemModel(
-                iconPath: ManagerIcons.dollarIcon,
-                title: "الملف",
-                onTap: () => print("ملف محمد"),
-              ),
-            ],
-          ),
-        ],
+        userItems: userItems,
+        providerItems: providerItems,
       ),
       child: Scaffold(
         body: Obx(() {

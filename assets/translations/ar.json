@@ -177,6 +177,19 @@
   "contact_us_field_hint": "الرسالة التي تريد إرسالها، لا تتردد في التواصل معنا",
   "send_message_button": "إرسال الرسالة",
 
+  "user_profile": "الملف الشخصي",
+  "user_daily_offers": "العروض اليومية",
+  "user_contracts": "العقود التجارية",
+  "user_real_estate": "خدمة العقارات",
+  "user_delivery": "خدمة التوصيل",
+  "user_jobs": "خدمة الوصول للوظائف",
+  "provider_manage_offers": "إدارة العروض - منتجاتي المعروضة",
+  "provider_manage_contracts": "إدارة العقود التجارية",
+  "provider_real_estate_manage": "عقاراتي المعروضة وإدارة العقارات",
+  "provider_delivery_dashboard": "لوحة التوصيل - طلبات التوصيل الخاصة بي",
+  "provider_manage_jobs": "إعلاناتي الوظيفية - إدارة الوظائف",
+
+
   "noRouteFound": "لم يتم العثور على المسار",
   "success": "نجاح",
   "noContent": "لا يوجد محتوى",

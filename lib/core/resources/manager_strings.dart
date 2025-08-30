@@ -217,6 +217,22 @@ class ManagerStrings {
   static String get sendMessageButton => tr('send_message_button');
 
 
+  ///Drawer Strings.
+  // User
+  static String get userProfile => tr('user_profile');
+  static String get userDailyOffers => tr('user_daily_offers');
+  static String get userContracts => tr('user_contracts');
+  static String get userRealEstate => tr('user_real_estate');
+  static String get userDelivery => tr('user_delivery');
+  static String get userJobs => tr('user_jobs');
+
+  // Provider
+  static String get providerManageOffers => tr('provider_manage_offers');
+  static String get providerManageContracts => tr('provider_manage_contracts');
+  static String get providerRealEstateManage => tr('provider_real_estate_manage');
+  static String get providerDeliveryDashboard => tr('provider_delivery_dashboard');
+  static String get providerManageJobs => tr('provider_manage_jobs');
+
 
 
 
