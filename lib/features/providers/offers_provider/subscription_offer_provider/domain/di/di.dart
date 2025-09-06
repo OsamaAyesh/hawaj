@@ -48,14 +48,19 @@ disposeGetPlanRequest() {
 
 void initGetPlan() {
   initGetPlanRequest();
-
+  initSetSubscriptionOfferProvider();
+  initGetMyOrganizations();
   Get.put(PlansController(
     instance<GetPlansUseCase>(),
+    instance<GetMyOrganizationOfferProviderUseCase>(),
+    instance<SetSubscriptionOfferProviderUseCase>(),
   ));
 }
 
 void disposeGetPlan() {
   disposeGetPlanRequest();
+  disposeGetMyOrganizationsRequest();
+  disposeSetSubscriptionOfferProviderRequest();
   Get.delete<PlansController>();
 }
 

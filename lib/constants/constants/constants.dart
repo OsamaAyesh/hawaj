@@ -33,6 +33,10 @@ class Constants {
   static const String english = 'en';
   static const String arabic = 'ar';
 
+  ///Base Url Attachments.
+  static const String baseUrlAttachments = 'https://hawaj.lezaz.org/storage';
+
+
   static List<Map<String, String>> itemsOfferManagerProvider = [
     {
       'icon': ManagerIcons.offerManagerIcons1,

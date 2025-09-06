@@ -1,19 +1,40 @@
 import 'package:get/get.dart';
 import 'package:app_mobile/core/error_handler/failure.dart';
+import 'package:app_mobile/core/model/with_out_data_model.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/model/plan_item_model.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/model/get_my_organization_offer_provider_model.dart';
+
+import '../../../../../../core/model/orgnization_company_daily_offer_item_model.dart';
 import '../../domain/use_case/get_plans_use_case.dart';
+import '../../domain/use_case/get_my_organization_offer_provider_use_case.dart';
+import '../../domain/use_case/set_subscription_offer_provider_use_case.dart';
+import '../../data/request/set_subscription_offer_provider_request.dart';
 
 class PlansController extends GetxController {
   final GetPlansUseCase _getPlansUseCase;
-  PlansController(this._getPlansUseCase);
+  final GetMyOrganizationOfferProviderUseCase _getMyOrganizationsUseCase;
+  final SetSubscriptionOfferProviderUseCase _setSubscriptionUseCase;
 
+  PlansController(
+      this._getPlansUseCase,
+      this._getMyOrganizationsUseCase,
+      this._setSubscriptionUseCase,
+      );
+
+  /// Loading & Error
   var isLoading = false.obs;
   var errorMessage = ''.obs;
-  var plans = <PlanItemModel>[].obs;
 
-  /// الخطة المختارة
+  /// Plans
+  var plans = <PlanItemModel>[].obs;
   Rxn<PlanItemModel> selectedPlan = Rxn<PlanItemModel>();
 
+  /// Organizations
+  var organizations = <OrganizationCompanyDailyOfferItemModel>[].obs;
+  Rxn<OrganizationCompanyDailyOfferItemModel> selectedOrganization =
+  Rxn<OrganizationCompanyDailyOfferItemModel>();
+
+  /// -------- Fetch Plans --------
   Future<void> fetchPlans() async {
     isLoading.value = true;
     errorMessage.value = '';
@@ -28,19 +49,75 @@ class PlansController extends GetxController {
           (planModel) {
         isLoading.value = false;
         plans.value = planModel.data.data;
-
-        /// نختار أول خطة كـ default
         if (plans.isNotEmpty) {
-          selectedPlan.value = plans.first;
+          selectedPlan.value = plans.first; // الافتراضي
         }
       },
     );
   }
 
+  /// -------- Fetch Organizations --------
+  Future<void> fetchOrganizations() async {
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    final result = await _getMyOrganizationsUseCase.execute();
+
+    result.fold(
+          (Failure failure) {
+        isLoading.value = false;
+        errorMessage.value = failure.message;
+      },
+          (organizationModel) {
+        isLoading.value = false;
+        organizations.value = organizationModel.data.data;
+        if (organizations.isNotEmpty) {
+          selectedOrganization.value = organizations.first; // ناخد أول وحدة
+        }
+      },
+    );
+  }
+
+  /// -------- Select Plan By Days --------
   void selectPlanByDays(double days) {
     final plan = plans.firstWhereOrNull((p) => p.days == days);
     if (plan != null) {
       selectedPlan.value = plan;
     }
+  }
+
+  /// -------- Set Subscription --------
+  Future<void> subscribe() async {
+    if (selectedOrganization.value == null || selectedPlan.value == null) {
+      errorMessage.value = "لم يتم اختيار المؤسسة أو الخطة";
+      return;
+    }
+
+    isLoading.value = true;
+    errorMessage.value = '';
+
+    final request = SetSubscriptionOfferProviderRequest(
+      organizationsId: selectedOrganization.value!.id,
+      plansId: selectedPlan.value!.id,
+    );
+
+    final result = await _setSubscriptionUseCase.execute(request);
+
+    result.fold(
+          (Failure failure) {
+        isLoading.value = false;
+        errorMessage.value = failure.message;
+      },
+          (WithOutDataModel response) {
+        isLoading.value = false;
+        Get.snackbar("تم الاشتراك", response.message ?? "تم الاشتراك بنجاح");
+      },
+    );
+  }
+
+  /// -------- Initialize Data --------
+  Future<void> initData() async {
+    await fetchPlans();
+    await fetchOrganizations();
   }
 }
