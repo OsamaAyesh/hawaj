@@ -31,4 +31,17 @@ class ResponseConstants {
   static const String createdAt = "created_at";
   static const String updatedAt = "updated_at";
   static const String avatar = "avatar";
+  static const String organizationName = "organization_name";
+  static const String organizationServices = "organization_services";
+  static const String organizationType = "organization_type";
+  static const String organizationLocation = "organization_location";
+  static const String organizationDetailedAddress = "organization_detailed_address";
+  static const String managerName = "manager_name";
+  static const String phoneNumber = "phone_number";
+  static const String workingHours = "working_hours";
+  static const String organizationLogo = "organization_logo";
+  static const String organizationBanner = "organization_banner";
+  static const String commercialRegistrationNumber = "commercial_registration_number";
+  static const String commercialRegistration = "commercial_registration";
+  static const String organizationStatus = "organization_status";
 }

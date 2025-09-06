@@ -1,0 +1,22 @@
+import 'package:app_mobile/core/extensions/extensions.dart';
+import 'package:app_mobile/core/model/orgnization_company_daily_offer_item_model.dart';
+import 'package:app_mobile/core/response/orgnization_company_daily_offer_item_response.dart';
+
+extension  OrgnizationCompanyDailyOfferItemMapper  on OrganizationCompanyDailyOfferItemResponse{
+  OrganizationCompanyDailyOfferItemModel toDomain() {
+    return OrganizationCompanyDailyOfferItemModel(id: id.onNull(),
+        organizationName: organizationName.onNull(),
+        organizationServices: organizationServices.onNull(),
+        organizationType: organizationType.onNull(),
+        organizationLocation: organizationLocation.onNull(),
+        organizationDetailedAddress: organizationDetailedAddress.onNull(),
+        managerName: managerName.onNull(),
+        phoneNumber: phoneNumber.onNull(),
+        workingHours: workingHours.onNull(),
+        organizationLogo: organizationLogo.onNull(),
+        organizationBanner: organizationBanner.onNull(),
+        commercialRegistrationNumber: commercialRegistrationNumber.onNull(),
+        commercialRegistration: commercialRegistration.onNull(),
+        organizationStatus: organizationStatus.onNull(),);
+  }
+}
