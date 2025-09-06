@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:get/get.dart';
 import 'package:app_mobile/core/error_handler/failure.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
@@ -110,7 +111,9 @@ class PlansController extends GetxController {
       },
           (WithOutDataModel response) {
         isLoading.value = false;
-        Get.snackbar("تم الاشتراك", response.message ?? "تم الاشتراك بنجاح");
+        AppSnackbar.success("تم الأشتراك بنجاح في هذه الخطة لمؤسستك",
+          englishMessage: "Successfully subscribed to this plan for your organization."
+        );
       },
     );
   }
