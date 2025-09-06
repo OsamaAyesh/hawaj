@@ -1,6 +1,6 @@
 import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/core/model/orgnization_company_daily_offer_item_model.dart';
-import 'package:app_mobile/core/response/orgnization_company_daily_offer_item_response.dart';
+import 'package:app_mobile/core/response/organization_company_daily_offer_item_response.dart';
 
 extension  OrgnizationCompanyDailyOfferItemMapper  on OrganizationCompanyDailyOfferItemResponse{
   OrganizationCompanyDailyOfferItemModel toDomain() {

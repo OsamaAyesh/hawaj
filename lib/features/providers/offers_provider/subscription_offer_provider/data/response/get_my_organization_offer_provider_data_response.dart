@@ -3,7 +3,7 @@ import 'package:app_mobile/features/providers/offers_provider/subscription_offer
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../../../constants/response_constants/response_constants.dart';
-import '../../../../../../core/response/orgnization_company_daily_offer_item_response.dart';
+import '../../../../../../core/response/organization_company_daily_offer_item_response.dart';
 
 part 'get_my_organization_offer_provider_data_response.g.dart';
 

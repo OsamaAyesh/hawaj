@@ -1,5 +1,7 @@
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/data_source/get_my_organization_offer_provider_data_source.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/data_source/get_plans_data_source.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/data_source/set_subscription_offer_provider_data_source.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/repository/get_my_organization_offer_provider_repository.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/repository/get_plan_repository.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/repository/set_subscription_offer_provider_repository.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/use_case/get_plans_use_case.dart';
@@ -11,6 +13,7 @@ import 'package:get_it/get_it.dart';
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
 import '../../presentation/controller/get_plans_controller.dart';
+import '../use_case/get_my_organization_offer_provider_use_case.dart';
 
 initGetPlanRequest() {
   if (!GetIt.I.isRegistered<GetPlansDataSource>()) {
@@ -98,5 +101,49 @@ void initSetSubscriptionOfferProvider() {
 
 void disposeSetSubscriptionOfferProvider() {
   disposeSetSubscriptionOfferProviderRequest();
+  // Get.delete<LoginController>();
+}
+initGetMyOrganizationsRequest() {
+  if (!GetIt.I.isRegistered<GetMyOrganizationOfferProviderDataSource>()) {
+    instance.registerLazySingleton<GetMyOrganizationOfferProviderDataSource>(
+            () => GetMyOrganizationOfferProviderDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!GetIt.I.isRegistered<GetMyOrganizationOfferProviderRepository>()) {
+    instance.registerLazySingleton<GetMyOrganizationOfferProviderRepository>(
+            () => GetMyOrganizationOfferProviderRepositoryImplement(instance(), instance()));
+  }
+
+  if (!GetIt.I.isRegistered<GetMyOrganizationOfferProviderUseCase>()) {
+    instance.registerFactory<GetMyOrganizationOfferProviderUseCase>(
+            () => GetMyOrganizationOfferProviderUseCase(instance<GetMyOrganizationOfferProviderRepository>()));
+  }
+}
+
+disposeGetMyOrganizationsRequest() {
+  if (GetIt.I.isRegistered<GetMyOrganizationOfferProviderDataSource>()) {
+    instance.unregister<GetMyOrganizationOfferProviderDataSource>();
+  }
+
+  if (GetIt.I.isRegistered<GetMyOrganizationOfferProviderRepository>()) {
+    instance.unregister<GetMyOrganizationOfferProviderRepository>();
+  }
+
+  if (GetIt.I.isRegistered<GetMyOrganizationOfferProviderUseCase>()) {
+    instance.unregister<GetMyOrganizationOfferProviderUseCase>();
+  }
+}
+
+void initGetMyOrganizations() {
+  initGetMyOrganizationsRequest();
+
+  // Get.put(LoginController(
+  //   instance<LoginUseCase>(),
+  //   instance<AppSettingsPrefs>(),
+  // ));
+}
+
+void disposeGetMyOrganizations() {
+  disposeGetMyOrganizationsRequest();
   // Get.delete<LoginController>();
 }
