@@ -99,6 +99,7 @@ class ManagerStrings {
   ///Subscription Offer Provider Strings
   static String get subscribeNow => tr('subscribe_now');
   static String get subscribeDescription => tr('subscribe_description');
+  static String get subscribeDescription1 => tr('subscribe_description1');
   static String get popularPlan => tr('popular_plan');
   static String get planName => tr('plan_name');
   static String get planPrice => tr('plan_price');

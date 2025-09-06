@@ -19,6 +19,7 @@ import '../../features/providers/offers_provider/manage_list_offer/presentation/
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
+import '../../features/users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
 import '../resources/manager_strings.dart';
 
 /// A class defined for all routes constants
@@ -46,6 +47,10 @@ class Routes {
   static const String successRegisterCompanyOfferProviderScreen = '/success_register_company_offer_provider_screen';
   static const String addOfferProviderScreen = '/add_offer_provider_screen';
   static const String manageListOfferProviderScreen = '/manage_list_offer_provider_screen';
+
+  ///Offer Daily User Screens
+  static const String companyWithOfferScreen = '/company_with_offer_screen';
+
 
 
 
@@ -105,6 +110,8 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HawajWelcomeStartScreen());
       case Routes.testScreen:
         return MaterialPageRoute(builder: (_) =>  ArabicSpeechToText());
+      case Routes.companyWithOfferScreen:
+        return MaterialPageRoute(builder: (_) =>  const CompanyWithOfferScreen());
 
       default:
         return unDefinedRoute();

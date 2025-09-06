@@ -4,10 +4,13 @@ import 'package:app_mobile/features/providers/offers_provider/subscription_offer
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/repository/set_subscription_offer_provider_repository.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/use_case/get_plans_use_case.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/use_case/set_subscription_offer_provider_use_case.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
+import '../../presentation/controller/get_plans_controller.dart';
 
 initGetPlanRequest() {
   if (!GetIt.I.isRegistered<GetPlansDataSource>()) {
@@ -43,15 +46,14 @@ disposeGetPlanRequest() {
 void initGetPlan() {
   initGetPlanRequest();
 
-  // Get.put(LoginController(
-  //   instance<LoginUseCase>(),
-  //   instance<AppSettingsPrefs>(),
-  // ));
+  Get.put(PlansController(
+    instance<GetPlansUseCase>(),
+  ));
 }
 
 void disposeGetPlan() {
   disposeGetPlanRequest();
-  // Get.delete<LoginController>();
+  Get.delete<PlansController>();
 }
 
 initSetSubscriptionOfferProviderRequest() {
