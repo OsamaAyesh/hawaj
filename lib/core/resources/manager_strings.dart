@@ -237,7 +237,14 @@ class ManagerStrings {
 
 
 
-
+  static String get publishOffersTitle => tr('publish_offers_title');
+  static String get publishOffersSubTitle => tr('publish_offers_subtitle');
+  static String get myOrganization => tr('my_organization');
+  static String get selectedPlan => tr('selected_plan');
+  static String get chooseSubscriptionDuration => tr('choose_subscription_duration');
+  static String get subscribeThisPlan => tr('subscribe_this_plan');
+  static String get changePlanNote => tr('change_plan_note');
+  static String get noData => tr('no_data');
 
 
 

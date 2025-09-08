@@ -190,6 +190,14 @@
   "provider_delivery_dashboard": "Delivery Dashboard - My Delivery Requests",
   "provider_manage_jobs": "My Job Ads - Job Management",
 
+  "publish_offers_title": "Publish your daily offers now with Hawaj!",
+  "publish_offers_subtitle": "Subscribe to your suitable plan and start publishing your offers in a professional and attractive way, reaching nearby customers with an interactive map.",
+  "my_organization": "My Organization",
+  "selected_plan": "Selected Plan",
+  "choose_subscription_duration": "Choose subscription duration",
+  "subscribe_this_plan": "Subscribe to this plan",
+  "change_plan_note": "You can change the selected plan after the current duration ends or by contacting support.",
+  "no_data": "No data available",
 
   "noRouteFound": "No route found",
   "success": "Success",

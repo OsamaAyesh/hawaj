@@ -7,6 +7,11 @@ import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+
+import '../../../../../common/map/domain/di/di.dart';
+import '../../../../../common/map/presenation/pages/map_screen.dart';
 
 class SuccessSubscriptionOfferProviderScreen extends StatelessWidget {
   const SuccessSubscriptionOfferProviderScreen({super.key});
@@ -65,7 +70,12 @@ class SuccessSubscriptionOfferProviderScreen extends StatelessWidget {
           /// ========== Button Continue Widget ===================
           ButtonApp(
             title: ManagerStrings.subscriptionSuccessButton,
-            onPressed: () {},
+            onPressed: () {
+              Get.offAll(
+                    () => const MapScreen(),
+                binding: MapBindings(),
+              );
+            },
             paddingWidth: ManagerWidth.w24,
           ),
         ],

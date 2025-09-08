@@ -10,6 +10,7 @@ import '../../domain/use_case/get_plans_use_case.dart';
 import '../../domain/use_case/get_my_organization_offer_provider_use_case.dart';
 import '../../domain/use_case/set_subscription_offer_provider_use_case.dart';
 import '../../data/request/set_subscription_offer_provider_request.dart';
+import '../pages/success_subscription_offer_provider_screen.dart';
 
 class PlansController extends GetxController {
   final GetPlansUseCase _getPlansUseCase;
@@ -114,6 +115,7 @@ class PlansController extends GetxController {
         AppSnackbar.success("تم الأشتراك بنجاح في هذه الخطة لمؤسستك",
           englishMessage: "Successfully subscribed to this plan for your organization."
         );
+        Get.offAll(const SuccessSubscriptionOfferProviderScreen());
       },
     );
   }

@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/resources/manager_font_size.dart';
+import '../../../../../../core/resources/manager_strings.dart';
 import '../../../../../../core/resources/manager_styles.dart';
 import '../../../../../../core/widgets/custom_header_subscription_widget.dart';
 import '../../../../../common/common_widgets/subscription_screen_widgets/label_drop_down_subscription_widget.dart';
@@ -31,7 +32,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ManagerColors.primaryColor,
         appBar: CustomHeader(
-          title: "اشترك الآن",
+          title: ManagerStrings.subscribeNow,
           onBack: () => Navigator.pop(context),
         ),
         body: Obx(() {
@@ -43,7 +44,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
               if (controller.errorMessage.isNotEmpty)
                 Center(child: Text(controller.errorMessage.value))
               else if (plan == null || org == null)
-                const Center(child: Text("لا يوجد بيانات حالياً"))
+                 Center(child: Text(ManagerStrings.noContent))
               else
                 SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
@@ -52,13 +53,11 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                     children: [
                       SizedBox(height: ManagerHeight.h32),
 
-                      const TitleSubscriptionOfferProviderWidget(
-                          title: "انشر عروضك اليومية الآن مع حواج!"),
+                       TitleSubscriptionOfferProviderWidget(
+                          title: ManagerStrings.publishOffersTitle),
                       SizedBox(height: ManagerHeight.h4),
-                      const SubTitleSubscriptionOfferProviderWidget(
-                        subTitleString:
-                        'اشترك بخطتك المناسبة وابدأ بنشر عروضك بطريقة جذابة واحترافية، '
-                            'ووصلها للعملاء القريبين منك بخريطة تفاعلية.',
+                       SubTitleSubscriptionOfferProviderWidget(
+                        subTitleString:ManagerStrings.publishOffersSubTitle,
                       ),
                       SizedBox(height: ManagerHeight.h21),
 
@@ -74,7 +73,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("مؤسستي",
+                            Text(ManagerStrings.myOrganization,
                                 style: getBoldTextStyle(
                                     fontSize: ManagerFontSize.s14,
                                     color: ManagerColors.black)),
@@ -142,7 +141,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                             SizedBox(height: ManagerHeight.h16),
 
                             /// عنوان الخطة
-                            const TitleContainerWidget(title: 'الخطة المختارة'),
+                             TitleContainerWidget(title: ManagerStrings.selectedPlan),
                             SizedBox(height: ManagerHeight.h8),
 
                             /// اسم الخطة
@@ -157,8 +156,8 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
 
                             /// Dropdown مدة الاشتراك (من السيرفر)
                             LabelDropDownSubscriptionWidget<double>(
-                              label: "مدة الإشتراك",
-                              hint: "اختر مدة الإشتراك",
+                              label: ManagerStrings.subscriptionDuration,
+                              hint: ManagerStrings.chooseSubscriptionDuration,
                               value: plan.days,
                               items: controller.plans
                                   .map((p) => DropdownMenuItem<double>(
@@ -182,7 +181,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "الميزات المشمولة",
+                                    ManagerStrings.includedFeatures,
                                     style: getBoldTextStyle(
                                       fontSize: ManagerFontSize.s14,
                                       color: ManagerColors.black,
@@ -196,7 +195,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
 
                             SizedBox(height: ManagerHeight.h16),
                             ButtonApp(
-                              title: "الاشتراك في هذه الخطة",
+                              title: ManagerStrings.subscribeThisPlan,
                               onPressed: () {
                                 controller.subscribe();
                               },
@@ -209,8 +208,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
 
                       const SizedBox(height: 12),
                       Text(
-                        "من الممكن تغيير الباقة التي قمت باختيارها بعد انتهاء المدة الحالية "
-                            "أو عن طريق التواصل مع الدعم الفني.",
+                        ManagerStrings.changePlanNote,
                         textAlign: TextAlign.center,
                         style: getRegularTextStyle(
                           fontSize: ManagerFontSize.s10,
