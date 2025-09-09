@@ -200,7 +200,7 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
   void _navigateToResults() {
     ///====== Navigate to the results or map page
     Get.to(
-          () => const MapScreen(),
+      () => const MapScreen(),
       binding: MapBindings(),
     );
   }
@@ -422,39 +422,40 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                 const Spacer(),
 
                 ///====== Animated action button that appears after speech
-                if (_showActionButton)
-                  ScaleTransition(
-                    scale: CurvedAnimation(
-                      parent: _buttonAnimationController,
-                      curve: Curves.elasticOut,
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(bottom: 20.0),
-                      child: ElevatedButton.icon(
-                        onPressed: _navigateToResults,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ManagerColors.primaryColor,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 12,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          elevation: 8,
+                // if (_showActionButton)
+                // ScaleTransition(
+                //   scale: CurvedAnimation(
+                //     parent: _buttonAnimationController,
+                //     curve: Curves.elasticOut,
+                //   ),
+                //   child:
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: ElevatedButton.icon(
+                      onPressed: _navigateToResults,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ManagerColors.primaryColor,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
                         ),
-                        icon: const Icon(Icons.search, size: 24),
-                        label: Text(
-                          "استمر للنتائج",
-                          style: getBoldTextStyle(
-                            fontSize: ManagerFontSize.s12,
-                            color: ManagerColors.white,
-                          ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 8,
+                      ),
+                      icon: const Icon(Icons.search, size: 24),
+                      label: Text(
+                        "استمر للنتائج",
+                        style: getBoldTextStyle(
+                          fontSize: ManagerFontSize.s12,
+                          color: ManagerColors.white,
                         ),
                       ),
                     ),
                   ),
+                // ),
 
                 if (!_showActionButton) SizedBox(height: ManagerHeight.h20),
               ],

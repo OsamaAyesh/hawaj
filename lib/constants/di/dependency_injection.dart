@@ -19,6 +19,7 @@ import '../../features/providers/offers_provider/add_offer/domain/di/di.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/domain/di/di.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/domain/di/di.dart';
 import '../../features/splash_and_boarding/domain/di/di.dart';
+import '../../features/users/offer_user/list_offers/domain/di/di.dart';
 
 final instance = GetIt.instance;
 
@@ -66,6 +67,7 @@ initModule() async {
   initSendOtp();
   initCreateOfferProvider();
   initGetPlan();
+  initGetOfferUser();
   initRegisterMyCompanyOfferProvider();
   Get.put(LocaleController());
 }

@@ -10,7 +10,7 @@ extension OfferUserItemMapper on OfferUserItemResponse{
     return OfferUserItemModel(id: id.onNull(),
         productName: productName.onNull(),
         productDescription: productDescription.onNull(),
-        productImages: productImages?.map((e)=>e.onNull()).toList()??[],
+        productImages: productImages.onNull(),
         productPrice: productPrice.onNull(),
         offerType: offerType.onNull(),
         offerPrice: offerPrice.onNull(),

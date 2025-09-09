@@ -14,7 +14,7 @@ class OfferUserItemResponse {
   @JsonKey(name: ResponseConstants.productDescription)
   String? productDescription;
   @JsonKey(name: ResponseConstants.productImages)
-  List<String>? productImages;
+  String? productImages;
   @JsonKey(name: ResponseConstants.productPrice)
   double? productPrice;
   @JsonKey(name: ResponseConstants.offerType)

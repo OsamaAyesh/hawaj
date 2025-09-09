@@ -2,7 +2,7 @@ class OfferUserItemModel {
   int id;
   String productName;
   String productDescription;
-  List<String> productImages;
+  String productImages;
   double productPrice;
   int offerType;
   double offerPrice;

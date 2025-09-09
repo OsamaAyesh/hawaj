@@ -1,10 +1,13 @@
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:app_mobile/core/resources/manager_height.dart';
-import 'package:app_mobile/core/resources/manager_icons.dart';
+import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/util/snack_bar.dart';
+import 'package:app_mobile/features/users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
@@ -13,16 +16,22 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:confetti/confetti.dart';
 
+import '../../../../../constants/constants/constants.dart';
 import '../../../../../core/resources/manager_colors.dart';
 import '../../../../../core/resources/manager_font_size.dart';
 import '../../../../../core/resources/manager_styles.dart';
 import '../../../../../core/widgets/loading_widget.dart';
+import '../../../../users/offer_user/list_offers/presentation/controller/get_offers_controller.dart';
 import '../controller/map_controller.dart';
 import '../widgets/drawer_widget.dart';
+import '../widgets/handel_permission_function.dart';
 import '../widgets/location_error_widget.dart';
 import '../widgets/manager_drawer_items.dart';
 import '../widgets/menu_icon_button.dart';
 import '../widgets/notfication_icon_button.dart';
+
+// 👇 import كونترولر العروض (عدّل المسار حسب مشروعك)
+import 'package:app_mobile/features/users/offer_user/list_offers/domain/model/offer_user_item_model.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -32,82 +41,77 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
-  final controller = Get.find<MapController>();
-  final GlobalKey<SliderDrawerState> _sliderKey = GlobalKey<SliderDrawerState>();
+  final mapC = Get.find<MapController>();
+  final offersC = Get.find<OffersController>();
+
+  final GlobalKey<SliderDrawerState> _sliderKey =
+      GlobalKey<SliderDrawerState>();
   final SpeechToText _speechToText = SpeechToText();
   final ConfettiController _confettiController =
-  ConfettiController(duration: const Duration(seconds: 2));
+      ConfettiController(duration: const Duration(seconds: 2));
 
-  Set<Marker> customMarkers = {};
+  GoogleMapController? _gmc;
+
   bool _isListening = false;
   bool _speechEnabled = false;
   bool _permissionGranted = false;
   String _recognizedText = "";
-  double _audioLevel = 0.0;
   List<double> _audioLevels = List.generate(20, (index) => 0.0);
   late AnimationController _waveController;
-  bool _showVoiceAssistant = false;
+
+  // ====== Marker icons cache (per-offer) ======
+  final Map<int, BitmapDescriptor> _offerIconCache = {};
+  BitmapDescriptor? _defaultOfferIcon;
+
+  // لإخفاء زر المايك وقت ظهور التفاصيل
+  bool _detailsOpen = false;
 
   @override
   void initState() {
     super.initState();
+
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      statusBarBrightness: Brightness.light,
+    ));
+
     _waveController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     )..repeat();
+
+    _initDefaultMarkerIcon(); // default icon (primary)
     _checkAndLoadLocation();
     _initSpeech();
+
+    // جلب العروض الأولية
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      offersC.fetchOffers();
+    });
   }
 
-  /// ====== Check permissions and request them if necessary
+  Future<void> _initDefaultMarkerIcon() async {
+    _defaultOfferIcon =
+        await _createPrimaryPinMarker(iconData: Icons.local_offer);
+    if (mounted) setState(() {});
+  }
+
   Future<void> _checkAndLoadLocation() async {
-    final hasPermission = await _handleLocationPermission();
+    final hasPermission = await handleLocationPermission();
     if (hasPermission) {
-      await controller.loadCurrentLocation();
-      _initMarkers();
+      await mapC.loadCurrentLocation();
+      setState(() {});
     }
   }
 
-  Future<bool> _handleLocationPermission() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      AppSnackbar.warning("رجاءً قم بتفعيل خدمة الموقع من الإعدادات.",
-          englishMessage: "Please enable location services from settings.");
-      return false;
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
-            englishMessage:
-            "The map cannot be used without location permission.");
-        return false;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
-          englishMessage:
-          "Please enable location permission manually from the phone settings.");
-      return false;
-    }
-
-    return true;
-  }
-
-  /// Initialize Speech Recognition
+  /// ====== Speech
   Future<void> _initSpeech() async {
     final status = await Permission.microphone.request();
     if (status.isGranted) {
-      setState(() {
-        _permissionGranted = true;
-      });
-
+      setState(() => _permissionGranted = true);
       _speechEnabled = await _speechToText.initialize(
         onStatus: (status) {
           if (status == 'notListening' && _isListening) {
@@ -119,13 +123,11 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             });
           }
         },
-        onError: (error) {
-          print('Speech recognition error: $error');
-        },
+        onError: (error) => debugPrint('Speech error: $error'),
       );
       setState(() {});
     } else {
-      print('Microphone permission denied');
+      debugPrint('Microphone permission denied');
     }
   }
 
@@ -135,50 +137,33 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
       if (!status.isGranted) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('يجب منح إذن استخدام الميكروفون للتمكن من التحدث'),
-            ),
+            const SnackBar(content: Text('يجب منح إذن الميكروفون')),
           );
         }
         return;
       } else {
-        setState(() {
-          _permissionGranted = true;
-        });
+        setState(() => _permissionGranted = true);
         await _initSpeech();
       }
     }
 
-    setState(() {
-      _recognizedText = "";
-      _showVoiceAssistant = true;
-    });
+    setState(() => _recognizedText = "");
 
     if (_speechEnabled) {
       await _speechToText.listen(
-        onResult: (result) {
-          setState(() {
-            _recognizedText = result.recognizedWords;
-          });
-        },
+        onResult: (r) => setState(() => _recognizedText = r.recognizedWords),
         localeId: "ar-SA",
-        listenMode: ListenMode.confirmation,
         onSoundLevelChange: (level) {
           setState(() {
-            _audioLevel = level;
             _audioLevels.removeAt(0);
             _audioLevels.add(level);
           });
         },
       );
-      setState(() {
-        _isListening = true;
-      });
+      setState(() => _isListening = true);
     } else {
       await _initSpeech();
-      if (_speechEnabled) {
-        await _startListening();
-      }
+      if (_speechEnabled) await _startListening();
     }
   }
 
@@ -186,97 +171,230 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     await _speechToText.stop();
     setState(() {
       _isListening = false;
-      if (_recognizedText.isNotEmpty) {
-        _confettiController.play();
+      if (_recognizedText.isNotEmpty) _confettiController.play();
+    });
+  }
+
+  // ====== Markers ======
+
+  // بما أنه لسا ما في إحداثيات للعرض من API، نوزّعها قرب المستخدم (Placeholder)
+  LatLng _fakePositionForIndex(LatLng base, int i) {
+    final double d = 0.00035 * ((i % 4) + 1);
+    switch (i % 6) {
+      case 0:
+        return LatLng(base.latitude + d, base.longitude + d);
+      case 1:
+        return LatLng(base.latitude - d, base.longitude + d);
+      case 2:
+        return LatLng(base.latitude + d, base.longitude - d);
+      case 3:
+        return LatLng(base.latitude - d, base.longitude - d);
+      case 4:
+        return LatLng(base.latitude, base.longitude + d);
+      default:
+        return LatLng(base.latitude + d, base.longitude);
+    }
+  }
+
+  Future<void> _ensureOfferMarkerIcon(OfferUserItemModel o) async {
+    // لو موجودة جاهزة خلاص
+    if (_offerIconCache.containsKey(o.id)) return;
+
+    // 1) حطّ Placeholder فوري (بدون صورة)
+    _offerIconCache[o.id] =
+        await _createPrimaryPinMarker(iconData: Icons.local_offer);
+    if (mounted) setState(() {}); // حتى تظهر الماركر فورًا
+
+    // 2) لو في صورة — حمّلها بالخلفية وحسّن الأيقونة بعدين
+    final hasImage = o.productImages.isNotEmpty;
+    if (!hasImage) return;
+
+    // خذ أول صورة من القائمة
+    final String firstImage = o.productImages;
+
+    // ابنِ الرابط الصحيح
+    final String url = "${Constants.baseUrlAttachments}/$firstImage";
+
+    try {
+      final iconWithImage = await _createPrimaryPinMarker(imageUrl: url);
+      // نجح التحميل: حدث الكاش وحرّك UI
+      _offerIconCache[o.id] = iconWithImage;
+      if (mounted) setState(() {});
+    } catch (_) {
+      // فشل التحميل: خليك على الـ placeholder (ولا تعمل شيء)
+    }
+  }
+
+  Set<Marker> _buildOfferMarkers(LatLng center) {
+    final set = <Marker>{};
+    final list = offersC.offers;
+
+    for (int i = 0; i < list.length; i++) {
+      final o = list[i];
+      _ensureOfferMarkerIcon(o); // async (يحدّث لما تجهز)
+
+      final icon = _offerIconCache[o.id] ?? _defaultOfferIcon;
+
+      set.add(
+        Marker(
+          markerId: MarkerId('offer_${o.id}'),
+          position: _fakePositionForIndex(center, i),
+          icon: icon ?? _defaultOfferIcon ?? BitmapDescriptor.defaultMarker,
+          anchor: const Offset(0.5, 1.0),
+          // رأس الـpin على الإحداثي
+          onTap: () => _openOfferDetails(o),
+        ),
+      );
+    }
+    return set;
+  }
+
+  // ====== Offer Details Popup ======
+  Future<void> _openOfferDetails(OfferUserItemModel o) async {
+    setState(() => _detailsOpen = true);
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black54,
+      builder: (_) {
+        return _OfferDetailsSheet(
+          offer: o,
+          onOrgPressed: () {
+            Navigator.pop(context);
+            AppSnackbar.success("سيتم فتح تفاصيل المنظمة لاحقاً");
+            Get.to(CompanyWithOfferScreen(idOrganization: o.id,));
+          },
+          onClose: () => Navigator.pop(context),
+        );
+      },
+    );
+
+    if (mounted) setState(() => _detailsOpen = false);
+  }
+
+  // ====== Marker Drawing (Primary pin + optional image) ======
+  Future<BitmapDescriptor> _createPrimaryPinMarker({
+    String? imageUrl,
+    IconData? iconData,
+    double size = 110, // أصغر قليلاً لتقليل الزحمة
+  }) async {
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    final Color primary = ManagerColors.primaryColor;
+
+    // ===== شكل الـ Pin مع تدرّج خفيف =====
+    final Path pinPath = Path()
+      ..moveTo(size / 2, size)
+      ..quadraticBezierTo(size, size * 0.55, size / 2, 0)
+      ..quadraticBezierTo(0, size * 0.55, size / 2, size);
+
+    // ظل ناعم حول الـPin
+    canvas.drawShadow(pinPath, Colors.black45, 6, false);
+
+    // تدرّج رأسي للّون الأساسي
+    final rect = Rect.fromLTWH(0, 0, size, size);
+    final gradient = ui.Gradient.linear(
+      Offset(0, 0),
+      Offset(0, size),
+      [primary.withOpacity(.95), primary],
+    );
+    canvas.drawPath(pinPath, Paint()..shader = gradient);
+
+    // ظل بيضاوي صغير أسفل الرأس يعطي عمق بسيط
+    final dropShadowOval = Rect.fromCenter(
+      center: Offset(size / 2, size * 0.965),
+      width: size * 0.28,
+      height: size * 0.08,
+    );
+    canvas.drawOval(
+      dropShadowOval,
+      Paint()..color = Colors.black.withOpacity(0.08),
+    );
+
+    // ===== الدائرة الداخلية =====
+    final double r = size * 0.22;
+    final Offset c = Offset(size / 2, size * 0.42);
+
+    // قرص أبيض + حافة (Stroke) لتحديدها
+    canvas.drawCircle(c, r, Paint()..color = Colors.white);
+    canvas.drawCircle(
+      c,
+      r,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = Colors.white.withOpacity(.9),
+    );
+
+    // محتوى الدائرة: صورة شبكة أو أيقونة
+    if (imageUrl != null && imageUrl.isNotEmpty) {
+      try {
+        final bytes =
+            await _loadNetworkBytes(imageUrl); // تأكد أنها تستدعي .load(url)
+        final codec = await ui.instantiateImageCodec(
+          bytes,
+          targetWidth: (r * 2).toInt(),
+          targetHeight: (r * 2).toInt(),
+        );
+        final frame = await codec.getNextFrame();
+        final img = frame.image;
+
+        final clipRect = Rect.fromCircle(center: c, radius: r - 2);
+        canvas.save();
+        canvas.clipPath(Path()..addOval(clipRect));
+        canvas.drawImageRect(
+          img,
+          Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble()),
+          clipRect,
+          Paint(),
+        );
+        canvas.restore();
+      } catch (_) {
+        // فشل تحميل الصورة -> fallback على أيقونة باللون الأبيض
+        _drawCenterIcon(
+            canvas, c, r, iconData ?? Icons.local_offer, Colors.white);
       }
-    });
+    } else {
+      _drawCenterIcon(
+          canvas, c, r, iconData ?? Icons.local_offer, Colors.white);
+    }
+
+    // لمعة خفيفة (gloss) من الأعلى
+    final gloss = Path()
+      ..addOval(Rect.fromCircle(
+          center: Offset(size / 2, size * 0.18), radius: size * 0.16));
+    canvas.drawPath(gloss, Paint()..color = Colors.white.withOpacity(.08));
+
+    // ===== إخراج الصورة =====
+    final img =
+        await recorder.endRecording().toImage(size.toInt(), size.toInt());
+    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(byteData!.buffer.asUint8List());
   }
 
-  void _closeVoiceAssistant() {
-    setState(() {
-      _showVoiceAssistant = false;
-    });
-    _stopListening();
-  }
-
-  Future<void> _initMarkers() async {
-    final location = controller.currentLocation.value;
-    if (location == null) return;
-
-    final restaurantIcon =
-    await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
-    final cafeIcon =
-    await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
-    final storeIcon =
-    await _createCustomMarker(Icons.store, Colors.deepPurple);
-
-    setState(() {
-      customMarkers = {
-        Marker(
-          markerId: const MarkerId("restaurant"),
-          position:
-          LatLng(location.latitude + 0.001, location.longitude + 0.001),
-          icon: restaurantIcon,
-          infoWindow: const InfoWindow(title: "مطعم شرقي"),
-        ),
-        Marker(
-          markerId: const MarkerId("cafe"),
-          position:
-          LatLng(location.latitude - 0.001, location.longitude - 0.001),
-          icon: cafeIcon,
-          infoWindow: const InfoWindow(title: "مقهى"),
-        ),
-        Marker(
-          markerId: const MarkerId("store"),
-          position:
-          LatLng(location.latitude + 0.002, location.longitude - 0.001),
-          icon: storeIcon,
-          infoWindow: const InfoWindow(title: "سوبر ماركت"),
-        ),
-      };
-    });
-  }
-
-  Future<BitmapDescriptor> _createCustomMarker(
-      IconData icon, Color background) async {
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(recorder);
-    const double size = 120;
-
-    final Paint paint = Paint()..color = background;
-    final Path path = Path();
-    path.moveTo(size / 2, size);
-    path.quadraticBezierTo(size, size * 0.6, size / 2, 0);
-    path.quadraticBezierTo(0, size * 0.6, size / 2, size);
-    canvas.drawPath(path, paint);
-
-    final Paint whiteCircle = Paint()..color = Colors.white;
-    canvas.drawCircle(Offset(size / 2, size * 0.45), size * 0.18, whiteCircle);
-
-    final textPainter = TextPainter(
+  void _drawCenterIcon(
+      Canvas canvas, Offset center, double radius, IconData icon, Color color) {
+    final tp = TextPainter(
       text: TextSpan(
         text: String.fromCharCode(icon.codePoint),
         style: TextStyle(
-          fontSize: size * 0.25,
+          fontSize: radius * 1.4,
           fontFamily: icon.fontFamily,
-          color: background,
+          color: color, // استخدم اللون المُمرَّر
           package: icon.fontPackage,
         ),
       ),
       textDirection: TextDirection.ltr,
-    );
-    textPainter.layout();
-    textPainter.paint(
-        canvas,
-        Offset((size - textPainter.width) / 2,
-            (size * 0.45 - textPainter.height / 2)));
+    )..layout();
+    tp.paint(
+        canvas, Offset(center.dx - tp.width / 2, center.dy - tp.height / 2));
+  }
 
-    final img =
-    await recorder.endRecording().toImage(size.toInt(), size.toInt());
-    final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-    final Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-    return BitmapDescriptor.fromBytes(pngBytes);
+  Future<Uint8List> _loadNetworkBytes(String url) async {
+    final bd = await NetworkAssetBundle(Uri.parse(url)).load("");
+    return bd.buffer.asUint8List();
   }
 
   @override
@@ -299,604 +417,360 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final userItems = visibilityManager.buildUserItems();
     final providerItems = visibilityManager.buildProviderItems();
+    final topInset = MediaQuery.of(context).padding.top;
+    final bottomInset = MediaQuery.of(context).padding.bottom; // ✅ هذا الصح
 
-    return SliderDrawer(
-      key: _sliderKey,
-      sliderOpenSize: 250,
-      appBar: null,
-      backgroundColor: ManagerColors.white,
-      slideDirection: SlideDirection.rightToLeft,
-      slider: AppDrawer(
-        sliderKey: _sliderKey,
-        userName: "عبدالله الدحو/اني",
-        role: "مستخدم جديد",
-        phone: "0599999999",
-        userItems: userItems,
-        providerItems: providerItems,
-      ),
-      child: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: LoadingWidget());
-        }
+    return MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      removeBottom: true,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
+          statusBarBrightness: Brightness.light,
+        ),
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          body: SliderDrawer(
+            key: _sliderKey,
+            sliderOpenSize: 250,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              automaticallyImplyLeading: false,
+            ),
+            backgroundColor: Colors.transparent,
+            slideDirection: SlideDirection.rightToLeft,
+            slider: AppDrawer(
+              sliderKey: _sliderKey,
+              userName: "عبدالله الدحو/اني",
+              role: "مستخدم جديد",
+              phone: "0599999999",
+              userItems: userItems,
+              providerItems: providerItems,
+            ),
+            child: Obx(() {
+              if (mapC.isLoading.value && mapC.currentLocation.value == null) {
+                return const Center(child: LoadingWidget());
+              }
 
-        final location = controller.currentLocation.value;
-        if (location == null) {
-          return LocationErrorWidget(onRetry: _checkAndLoadLocation);
-        }
+              final location = mapC.currentLocation.value;
+              if (location == null) {
+                return LocationErrorWidget(onRetry: _checkAndLoadLocation);
+              }
 
-        final LatLng currentLatLng =
-        LatLng(location.latitude, location.longitude);
+              final LatLng currentLatLng =
+                  LatLng(location.latitude, location.longitude);
 
-        return SafeArea(
-          child: Stack(
-            children: [
-              GoogleMap(
-                initialCameraPosition: CameraPosition(
-                  target: currentLatLng,
-                  zoom: 14,
-                ),
-                myLocationEnabled: true,
-                markers: customMarkers,
-                trafficEnabled: false,
-                compassEnabled: false,
-                buildingsEnabled: false,
-                mapToolbarEnabled: false,
-                myLocationButtonEnabled: false,
-                onMapCreated: (GoogleMapController mapController) async {
-                  String style = await DefaultAssetBundle.of(context)
-                      .loadString('assets/json/style_map.json');
-                  mapController.setMapStyle(style);
-                },
-              ),
-              Padding(
-                padding: EdgeInsets.only(
-                  left: ManagerWidth.w16,
-                  right: ManagerWidth.w16,
-                  top: ManagerHeight.h24,
-                ),
-                child: Row(
-                  children: [
-                    MenuIconButton(
-                      onPressed: () {
-                        _sliderKey.currentState?.toggle();
+              final markers = _buildOfferMarkers(currentLatLng);
+
+              return Stack(
+                children: [
+                  // الخريطة Fullscreen
+                  Positioned.fill(
+                    child: GoogleMap(
+                      initialCameraPosition:
+                          CameraPosition(target: currentLatLng, zoom: 14),
+                      onMapCreated: (mc) async {
+                        _gmc = mc;
+                        final style = await DefaultAssetBundle.of(context)
+                            .loadString('assets/json/style_map.json');
+                        mc.setMapStyle(style);
+                      },
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: false,
+                      trafficEnabled: false,
+                      compassEnabled: false,
+                      buildingsEnabled: false,
+                      mapToolbarEnabled: false,
+                      markers: markers,
+                      onTap: (_) {
+                        // اغلق أي تفاصيل مفتوحة
+                        if (_detailsOpen) Navigator.maybePop(context);
                       },
                     ),
-                    const Spacer(),
-                    NotificationIconButton(
-                      onPressed: () {},
-                      showDot: true,
-                    ),
-                  ],
-                ),
-              ),
-              Positioned(
-                bottom: 24,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: GestureDetector(
-                    onTap: _startListening,
-                    child: VoiceAssistantButton(
-                      isListening: _isListening,
-                      audioLevels: _audioLevels,
-                      waveController: _waveController,
-                      onTap: _startListening,
+                  ),
+
+                  // شريط علوي (منيو + إشعارات)
+                  Positioned(
+                    left: ManagerWidth.w16,
+                    right: ManagerWidth.w16,
+                    top: topInset + ManagerHeight.h12,
+                    child: Row(
+                      children: [
+                        MenuIconButton(
+                            onPressed: () => _sliderKey.currentState?.toggle()),
+                        const Spacer(),
+                        NotificationIconButton(onPressed: () {}, showDot: true),
+                      ],
                     ),
                   ),
-                ),
-              ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: ConfettiWidget(
-                  confettiController: _confettiController,
-                  blastDirectionality: BlastDirectionality.explosive,
-                  shouldLoop: false,
-                  colors: const [
-                    Colors.green,
-                    Colors.blue,
-                    Colors.pink,
-                    Colors.orange,
-                    Colors.purple
-                  ],
-                ),
-              ),
-              if (_showVoiceAssistant)
-                Positioned.fill(
-                  child: GestureDetector(
-                    onTap: _closeVoiceAssistant,
-                    child: Container(
-                      color: Colors.black.withOpacity(0.4),
-                      child: DraggableScrollableSheet(
-                        initialChildSize: 0.7,
-                        minChildSize: 0.5,
-                        maxChildSize: 0.9,
-                        builder: (context, scrollController) {
-                          return VoiceAssistantPanel(
+
+                  // Loading Overlay للعروض (عند جلبها)
+                  Obx(() {
+                    return AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 250),
+                      child: offersC.isLoading.value
+                          ? Container(
+                              key: const ValueKey('loading'),
+                              color: Colors.black.withOpacity(0.12),
+                              child: const Center(
+                                  child: CircularProgressIndicator()),
+                            )
+                          : const SizedBox.shrink(key: ValueKey('idle')),
+                    );
+                  }),
+
+                  // الكونفيتي
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: ConfettiWidget(
+                      confettiController: _confettiController,
+                      blastDirectionality: BlastDirectionality.explosive,
+                      shouldLoop: false,
+                      colors: const [
+                        Colors.green,
+                        Colors.blue,
+                        Colors.pink,
+                        Colors.orange,
+                        Colors.purple,
+                      ],
+                    ),
+                  ),
+
+                  // زر المساعد الصوتي (يختفي أثناء فتح التفاصيل لتفادي أي تداخل/Overflow)
+                  if (!_detailsOpen)
+                    Positioned(
+                      bottom: (bottomInset > 0 ? bottomInset : 16) + 8,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: GestureDetector(
+                          onTap: _startListening,
+                          child: VoiceAssistantButton(
                             isListening: _isListening,
-                            recognizedText: _recognizedText,
                             audioLevels: _audioLevels,
                             waveController: _waveController,
-                            onStartListening: _startListening,
-                            onStopListening: _stopListening,
-                            onClose: _closeVoiceAssistant,
-                            scrollController: scrollController,
-                          );
-                        },
+                            onTap: _startListening,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-            ],
+                ],
+              );
+            }),
           ),
-        );
-      }),
+        ),
+      ),
     );
   }
 }
 
+/// ====== Offer Details Bottom Sheet (Popup) ======
+class _OfferDetailsSheet extends StatefulWidget {
+  final OfferUserItemModel offer;
+  final VoidCallback onOrgPressed;
+  final VoidCallback onClose;
 
-// import 'dart:typed_data';
-// import 'dart:ui' as ui;
-// import 'package:app_mobile/core/resources/manager_height.dart';
-// import 'package:app_mobile/core/resources/manager_icons.dart';
-// import 'package:app_mobile/core/resources/manager_width.dart';
-// import 'package:app_mobile/core/util/snack_bar.dart';
-// import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:geolocator/geolocator.dart';
-// import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
-// import 'package:speech_to_text/speech_to_text.dart';
-// import 'package:permission_handler/permission_handler.dart';
-// import 'package:confetti/confetti.dart';
-//
-// import '../../../../../core/resources/manager_colors.dart';
-// import '../../../../../core/resources/manager_font_size.dart';
-// import '../../../../../core/resources/manager_styles.dart';
-// import '../../../../../core/widgets/loading_widget.dart';
-// import '../controller/map_controller.dart';
-// import '../widgets/drawer_widget.dart';
-// import '../widgets/location_error_widget.dart';
-// import '../widgets/manager_drawer_items.dart';
-// import '../widgets/menu_icon_button.dart';
-// import '../widgets/notfication_icon_button.dart';
-//
-// class MapScreen extends StatefulWidget {
-//   const MapScreen({super.key});
-//
-//   @override
-//   State<MapScreen> createState() => _MapScreenState();
-// }
-//
-// class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
-//   final controller = Get.find<MapController>();
-//   final GlobalKey<SliderDrawerState> _sliderKey = GlobalKey<SliderDrawerState>();
-//   final SpeechToText _speechToText = SpeechToText();
-//   final ConfettiController _confettiController = ConfettiController(duration: const Duration(seconds: 2));
-//
-//   Set<Marker> customMarkers = {};
-//   bool _isListening = false;
-//   bool _speechEnabled = false;
-//   bool _permissionGranted = false;
-//   String _recognizedText = "";
-//   double _audioLevel = 0.0;
-//   List<double> _audioLevels = List.generate(20, (index) => 0.0);
-//   late AnimationController _waveController;
-//   bool _showVoiceAssistant = false;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _waveController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 800),
-//     )..repeat();
-//     _checkAndLoadLocation();
-//     _initSpeech();
-//   }
-//
-//   /// ====== Check permissions and request them if necessary
-//   Future<void> _checkAndLoadLocation() async {
-//     final hasPermission = await _handleLocationPermission();
-//     if (hasPermission) {
-//       await controller.loadCurrentLocation();
-//       _initMarkers();
-//     }
-//   }
-//
-//   Future<bool> _handleLocationPermission() async {
-//     bool serviceEnabled;
-//     LocationPermission permission;
-//
-//     /// ====== Make sure GPS is enabled
-//     serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//     if (!serviceEnabled) {
-//       AppSnackbar.warning("رجاءً قم بتفعيل خدمة الموقع من الإعدادات.",
-//           englishMessage: "Please enable location services from settings.");
-//       return false;
-//     }
-//
-//     permission = await Geolocator.checkPermission();
-//     if (permission == LocationPermission.denied) {
-//       permission = await Geolocator.requestPermission();
-//       if (permission == LocationPermission.denied) {
-//         AppSnackbar.error("لا يمكن استخدام الخريطة بدون إذن الموقع.",
-//             englishMessage:
-//             "The map cannot be used without location permission.");
-//         return false;
-//       }
-//     }
-//
-//     if (permission == LocationPermission.deniedForever) {
-//       AppSnackbar.error("رجاءً فعّل إذن الموقع يدويًا من إعدادات الهاتف.",
-//           englishMessage:
-//           "Please enable location permission manually from the phone settings.");
-//       return false;
-//     }
-//
-//     return true;
-//   }
-//
-//   /// Initialize Speech Recognition
-//   Future<void> _initSpeech() async {
-//     final status = await Permission.microphone.request();
-//     if (status.isGranted) {
-//       setState(() {
-//         _permissionGranted = true;
-//       });
-//
-//       _speechEnabled = await _speechToText.initialize(
-//         onStatus: (status) {
-//           print('Speech recognition status: $status');
-//           if (status == 'notListening' && _isListening) {
-//             setState(() {
-//               _isListening = false;
-//               if (_recognizedText.isNotEmpty) {
-//                 _confettiController.play();
-//               }
-//             });
-//           }
-//         },
-//         onError: (error) {
-//           print('Speech recognition error: $error');
-//         },
-//       );
-//       setState(() {});
-//     } else {
-//       print('Microphone permission denied');
-//     }
-//   }
-//
-//   Future<void> _startListening() async {
-//     if (!_permissionGranted) {
-//       final status = await Permission.microphone.request();
-//       if (!status.isGranted) {
-//         if (mounted) {
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             const SnackBar(
-//               content: Text('يجب منح إذن استخدام الميكروفون للتمكن من التحدث'),
-//             ),
-//           );
-//         }
-//         return;
-//       } else {
-//         setState(() {
-//           _permissionGranted = true;
-//         });
-//         await _initSpeech();
-//       }
-//     }
-//
-//     setState(() {
-//       _recognizedText = "";
-//       _showVoiceAssistant = true;
-//     });
-//
-//     if (_speechEnabled) {
-//       await _speechToText.listen(
-//         onResult: (result) {
-//           setState(() {
-//             _recognizedText = result.recognizedWords;
-//           });
-//         },
-//         localeId: "ar-SA",
-//         listenMode: ListenMode.confirmation,
-//         onSoundLevelChange: (level) {
-//           setState(() {
-//             _audioLevel = level;
-//             _audioLevels.removeAt(0);
-//             _audioLevels.add(level);
-//           });
-//         },
-//       );
-//       setState(() {
-//         _isListening = true;
-//       });
-//     } else {
-//       await _initSpeech();
-//       if (_speechEnabled) {
-//         await _startListening();
-//       }
-//     }
-//   }
-//
-//   void _stopListening() async {
-//     await _speechToText.stop();
-//     setState(() {
-//       _isListening = false;
-//       if (_recognizedText.isNotEmpty) {
-//         _confettiController.play();
-//       }
-//     });
-//   }
-//
-//   void _closeVoiceAssistant() {
-//     setState(() {
-//       _showVoiceAssistant = false;
-//     });
-//     _stopListening();
-//   }
-//
-//   Future<void> _initMarkers() async {
-//     final location = controller.currentLocation.value;
-//     if (location == null) return;
-//
-//     final restaurantIcon =
-//     await _createCustomMarker(Icons.restaurant, Colors.deepPurple);
-//     final cafeIcon =
-//     await _createCustomMarker(Icons.local_cafe, Colors.deepPurple);
-//     final storeIcon = await _createCustomMarker(Icons.store, Colors.deepPurple);
-//
-//     setState(() {
-//       customMarkers = {
-//         Marker(
-//           markerId: const MarkerId("restaurant"),
-//           position:
-//           LatLng(location.latitude + 0.001, location.longitude + 0.001),
-//           icon: restaurantIcon,
-//           infoWindow: const InfoWindow(title: "مطعم شرقي"),
-//         ),
-//         Marker(
-//           markerId: const MarkerId("cafe"),
-//           position:
-//           LatLng(location.latitude - 0.001, location.longitude - 0.001),
-//           icon: cafeIcon,
-//           infoWindow: const InfoWindow(title: "مقهى"),
-//         ),
-//         Marker(
-//           markerId: const MarkerId("store"),
-//           position:
-//           LatLng(location.latitude + 0.002, location.longitude - 0.001),
-//           icon: storeIcon,
-//           infoWindow: const InfoWindow(title: "سوبر ماركت"),
-//         ),
-//       };
-//     });
-//   }
-//
-//   /// Create a custom marker
-//   Future<BitmapDescriptor> _createCustomMarker(
-//       IconData icon, Color background) async {
-//     final ui.PictureRecorder recorder = ui.PictureRecorder();
-//     final Canvas canvas = Canvas(recorder);
-//     const double size = 120;
-//
-//     final Paint paint = Paint()..color = background;
-//     final Path path = Path();
-//     path.moveTo(size / 2, size);
-//     path.quadraticBezierTo(size, size * 0.6, size / 2, 0);
-//     path.quadraticBezierTo(0, size * 0.6, size / 2, size);
-//     canvas.drawPath(path, paint);
-//
-//     final Paint whiteCircle = Paint()..color = Colors.white;
-//     canvas.drawCircle(Offset(size / 2, size * 0.45), size * 0.18, whiteCircle);
-//
-//     final textPainter = TextPainter(
-//       text: TextSpan(
-//         text: String.fromCharCode(icon.codePoint),
-//         style: TextStyle(
-//           fontSize: size * 0.25,
-//           fontFamily: icon.fontFamily,
-//           color: background,
-//           package: icon.fontPackage,
-//         ),
-//       ),
-//       textDirection: TextDirection.ltr,
-//     );
-//     textPainter.layout();
-//     textPainter.paint(
-//         canvas,
-//         Offset((size - textPainter.width) / 2,
-//             (size * 0.45 - textPainter.height / 2)));
-//
-//     final img =
-//     await recorder.endRecording().toImage(size.toInt(), size.toInt());
-//     final byteData = await img.toByteData(format: ui.ImageByteFormat.png);
-//     final Uint8List pngBytes = byteData!.buffer.asUint8List();
-//
-//     return BitmapDescriptor.fromBytes(pngBytes);
-//   }
-//
-//   @override
-//   void dispose() {
-//     _waveController.dispose();
-//     _confettiController.dispose();
-//     _speechToText.stop();
-//     super.dispose();
-//   }
-//   final visibilityManager = DrawerVisibilityManager(enabled: {
-//     // User features enabled
-//     DrawerFeatures.userProfile,
-//     DrawerFeatures.userDailyOffers,
-//     DrawerFeatures.userDelivery,
-//
-//     // Provider features enabled
-//     DrawerFeatures.providerManageOffers,
-//     DrawerFeatures.providerManageContracts,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final userItems = visibilityManager.buildUserItems();
-//     final providerItems = visibilityManager.buildProviderItems();
-//
-//    return Obx((){
-//       if (controller.isLoading.value) {
-//         return Scaffold(
-//           body:  Center(child: LoadingWidget()),
-//         );
-//       }
-//
-//       final location = controller.currentLocation.value;
-//       if (location == null) {
-//         return LocationErrorWidget(
-//           onRetry: _checkAndLoadLocation,
-//         );
-//       }
-//
-//       return SliderDrawer(
-//         key: _sliderKey,
-//         sliderOpenSize: 250,
-//         // appBar: null,
-//         backgroundColor: ManagerColors.white,
-//         slideDirection: SlideDirection.rightToLeft,
-//         slider: AppDrawer(
-//           sliderKey: _sliderKey,
-//           userName: "عبدالله الدحو/اني",
-//           role: "مستخدم جديد",
-//           phone: "0599999999",
-//           userItems: userItems,
-//           providerItems: providerItems,
-//         ),
-//         child: Scaffold(
-//           body: Obx(() {
-//             // if (controller.isLoading.value) {
-//             //   return const LoadingWidget();
-//             // }
-//             //
-//             // final location = controller.currentLocation.value;
-//             // if (location == null) {
-//             //   return LocationErrorWidget(
-//             //     onRetry: _checkAndLoadLocation,
-//             //   );
-//             // }
-//
-//             final LatLng currentLatLng =
-//             LatLng(location.latitude, location.longitude);
-//
-//             return SafeArea(
-//               child: Stack(
-//                 children: [
-//                   GoogleMap(
-//                     initialCameraPosition: CameraPosition(
-//                       target: currentLatLng,
-//                       zoom: 14,
-//                     ),
-//                     myLocationEnabled: true,
-//                     markers: customMarkers,
-//                     trafficEnabled: false,
-//                     compassEnabled: false,
-//                     buildingsEnabled: false,
-//                     mapToolbarEnabled: false,
-//                     myLocationButtonEnabled: false,
-//                     onMapCreated: (GoogleMapController mapController) async {
-//                       String style = await DefaultAssetBundle.of(context)
-//                           .loadString('assets/json/style_map.json');
-//                       mapController.setMapStyle(style);
-//                     },
-//                   ),
-//                   Padding(
-//                     padding: EdgeInsets.only(
-//                       left: ManagerWidth.w16,
-//                       right: ManagerWidth.w16,
-//                       top: ManagerHeight.h24,
-//                     ),
-//                     child: Row(
-//                       children: [
-//                         MenuIconButton(
-//                           onPressed: () {
-//                             _sliderKey.currentState?.toggle();
-//                           },
-//                         ),
-//                         const Spacer(),
-//                         NotificationIconButton(
-//                           onPressed: () {},
-//                           showDot: true,
-//                         ),
-//                       ],
-//                     ),
-//                   ),
-//                   Positioned(
-//                     bottom: 24,
-//                     left: 0,
-//                     right: 0,
-//                     child: Center(
-//                       child: GestureDetector(
-//                         onTap: _startListening,
-//                         child: VoiceAssistantButton(
-//                           isListening: _isListening,
-//                           audioLevels: _audioLevels,
-//                           waveController: _waveController,
-//                           onTap: _startListening,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   Align(
-//                     alignment: Alignment.topCenter,
-//                     child: ConfettiWidget(
-//                       confettiController: _confettiController,
-//                       blastDirectionality: BlastDirectionality.explosive,
-//                       shouldLoop: false,
-//                       colors: const [
-//                         Colors.green,
-//                         Colors.blue,
-//                         Colors.pink,
-//                         Colors.orange,
-//                         Colors.purple
-//                       ],
-//                     ),
-//                   ),
-//
-//                   // Voice Assistant Panel that appears when mic is pressed
-//                   if (_showVoiceAssistant)
-//                     Positioned.fill(
-//                       child: GestureDetector(
-//                         onTap: _closeVoiceAssistant,
-//                         child: Container(
-//                           color: Colors.black.withOpacity(0.4),
-//                           child: DraggableScrollableSheet(
-//                             initialChildSize: 0.7,
-//                             minChildSize: 0.5,
-//                             maxChildSize: 0.9,
-//                             builder: (context, scrollController) {
-//                               return VoiceAssistantPanel(
-//                                 isListening: _isListening,
-//                                 recognizedText: _recognizedText,
-//                                 audioLevels: _audioLevels,
-//                                 waveController: _waveController,
-//                                 onStartListening: _startListening,
-//                                 onStopListening: _stopListening,
-//                                 onClose: _closeVoiceAssistant,
-//                                 scrollController: scrollController,
-//                               );
-//                             },
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                 ],
-//               ),
-//             );
-//           }),
-//         ),
-//       );
-//     });
-//
-//
-//   }
-// }
-//
+  const _OfferDetailsSheet({
+    required this.offer,
+    required this.onOrgPressed,
+    required this.onClose,
+  });
+
+  @override
+  State<_OfferDetailsSheet> createState() => _OfferDetailsSheetState();
+}
+
+class _OfferDetailsSheetState extends State<_OfferDetailsSheet>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _anim = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 280),
+  )..forward();
+  late final Animation<double> _scale =
+      CurvedAnimation(parent: _anim, curve: Curves.easeOutBack);
+
+  @override
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final o = widget.offer;
+
+    return SafeArea(
+      top: false,
+      child: ScaleTransition(
+        scale: _scale,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(.15), blurRadius: 20)
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Handle + Close
+              Padding(
+                padding: const EdgeInsets.only(top: 10, bottom: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                        width: 42,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.black12,
+                          borderRadius: BorderRadius.circular(6),
+                        )),
+                    const Spacer(),
+                    IconButton(
+                        onPressed: widget.onClose,
+                        icon: const Icon(Icons.close)),
+                  ],
+                ),
+              ),
+
+              if (o.productImages.isNotEmpty)
+                AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(ManagerRadius.r4),
+                      child: CachedNetworkImage(
+                        imageUrl:
+                            "${Constants.baseUrlAttachments}/${o.productImages}",
+                        fit: BoxFit.cover,
+                        placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        errorWidget: (context, url, error) => Container(
+                          color: Colors.grey.shade200,
+                          child: const Icon(Icons.broken_image,
+                              size: 48, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                Container(
+                  height: 160,
+                  margin: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(14),
+                    color: Colors.grey.shade200,
+                  ),
+                  child: const Center(child: Icon(Icons.local_offer, size: 48)),
+                ),
+
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 6),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        o.productName,
+                        style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s18, color: Colors.black),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: ManagerColors.primaryColor.withOpacity(.1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        "${o.offerPrice}",
+                        style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s14,
+                            color: ManagerColors.primaryColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    o.offerDescription,
+                    style: getRegularTextStyle(
+                        fontSize: ManagerFontSize.s14, color: Colors.black87),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 8),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Row(
+                  children: [
+                    const Icon(Icons.calendar_today, size: 16),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        "${o.offerStartDate}  →  ${o.offerEndDate}",
+                        style: getRegularTextStyle(
+                            fontSize: ManagerFontSize.s12,
+                            color: Colors.black54),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ManagerColors.primaryColor,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(ManagerRadius.r4)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    onPressed: widget.onOrgPressed,
+                    icon: const Icon(Icons.business_outlined),
+                    label: Text(
+                      "تفاصيل المنظمة",
+                      style: getBoldTextStyle(
+                        fontSize: ManagerFontSize.s12,
+                        color: ManagerColors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class VoiceAssistantButton extends StatelessWidget {
   final bool isListening;
   final List<double> audioLevels;
@@ -935,10 +809,16 @@ class VoiceAssistantButton extends StatelessWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Waves based on audio level
                 ...List.generate(3, (index) {
-                  final progress = ((waveController.value + (index * 0.3)) % 1.0);
-                  final waveSize = 80 + (progress * 40) + (isListening ? audioLevels.isNotEmpty ? audioLevels.last * 0.5 : 0 : 0);
+                  final progress =
+                      ((waveController.value + (index * 0.3)) % 1.0);
+                  final waveSize = 80 +
+                      (progress * 40) +
+                      (isListening
+                          ? (audioLevels.isNotEmpty
+                              ? audioLevels.last * 0.5
+                              : 0)
+                          : 0);
 
                   return Container(
                     width: waveSize,
@@ -946,21 +826,18 @@ class VoiceAssistantButton extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: ManagerColors.primaryColor.withOpacity((1 - progress) * 0.3),
+                        color: ManagerColors.primaryColor
+                            .withOpacity((1 - progress) * 0.3),
                         width: 2,
                       ),
                     ),
                   );
                 }),
-
-                // Main icon
                 Icon(
                   isListening ? Icons.mic : Icons.mic_none,
                   color: Colors.white,
                   size: 36,
                 ),
-
-                // Pulsating circle when listening
                 if (isListening)
                   Container(
                     width: 80,
@@ -978,7 +855,7 @@ class VoiceAssistantButton extends StatelessWidget {
     );
   }
 }
-//
+
 class VoiceAssistantPanel extends StatefulWidget {
   final bool isListening;
   final String recognizedText;
@@ -1017,7 +894,6 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Drag handle
           Center(
             child: Container(
               width: 40,
@@ -1029,7 +905,6 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
               ),
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -1050,9 +925,7 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
               ),
             ],
           ),
-
           const SizedBox(height: 20),
-
           Expanded(
             child: Container(
               padding: const EdgeInsets.all(16),
@@ -1090,19 +963,17 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
                         ),
                       ),
                     ),
-
                   const SizedBox(height: 20),
-
-                  // Visual audio level indicator
                   if (widget.isListening)
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(10, (index) {
                         final level = widget.audioLevels.isNotEmpty
-                            ? widget.audioLevels[widget.audioLevels.length - 1 - (index % widget.audioLevels.length)]
+                            ? widget.audioLevels[widget.audioLevels.length -
+                                1 -
+                                (index % widget.audioLevels.length)]
                             : 0.0;
                         final height = 10 + (level * 0.5);
-
                         return Container(
                           width: 4,
                           height: height,
@@ -1114,12 +985,11 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
                         );
                       }),
                     ),
-
                   const SizedBox(height: 20),
-
-                  // Animated mic button
                   GestureDetector(
-                    onTap: widget.isListening ? widget.onStopListening : widget.onStartListening,
+                    onTap: widget.isListening
+                        ? widget.onStopListening
+                        : widget.onStartListening,
                     child: AnimatedBuilder(
                       animation: widget.waveController,
                       builder: (context, child) {
@@ -1140,25 +1010,30 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              // Waves based on audio level
                               if (widget.isListening)
                                 ...List.generate(3, (index) {
-                                  final progress = ((widget.waveController.value + (index * 0.3)) % 1.0);
-                                  final waveSize = 80 + (progress * 60) + (widget.audioLevels.isNotEmpty ? widget.audioLevels.last * 0.8 : 0);
-
+                                  final progress =
+                                      ((widget.waveController.value +
+                                              (index * 0.3)) %
+                                          1.0);
+                                  final waveSize = 80 +
+                                      (progress * 60) +
+                                      (widget.audioLevels.isNotEmpty
+                                          ? widget.audioLevels.last * 0.8
+                                          : 0);
                                   return Container(
                                     width: waveSize,
                                     height: waveSize,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       border: Border.all(
-                                        color: Colors.white.withOpacity((1 - progress) * 0.2),
+                                        color: Colors.white
+                                            .withOpacity((1 - progress) * 0.2),
                                         width: 2,
                                       ),
                                     ),
                                   );
                                 }),
-
                               Icon(
                                 widget.isListening ? Icons.mic : Icons.mic_none,
                                 color: ManagerColors.primaryColor,
@@ -1170,9 +1045,7 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
                       },
                     ),
                   ),
-
                   const SizedBox(height: 16),
-
                   Text(
                     widget.isListening ? "جاري الاستماع..." : "انقر للتحدث",
                     style: getRegularTextStyle(
@@ -1180,7 +1053,6 @@ class _VoiceAssistantPanelState extends State<VoiceAssistantPanel> {
                       color: Colors.white,
                     ),
                   ),
-
                   const SizedBox(height: 10),
                 ],
               ),

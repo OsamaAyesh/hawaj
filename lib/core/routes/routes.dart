@@ -110,7 +110,7 @@ class RouteGenerator {
       case Routes.testScreen:
         return MaterialPageRoute(builder: (_) =>  ArabicSpeechToText());
       case Routes.companyWithOfferScreen:
-        return MaterialPageRoute(builder: (_) =>  const CompanyWithOfferScreen());
+        return MaterialPageRoute(builder: (_) =>  const CompanyWithOfferScreen(idOrganization: 1,));
 
       default:
         return unDefinedRoute();

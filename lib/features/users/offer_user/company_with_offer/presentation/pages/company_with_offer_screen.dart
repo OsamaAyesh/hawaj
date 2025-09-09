@@ -10,7 +10,8 @@ import 'package:flutter/material.dart';
 import '../widgets/circle_icon_widget.dart';
 
 class CompanyWithOfferScreen extends StatelessWidget {
-  const CompanyWithOfferScreen({super.key});
+  final int idOrganization;
+  const CompanyWithOfferScreen({super.key,required this.idOrganization});
 
   @override
   Widget build(BuildContext context) {
