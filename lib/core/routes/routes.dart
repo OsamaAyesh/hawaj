@@ -53,7 +53,6 @@ class Routes {
 
 
 
-
   ///Common Screens
   static const String profileScreen = '/profile_screen';
   static const String mapScreen = '/map_screen';

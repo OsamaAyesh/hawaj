@@ -1,7 +1,7 @@
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// A class defined for font sizes in the app
-class ManagerFontSize {
+class  ManagerFontSize {
   static double _getSize(double size) {
     if (size <= 12) {
       return size.sp.clamp(10, 14);

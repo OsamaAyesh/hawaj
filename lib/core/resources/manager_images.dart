@@ -15,8 +15,10 @@ class ManagerImages {
   ///===Contact Us Image Widget.
   static const String contactUsImage="$imagesPath/contact_us_image.png";
 
-  ///======== Images For Remove
+  ///======== Images For Remove When Production
   static const String imageFoodOneRemove="$imagesRemovePath/image_food_one.png";
+  static const String imageRemoveIt="$imagesRemovePath/imageremove1.png";
+  static const String image3remove="$imagesRemovePath/image3remove.jpg";
 
   ///======== Welcome Hawaj Start Images.
   static const String welcomeStartImage="$imagesPath/welcome_start_image.png";
