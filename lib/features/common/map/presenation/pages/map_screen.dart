@@ -21,6 +21,7 @@ import '../../../../../core/resources/manager_colors.dart';
 import '../../../../../core/resources/manager_font_size.dart';
 import '../../../../../core/resources/manager_styles.dart';
 import '../../../../../core/widgets/loading_widget.dart';
+import '../../../../users/offer_user/company_with_offer/domain/di/di.dart';
 import '../../../../users/offer_user/list_offers/presentation/controller/get_offers_controller.dart';
 import '../controller/map_controller.dart';
 import '../widgets/drawer_widget.dart';
@@ -264,6 +265,7 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
           onOrgPressed: () {
             Navigator.pop(context);
             AppSnackbar.success("سيتم فتح تفاصيل المنظمة لاحقاً");
+            initGetCompany();
             Get.to(CompanyWithOfferScreen(idOrganization: o.id,));
           },
           onClose: () => Navigator.pop(context),
