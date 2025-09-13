@@ -102,6 +102,7 @@ abstract class AppService {
   ///===== Get Offers Data
   @GET(RequestConstantsEndpoints.getOffers)
   Future<OfferUserResponse> getOffers(
+      @Query(RequestConstants.language) String language,
       );
 
   ///=== Get My Organization Request.

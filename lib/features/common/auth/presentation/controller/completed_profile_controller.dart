@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
@@ -29,7 +30,6 @@ class CompletedProfileController extends GetxController {
     errorMessage.value = '';
     isSuccess.value = false;
 
-    //  التحقق من الحقول باستخدام ManagerStrings
     if (firstNameController.text.trim().isEmpty) {
       errorMessage.value = ManagerStrings.firstNameRequired;
       return;
@@ -65,6 +65,9 @@ class CompletedProfileController extends GetxController {
       },
           (WithOutDataModel response) {
         isSuccess.value = true;
+        AppSnackbar.success("تم إكمال الملف الشخصي بنجاح، استمتع مع حواج!",
+        englishMessage: "Profile completed successfully. Enjoy Hawaj!");
+
       },
     );
 

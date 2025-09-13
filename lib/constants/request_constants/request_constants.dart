@@ -11,4 +11,5 @@ class RequestConstants {
   static const String lastName = 'last_name';
   static const String dateOfBirth = 'dob';
   static const String gender = 'gender';
+  static const String language = 'language';
 }

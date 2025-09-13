@@ -10,6 +10,7 @@ import '../../../../../../core/network/app_api.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart' as rootBundle;
 
+import '../../../../../../core/util/get_app_langauge.dart';
 import '../response/offer_user_response.dart';
 
 
@@ -37,6 +38,7 @@ class GetOffersUserDataSourceImplement
       );
     }
     return await _appService.getOffers(
+        AppLanguage().getCurrentLocale(),
     );
   }
 }
