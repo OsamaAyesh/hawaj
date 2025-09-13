@@ -8,6 +8,7 @@ import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
+import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:pinput/pinput.dart';
@@ -204,14 +205,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           /// 🔹 Loading Overlay
           Obx(() {
             return authController.isLoading.value
-                ? Container(
-              color: Colors.black.withOpacity(0.3),
-              child: const Center(
-                child: CircularProgressIndicator(
-                  color: ManagerColors.primaryColor,
-                ),
-              ),
-            )
+                ? const LoadingWidget()
                 : const SizedBox.shrink();
           }),
         ],

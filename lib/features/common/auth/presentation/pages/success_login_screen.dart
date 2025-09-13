@@ -10,13 +10,17 @@ import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
+import 'package:app_mobile/features/common/auth/domain/di/di.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../../core/resources/manager_opacity.dart';
 import '../../../../../core/routes/custom_transitions.dart';
 import '../widgets/sub_title_text_auth_widget.dart';
 import '../widgets/title_auth_text_widget.dart';
+import 'complete_information_screen.dart';
 import 'login_screen.dart';
 
 class SuccessLoginScreen extends StatelessWidget {
@@ -68,7 +72,8 @@ class SuccessLoginScreen extends StatelessWidget {
           ButtonApp(
             title: ManagerStrings.completeProfileButton,
             onPressed: () {
-
+              initCompletedProfile();
+              Get.offAll(const CompleteInformationScreen());
             },
             paddingWidth: ManagerWidth.w24,
           ),

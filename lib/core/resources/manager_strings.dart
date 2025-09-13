@@ -68,9 +68,17 @@ class ManagerStrings {
   static String get profileImageHint => tr('profile_image_hint');
   static String get profileImageNote => tr('profile_image_note');
   static String get continueButton => tr('continue_button');
+  /// Fields
+  static String get firstName => tr('first_name');
+  static String get lastName => tr('last_name');
+  static String get gender => tr('gender');
+  static String get dob => tr('dob');
+  /// Gender options
+  static String get genderMale => tr('gender_male');
+  static String get genderFemale => tr('gender_female');
 
 
-///Profile Screen Strings
+  ///Profile Screen Strings
   static String get profileTitle => tr('profile_title');
   static String get newUser => tr('new_user');
   static String get phoneNumber => tr('phone_number');
@@ -250,6 +258,11 @@ class ManagerStrings {
 
 
 
+  ///  Validation Completed Screen Strings.
+  static String get firstNameRequired => tr('first_name_required');
+  static String get lastNameRequired => tr('last_name_required');
+  static String get genderRequired => tr('gender_required');
+  static String get dobRequired => tr('dob_required');
 
 
 

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
 import 'package:app_mobile/core/error_handler/failure.dart';
 import 'package:app_mobile/features/common/auth/data/request/completed_profile_request.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import '../../domain/use_case/completed_profile_use_case.dart';
 
 class CompletedProfileController extends GetxController {
@@ -13,36 +14,53 @@ class CompletedProfileController extends GetxController {
   /// --- Text Controllers ---
   final firstNameController = TextEditingController();
   final lastNameController = TextEditingController();
-  final emailController = TextEditingController();
-  final locationController = TextEditingController();
+  final dateOfBirthController = TextEditingController();
 
   /// --- States ---
   var isLoading = false.obs;
   var errorMessage = ''.obs;
   var isSuccess = false.obs;
 
-  /// --- Gender & DOB (extra fields) ---
-  var gender = 0.obs;
-  var dateOfBirth = ''.obs;
+  /// --- Gender ---
+  var gender = 0.obs; // 0 = not selected, 1 = male, 2 = female
 
   /// --- Submit Profile ---
   Future<void> submitProfile() async {
     errorMessage.value = '';
     isSuccess.value = false;
+
+    //  التحقق من الحقول باستخدام ManagerStrings
+    if (firstNameController.text.trim().isEmpty) {
+      errorMessage.value = ManagerStrings.firstNameRequired;
+      return;
+    }
+    if (lastNameController.text.trim().isEmpty) {
+      errorMessage.value = ManagerStrings.lastNameRequired;
+      return;
+    }
+    if (gender.value == 0) {
+      errorMessage.value = ManagerStrings.genderRequired;
+      return;
+    }
+    if (dateOfBirthController.text.trim().isEmpty) {
+      errorMessage.value = ManagerStrings.dobRequired;
+      return;
+    }
+
     isLoading.value = true;
 
     final request = CompletedProfileRequest(
       firstName: firstNameController.text.trim(),
       lastName: lastNameController.text.trim(),
       gender: gender.value,
-      dateOfBirth: dateOfBirth.value,
+      dateOfBirth: dateOfBirthController.text.trim(),
     );
 
     final result = await _completedProfileUseCase.execute(request);
 
     result.fold(
           (Failure failure) {
-        errorMessage.value = failure.message ?? "Unknown error occurred";
+        errorMessage.value = failure.message ?? ManagerStrings.noContent;
         isSuccess.value = false;
       },
           (WithOutDataModel response) {
@@ -57,20 +75,14 @@ class CompletedProfileController extends GetxController {
   void reset() {
     firstNameController.clear();
     lastNameController.clear();
-    emailController.clear();
-    locationController.clear();
+    dateOfBirthController.clear();
     gender.value = 0;
-    dateOfBirth.value = '';
     errorMessage.value = '';
     isSuccess.value = false;
   }
 
   @override
   void onClose() {
-    firstNameController.dispose();
-    lastNameController.dispose();
-    emailController.dispose();
-    locationController.dispose();
     super.onClose();
   }
 }

@@ -116,7 +116,7 @@ abstract class AppService {
       );
 
   ///===== Completed Profile Request.
-  @POST(RequestConstantsEndpoints.getMyOrganizations)
+  @POST(RequestConstantsEndpoints.completedProfile)
   Future<WithOutDataResponse> completedProfile(
       @Query(RequestConstants.firstName) String firstName,
       @Query(RequestConstants.lastName) String lastName,

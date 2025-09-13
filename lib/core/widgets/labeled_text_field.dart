@@ -28,7 +28,6 @@ class LabeledTextField extends StatefulWidget {
   final bool isPhoneField;
   final bool isEmailField;
 
-  /// 🔹 الحل: أضف هنا onChanged
   final Function(String)? onChanged;
 
   const LabeledTextField({

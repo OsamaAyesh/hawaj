@@ -199,6 +199,19 @@
   "change_plan_note": "You can change the selected plan after the current duration ends or by contacting support.",
   "no_data": "No data available",
 
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "gender": "Gender",
+  "dob": "Date of Birth",
+  "continue": "Continue",
+  "gender_male": "Male",
+  "gender_female": "Female",
+
+  "first_name_required": "Please enter your first name",
+  "last_name_required": "Please enter your last name",
+  "gender_required": "Please select your gender",
+  "dob_required": "Please enter your date of birth",
+
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",
