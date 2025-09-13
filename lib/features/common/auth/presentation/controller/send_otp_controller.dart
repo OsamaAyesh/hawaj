@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../../../../constants/di/dependency_injection.dart';
 import '../../../../../core/storage/local/app_settings_prefs.dart';
+import '../../../hawaj_welcome_start/presentation/pages/hawaj_welcome_start_screen.dart';
 import '../../domain/use_case/send_otp_use_case.dart';
 import '../../domain/use_case/verfiy_otp_use_case.dart';
 import '../../data/request/send_otp_request.dart';
@@ -71,13 +72,13 @@ class SendOtpController extends GetxController {
   }
 
   /// Verify OTP
+  /// Verify OTP
   Future<void> verifyOtp(String phone, String otp) async {
     if (otp.trim().isEmpty) {
       final msg = Get.locale?.languageCode == 'ar'
           ? "الرجاء إدخال رمز التحقق"
           : "Please enter the OTP code";
-      AppSnackbar.error(msg,);
-
+      AppSnackbar.error(msg);
       return;
     }
 
@@ -106,13 +107,26 @@ class SendOtpController extends GetxController {
         await instance<AppSettingsPrefs>().setUserLoggedIn();
 
         ///  Save token
-        final token = data.data.token; // assuming VerfiyOtpModel has data.token
+        final token = data.data.token;
         if (token.isNotEmpty) {
           await instance<AppSettingsPrefs>().setToken(token: token);
         }
 
-        /// Navigate to Success screen
-        Get.offAll(() => const SuccessLoginScreen());
+        /// Check complete profile flag
+        final isCompleted = data.data.completeProfile; // bool field from API
+        if (isCompleted == false) {
+          /// Navigate to Complete Profile screen
+          Get.offAll(() => const SuccessLoginScreen());
+        } else {
+          /// Navigate to Success/Home screen
+          Get.offAll(() => const HawajWelcomeStartScreen());
+
+          /// SnackBar to confirm login
+          final successMsg = Get.locale?.languageCode == 'ar'
+              ? "تم تسجيل الدخول بنجاح "
+              : "Login successful ";
+          AppSnackbar.success(successMsg);
+        }
       },
     );
 

@@ -45,4 +45,5 @@ class ResponseConstants {
   static const String commercialRegistration = "commercial_registration";
   static const String organizationStatus = "organization_status";
   static const String offers = "offers";
+  static const String completeProfile = "completeprofile";
 }

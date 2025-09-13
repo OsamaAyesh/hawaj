@@ -7,4 +7,8 @@ class RequestConstants {
   static const String name = 'name';
   static const String plansId = 'plans_id';
   static const String id = 'id';
+  static const String firstName = 'first_name';
+  static const String lastName = 'last_name';
+  static const String dateOfBirth = 'dob';
+  static const String gender = 'gender';
 }

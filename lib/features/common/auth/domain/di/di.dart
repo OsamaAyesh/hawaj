@@ -1,5 +1,7 @@
+import 'package:app_mobile/features/common/auth/data/data_source/completed_profile_data_source.dart';
 import 'package:app_mobile/features/common/auth/data/data_source/send_otp_data_source.dart';
 import 'package:app_mobile/features/common/auth/data/data_source/verfiy_otp_data_source.dart';
+import 'package:app_mobile/features/common/auth/data/repository/completed_profile_repository.dart';
 import 'package:app_mobile/features/common/auth/data/repository/send_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/data/repository/verfiy_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/domain/use_case/send_otp_use_case.dart';
@@ -9,7 +11,9 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../../constants/di/dependency_injection.dart';
 import '../../../../../core/network/app_api.dart';
+import '../../presentation/controller/completed_profile_controller.dart';
 import '../../presentation/controller/send_otp_controller.dart';
+import '../use_case/completed_profile_use_case.dart';
 import '../use_case/verfiy_otp_use_case.dart';
 
 initSendOtpRequest() {
@@ -100,4 +104,49 @@ void initVerfiyOtp() {
 void disposeVerfiyOtp() {
   disposeVerfiyOtpRRequest();
   // Get.delete<LoginController>();
+}
+
+
+initCompletedProfileRequest() {
+  if (!GetIt.I.isRegistered<CompletedProfileDataSource>()) {
+    instance.registerLazySingleton<CompletedProfileDataSource>(
+            () => CompletedProfileDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!GetIt.I.isRegistered<CompletedProfileRepository>()) {
+    instance.registerLazySingleton<CompletedProfileRepository>(
+            () => CompletedProfileRepositoryImplement(instance(), instance()));
+  }
+
+  if (!GetIt.I.isRegistered<CompletedProfileUseCase>()) {
+    instance.registerFactory<CompletedProfileUseCase>(
+            () => CompletedProfileUseCase(instance<CompletedProfileRepository>()));
+  }
+}
+
+disposeCompletedProfileRequest() {
+  if (GetIt.I.isRegistered<CompletedProfileDataSource>()) {
+    instance.unregister<CompletedProfileDataSource>();
+  }
+
+  if (GetIt.I.isRegistered<CompletedProfileRepository>()) {
+    instance.unregister<CompletedProfileRepository>();
+  }
+
+  if (GetIt.I.isRegistered<CompletedProfileRepository>()) {
+    instance.unregister<CompletedProfileRepository>();
+  }
+}
+
+void initCompletedProfile() {
+  initCompletedProfileRequest();
+
+  Get.put(CompletedProfileController(
+    instance<CompletedProfileUseCase>(),
+  ));
+}
+
+void disposeCompletedProfile() {
+  disposeCompletedProfileRequest();
+  Get.delete<CompletedProfileController>();
 }

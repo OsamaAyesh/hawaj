@@ -80,7 +80,7 @@ abstract class AppService {
   Future<OfferResponse> getMyOffer(
       );
 
-  ///===== Update Profile ======\
+  ///===== Update Profile Request .======
   @PUT(RequestConstantsEndpoints.getMyOffer)
   Future<WithOutDataResponse> updateProfile(
       @Query(RequestConstants.name) String? name,
@@ -113,6 +113,15 @@ abstract class AppService {
   @GET(RequestConstantsEndpoints.getMyOrganizations)
   Future<GetCompanyResponse> getCompany(
       @Query(RequestConstants.id) int id,
+      );
+
+  ///===== Completed Profile Request.
+  @POST(RequestConstantsEndpoints.getMyOrganizations)
+  Future<WithOutDataResponse> completedProfile(
+      @Query(RequestConstants.firstName) String firstName,
+      @Query(RequestConstants.lastName) String lastName,
+      @Query(RequestConstants.gender) int gender,
+      @Query(RequestConstants.dateOfBirth) String dateOfBirth,
       );
 
 }

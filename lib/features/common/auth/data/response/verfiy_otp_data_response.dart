@@ -8,10 +8,13 @@ part 'verfiy_otp_data_response.g.dart';
 class VerfiyOtpDataResponse {
   @JsonKey(name: ResponseConstants.token)
   String? token;
+  @JsonKey(name: ResponseConstants.completeProfile)
+  bool? completeProfile;
 
 
   VerfiyOtpDataResponse({
     this.token,
+    this.completeProfile,
   });
 
   factory VerfiyOtpDataResponse.fromJson(Map<String, dynamic> json) =>
