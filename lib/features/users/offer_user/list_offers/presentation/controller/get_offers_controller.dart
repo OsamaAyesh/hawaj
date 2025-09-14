@@ -1,4 +1,3 @@
-
 import 'package:get/get.dart';
 import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/core/error_handler/failure.dart';
@@ -13,7 +12,7 @@ class OffersController extends GetxController {
 
   OffersController(this._getOfferUseCase);
 
-  /// الحالة العامة
+  /// الحالة ال
   final isLoading = false.obs;
   final errorMessage = ''.obs;
 
@@ -28,11 +27,11 @@ class OffersController extends GetxController {
     final result = await _getOfferUseCase.execute();
 
     result.fold(
-          (Failure f) {
+      (Failure f) {
         errorMessage.value = f.message ?? "حدث خطأ أثناء تحميل البيانات";
         AppSnackbar.error(errorMessage.value);
       },
-          (OfferUserModel model) {
+      (OfferUserModel model) {
         if (model.error) {
           errorMessage.value = model.message;
           AppSnackbar.error(model.message);

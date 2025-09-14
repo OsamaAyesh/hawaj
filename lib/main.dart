@@ -12,9 +12,7 @@ import 'core/locale/locales.dart';
 import 'core/resources/manager_translation.dart';
 import 'core/routes/routes.dart';
 import 'core/util/size_util.dart';
-import 'package:device_preview/device_preview.dart';
 
-import 'features/common/map/domain/di/di.dart';
 void main() async {
   await initModule();
   runApp(
