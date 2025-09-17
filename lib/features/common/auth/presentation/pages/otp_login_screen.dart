@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
@@ -202,7 +203,7 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
             ),
           ),
 
-          /// 🔹 Loading Overlay
+          ///  Loading Overlay
           Obx(() {
             return authController.isLoading.value
                 ? const LoadingWidget()
@@ -213,8 +214,8 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
     );
   }
 
-
-  PinTheme _pinTheme({bool focused = false, bool submitted = false, bool following = false}) {
+  PinTheme _pinTheme(
+      {bool focused = false, bool submitted = false, bool following = false}) {
     return PinTheme(
       width: ManagerWidth.w56,
       height: ManagerHeight.h56,
@@ -231,8 +232,8 @@ class _OtpLoginScreenState extends State<OtpLoginScreen> {
           color: focused
               ? ManagerColors.primaryColor
               : following
-              ? ManagerColors.greyWithColor.withOpacity(0.3)
-              : ManagerColors.primaryColor.withOpacity(0.5),
+                  ? ManagerColors.greyWithColor.withOpacity(0.3)
+                  : ManagerColors.primaryColor.withOpacity(0.5),
           width: focused ? 1.5 : 1,
         ),
       ),

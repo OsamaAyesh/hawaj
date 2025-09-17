@@ -45,7 +45,7 @@ disposeCreateOfferProviderRequest() {
 void initCreateOfferProvider() {
   initCreateOfferProviderRequest();
   initGetMyCompanySetOfferRequest();
-  Get.put(CreateOfferProviderController(
+  Get.put(AddOfferController(
     instance<CreateOfferProviderUseCase>(),
     instance<GetMyCompanySetOfferUseCase>(),
   ));
@@ -54,7 +54,7 @@ void initCreateOfferProvider() {
 void disposeCreateOfferProvider() {
   disposeCreateOfferProviderRequest();
   disposeGetMyCompanySetOfferRequest();
-  Get.delete<CreateOfferProviderController>();
+  Get.delete<AddOfferController>();
 }
 
 initGetMyCompanySetOfferRequest() {

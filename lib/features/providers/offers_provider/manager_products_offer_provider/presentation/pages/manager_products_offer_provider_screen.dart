@@ -16,7 +16,6 @@ import '../../../../../../core/storage/local/app_settings_prefs.dart';
 import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
-import '../../../subscription_offer_provider/domain/di/di.dart';
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
   const ManagerProductsOfferProviderScreen({super.key});
@@ -57,7 +56,6 @@ class _ManagerProductsOfferProviderScreenState
           print("إضافة منتج");
         }
         initCreateOfferProvider();
-        initGetPlan();
         Get.to(AddOfferProviderScreen());
       },
       () {

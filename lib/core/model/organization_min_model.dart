@@ -1,33 +1,17 @@
-import 'offer_general_item_model.dart';
-
-class OrganizationCompanyDailyOfferItemModel {
+class OrganizationMinModel {
   int id;
-
   String organization;
-
   String organizationServices;
-
   String lat;
-
   String lng;
-
   String address;
-
   String managerName;
-
   String phoneNumber;
-
   String workingHours;
-
   String organizationLogo;
-
   String organizationBanner;
 
-  int offersCount;
-
-  List<OfferGeneralItemModel> offers;
-
-  OrganizationCompanyDailyOfferItemModel({
+  OrganizationMinModel({
     required this.id,
     required this.organization,
     required this.organizationServices,
@@ -39,7 +23,5 @@ class OrganizationCompanyDailyOfferItemModel {
     required this.workingHours,
     required this.organizationLogo,
     required this.organizationBanner,
-    required this.offersCount,
-    required this.offers,
   });
 }

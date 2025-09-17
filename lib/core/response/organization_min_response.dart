@@ -1,12 +1,11 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../../constants/response_constants/response_constants.dart';
-import 'offer_general_item_response.dart';
 
-part 'organization_company_daily_offer_item_response.g.dart';
+part 'organization_min_response.g.dart';
 
 @JsonSerializable()
-class OrganizationCompanyDailyOfferItemResponse {
+class OrganizationMinResponse {
   @JsonKey(name: ResponseConstants.id)
   int? id;
 
@@ -40,13 +39,7 @@ class OrganizationCompanyDailyOfferItemResponse {
   @JsonKey(name: ResponseConstants.organizationBanner)
   String? organizationBanner;
 
-  @JsonKey(name: ResponseConstants.offersCount)
-  int? offersCount;
-
-  @JsonKey(name: ResponseConstants.offers)
-  List<OfferGeneralItemResponse>? offers;
-
-  OrganizationCompanyDailyOfferItemResponse({
+  OrganizationMinResponse({
     this.id,
     this.organization,
     this.organizationServices,
@@ -54,18 +47,13 @@ class OrganizationCompanyDailyOfferItemResponse {
     this.lng,
     this.address,
     this.managerName,
-    this.phoneNumber,
     this.workingHours,
     this.organizationLogo,
     this.organizationBanner,
-    this.offersCount,
-    this.offers,
   });
 
-  factory OrganizationCompanyDailyOfferItemResponse.fromJson(
-          Map<String, dynamic> json) =>
-      _$OrganizationCompanyDailyOfferItemResponseFromJson(json);
+  factory OrganizationMinResponse.fromJson(Map<String, dynamic> json) =>
+      _$OrganizationMinResponseFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$OrganizationCompanyDailyOfferItemResponseToJson(this);
+  Map<String, dynamic> toJson() => _$OrganizationMinResponseToJson(this);
 }

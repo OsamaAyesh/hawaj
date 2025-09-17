@@ -27,23 +27,36 @@ class ResponseConstants {
   static const String organizationId = "organization_id";
   static const String name = "name";
   static const String offerStatus = "offer_status";
+  static const String offerStatusLabel = "offer_status_label";
   static const String phone = "phone";
   static const String createdAt = "created_at";
   static const String updatedAt = "updated_at";
   static const String avatar = "avatar";
   static const String organizationName = "organization_name";
+  static const String organization = "organization";
   static const String organizationServices = "organization_services";
   static const String organizationType = "organization_type";
   static const String organizationLocation = "organization_location";
-  static const String organizationDetailedAddress = "organization_detailed_address";
+  static const String organizationDetailedAddress =
+      "organization_detailed_address";
   static const String managerName = "manager_name";
   static const String phoneNumber = "phone_number";
   static const String workingHours = "working_hours";
   static const String organizationLogo = "organization_logo";
   static const String organizationBanner = "organization_banner";
-  static const String commercialRegistrationNumber = "commercial_registration_number";
+  static const String commercialRegistrationNumber =
+      "commercial_registration_number";
   static const String commercialRegistration = "commercial_registration";
   static const String organizationStatus = "organization_status";
   static const String offers = "offers";
   static const String completeProfile = "completeprofile";
+  static const String lat = "lat";
+  static const String lng = "lng";
+  static const String address = "address";
+  static const String offersCount = "offers_count";
+  static const String offerId = "offer_id";
+  static const String offerName = "offer_name";
+  static const String offerImage = "offer_image";
+  static const String offerPercentage = "offer_percentage";
+  static const String offerTypeLabel = "offer_type_label";
 }

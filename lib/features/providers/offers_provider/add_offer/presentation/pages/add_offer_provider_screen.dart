@@ -22,17 +22,17 @@ class AddOfferProviderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<CreateOfferProviderController>();
+    final controller = Get.find<AddOfferController>();
 
     return ScaffoldWithBackButton(
       title: ManagerStrings.offerRegisterTitle,
       body: Obx(() {
-        // أثناء تحميل بيانات الشركة
+        // ===== 1️⃣ تحميل أولي لبيانات الشركة =====
         if (controller.isLoading.value && controller.company.value == null) {
           return const LoadingWidget();
         }
 
-        // في حالة خطأ عند جلب بيانات الشركة
+        // ===== 2️⃣ حالة الخطأ =====
         if (controller.companyError.isNotEmpty) {
           return Center(
             child: Text(
@@ -42,31 +42,33 @@ class AddOfferProviderScreen extends StatelessWidget {
           );
         }
 
-        // إذا لم يتم جلب الشركة بعد (بدون خطأ)
+        // ===== 3️⃣ لا توجد شركة =====
         if (controller.company.value == null) {
           return const Center(child: Text("لا توجد بيانات مؤسسة حالياً"));
         }
 
+        // ===== 4️⃣ نموذج إضافة العرض =====
         return Stack(
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
               child: SingleChildScrollView(
                 padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: ManagerHeight.h24),
 
-                    /// ===== Title & Subtitle =====
+                    /// العنوان والوصف
                     TitleFormScreenWidget(title: ManagerStrings.offerAddNew),
                     SubTitleFormScreenWidget(
                         subTitle: ManagerStrings.offerSubtitle),
                     SizedBox(height: ManagerHeight.h16),
 
-                    /// ===== Product Name =====
+                    /// اسم المنتج
                     LabeledTextField(
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.offerProductName,
@@ -76,7 +78,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
-                    /// ===== Product Description =====
+                    /// وصف المنتج
                     LabeledTextField(
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.offerProductDesc,
@@ -86,7 +88,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
-                    /// ===== Upload Image =====
+                    /// صورة المنتج
                     UploadMediaField(
                       label: ManagerStrings.offerProductImages,
                       hint: ManagerStrings.offerProductImagesHint,
@@ -95,23 +97,22 @@ class AddOfferProviderScreen extends StatelessWidget {
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
-                    /// ===== Product Price =====
+                    /// سعر المنتج
                     LabeledTextField(
                       widthButton: ManagerWidth.w40,
                       label: ManagerStrings.offerProductPrice,
                       hintText: ManagerStrings.offerProductPriceHint,
                       controller: controller.productPriceController,
+                      keyboardType: TextInputType.number,
                       buttonWidget: Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 0, vertical: ManagerHeight.h2),
+                        padding:
+                            EdgeInsets.symmetric(vertical: ManagerHeight.h2),
                         child: Image.asset(ManagerIcons.ryalSudia),
                       ),
-                      keyboardType: TextInputType.number,
-                      textInputAction: TextInputAction.done,
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
-                    /// ===== Offer Type Dropdown =====
+                    /// نوع العرض
                     Obx(() => LabeledDropdownField<String>(
                           label: ManagerStrings.offerType,
                           hint: ManagerStrings.offerTypeHint,
@@ -123,12 +124,11 @@ class AddOfferProviderScreen extends StatelessWidget {
                             DropdownMenuItem(
                                 value: "1", child: Text("خصم بالمئة")),
                           ],
-                          onChanged: (value) {
-                            controller.offerType.value = value ?? "";
-                          },
+                          onChanged: (v) =>
+                              controller.offerType.value = v ?? "",
                         )),
 
-                    /// ===== Extra Fields if Discount =====
+                    /// الحقول الإضافية عند اختيار خصم
                     Obx(() {
                       if (controller.offerType.value == "1") {
                         return Column(
@@ -212,10 +212,9 @@ class AddOfferProviderScreen extends StatelessWidget {
                       }
                       return const SizedBox.shrink();
                     }),
-
                     const SizedBoxBetweenFieldWidgets(),
 
-                    /// ===== Offer Status Dropdown =====
+                    /// حالة العرض
                     Obx(() => LabeledDropdownField<String>(
                           label: "حالة العرض",
                           hint: "اختر حالة العرض",
@@ -231,14 +230,13 @@ class AddOfferProviderScreen extends StatelessWidget {
                             DropdownMenuItem(
                                 value: "5", child: Text("قيد المعاينة")),
                           ],
-                          onChanged: (value) {
-                            controller.offerStatus.value = value ?? "";
-                          },
+                          onChanged: (v) =>
+                              controller.offerStatus.value = v ?? "",
                         )),
 
                     SizedBox(height: ManagerHeight.h16),
 
-                    /// ===== Submit Button =====
+                    /// زر الإرسال
                     ButtonApp(
                       title: ManagerStrings.offerSubmit,
                       onPressed: () {
@@ -249,10 +247,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                               ManagerStrings.confirmAddProductConfirm,
                           actionCancel: ManagerStrings.confirmAddProductCancel,
                           context,
-                          onConfirm: () {
-                            // سيستخدم الcontroller الـ organizationId المجلوب تلقائياً
-                            controller.submitOffer();
-                          },
+                          onConfirm: controller.submitOffer,
                           onCancel: () {},
                         );
                       },
@@ -264,8 +259,12 @@ class AddOfferProviderScreen extends StatelessWidget {
               ),
             ),
 
-            /// Loading Overlay عند أي عملية
-            if (controller.isLoading.value) const LoadingWidget(),
+            /// ✅ Overlay يظهر أثناء الإضافة (submitOffer)
+            if (controller.isSubmitting.value) const LoadingWidget(),
+
+            /// Overlay إضافي أثناء أي عملية تحميل (اختياري)
+            if (controller.isLoading.value && controller.company.value != null)
+              const LoadingWidget(),
           ],
         );
       }),

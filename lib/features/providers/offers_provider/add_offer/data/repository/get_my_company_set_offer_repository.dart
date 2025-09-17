@@ -31,6 +31,7 @@ class GetMyCompanySetOfferRepositoryImplement
       final response = await remoteDataSource.getMyCompanySetOffer(request);
       return Right(response.toDomain());
     } catch (e) {
+      print("في مشكلة عويصة");
       return Left(ErrorHandler.handle(e).failure);
     }
     // } else {

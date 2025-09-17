@@ -44,7 +44,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
               if (controller.errorMessage.isNotEmpty)
                 Center(child: Text(controller.errorMessage.value))
               else if (plan == null || org == null)
-                 Center(child: Text(ManagerStrings.noContent))
+                Center(child: Text(ManagerStrings.noContent))
               else
                 SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
@@ -53,11 +53,11 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                     children: [
                       SizedBox(height: ManagerHeight.h32),
 
-                       TitleSubscriptionOfferProviderWidget(
+                      TitleSubscriptionOfferProviderWidget(
                           title: ManagerStrings.publishOffersTitle),
                       SizedBox(height: ManagerHeight.h4),
-                       SubTitleSubscriptionOfferProviderWidget(
-                        subTitleString:ManagerStrings.publishOffersSubTitle,
+                      SubTitleSubscriptionOfferProviderWidget(
+                        subTitleString: ManagerStrings.publishOffersSubTitle,
                       ),
                       SizedBox(height: ManagerHeight.h21),
 
@@ -85,16 +85,21 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                                   backgroundColor: Colors.grey[200],
                                   child: ClipOval(
                                     child: CachedNetworkImage(
-                                      imageUrl: "${Constants.baseUrlAttachments}/${org.organizationLogo}",
+                                      imageUrl:
+                                          "${Constants.baseUrlAttachments}/${org.organizationLogo}",
                                       width: 48,
                                       height: 48,
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => const SizedBox(
+                                      placeholder: (context, url) =>
+                                          const SizedBox(
                                         width: 24,
                                         height: 24,
-                                        child: CircularProgressIndicator(strokeWidth: 2),
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2),
                                       ),
-                                      errorWidget: (context, url, error) => const Icon(Icons.error, color: Colors.red),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error,
+                                              color: Colors.red),
                                     ),
                                   ),
                                 ),
@@ -102,9 +107,9 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Text(org.organizationName,
+                                      Text(org.organization,
                                           style: getBoldTextStyle(
                                               fontSize: ManagerFontSize.s14,
                                               color: ManagerColors.black)),
@@ -120,7 +125,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                               ],
                             ),
                             SizedBox(height: ManagerHeight.h8),
-                            Text(org.organizationDetailedAddress,
+                            Text(org.address,
                                 style: getRegularTextStyle(
                                     fontSize: ManagerFontSize.s12,
                                     color: ManagerColors
@@ -141,7 +146,8 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                             SizedBox(height: ManagerHeight.h16),
 
                             /// عنوان الخطة
-                             TitleContainerWidget(title: ManagerStrings.selectedPlan),
+                            TitleContainerWidget(
+                                title: ManagerStrings.selectedPlan),
                             SizedBox(height: ManagerHeight.h8),
 
                             /// اسم الخطة
@@ -161,9 +167,9 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                               value: plan.days,
                               items: controller.plans
                                   .map((p) => DropdownMenuItem<double>(
-                                value: p.days,
-                                child: Text("${p.days.toInt()} يوم"),
-                              ))
+                                        value: p.days,
+                                        child: Text("${p.days.toInt()} يوم"),
+                                      ))
                                   .toList(),
                               onChanged: (val) {
                                 if (val != null) {
@@ -221,8 +227,7 @@ class SubscriptionOfferProviderScreen extends StatelessWidget {
                 ),
 
               /// Loading Overlay
-              if (controller.isLoading.value)
-                const LoadingWidget(),
+              if (controller.isLoading.value) const LoadingWidget(),
             ],
           );
         }),
@@ -260,7 +265,6 @@ class FeatureItem extends StatelessWidget {
     );
   }
 }
-
 
 // import 'package:app_mobile/core/resources/manager_colors.dart';
 // import 'package:app_mobile/core/resources/manager_height.dart';
