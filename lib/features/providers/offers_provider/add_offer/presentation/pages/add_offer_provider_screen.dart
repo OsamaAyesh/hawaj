@@ -15,7 +15,6 @@ import '../../../../../../core/widgets/sized_box_between_feilads_widgets.dart';
 import '../../../../../../core/widgets/upload_media_widget.dart';
 import '../../../../../common/common_widgets/form_screen_widgets/sub_title_form_screen_widget.dart';
 import '../../../../../common/common_widgets/form_screen_widgets/title_form_screen_widget.dart';
-import '../../../subscription_offer_provider/presentation/controller/get_plans_controller.dart';
 import '../controller/add_offer_controller.dart';
 
 class AddOfferProviderScreen extends StatelessWidget {
@@ -23,39 +22,30 @@ class AddOfferProviderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addOfferController = Get.find<CreateOfferProviderController>();
-    final plansController = Get.find<PlansController>();
-
-    /// تحميل بيانات المؤسسات عند الدخول
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (plansController.organizations.isEmpty) {
-        plansController.fetchOrganizations();
-      }
-    });
+    final controller = Get.find<CreateOfferProviderController>();
 
     return ScaffoldWithBackButton(
       title: ManagerStrings.offerRegisterTitle,
       body: Obx(() {
-        // حالة التحميل الأولية لبيانات المؤسسة
-        if (plansController.isLoading.value &&
-            plansController.organizations.isEmpty) {
-          return LoadingWidget();
+        // أثناء تحميل بيانات الشركة
+        if (controller.isLoading.value && controller.company.value == null) {
+          return const LoadingWidget();
         }
 
-        if (plansController.errorMessage.isNotEmpty) {
+        // في حالة خطأ عند جلب بيانات الشركة
+        if (controller.companyError.isNotEmpty) {
           return Center(
             child: Text(
-              plansController.errorMessage.value,
+              controller.companyError.value,
               style: const TextStyle(color: Colors.red, fontSize: 16),
             ),
           );
         }
 
-        // نأخذ أول مؤسسة كافتراضي
-        final orgId = plansController.selectedOrganization.value?.id ??
-            (plansController.organizations.isNotEmpty
-                ? plansController.organizations.first.id
-                : 1);
+        // إذا لم يتم جلب الشركة بعد (بدون خطأ)
+        if (controller.company.value == null) {
+          return const Center(child: Text("لا توجد بيانات مؤسسة حالياً"));
+        }
 
         return Stack(
           children: [
@@ -81,10 +71,8 @@ class AddOfferProviderScreen extends StatelessWidget {
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.offerProductName,
                       hintText: ManagerStrings.offerProductDesc1,
-                      controller: addOfferController.productNameController,
+                      controller: controller.productNameController,
                       textInputAction: TextInputAction.next,
-                      minLines: 1,
-                      maxLines: 1,
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
@@ -93,11 +81,8 @@ class AddOfferProviderScreen extends StatelessWidget {
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.offerProductDesc,
                       hintText: ManagerStrings.offerProductDescHint,
-                      controller:
-                          addOfferController.productDescriptionController,
+                      controller: controller.productDescriptionController,
                       textInputAction: TextInputAction.next,
-                      minLines: 1,
-                      maxLines: 1,
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
@@ -106,7 +91,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                       label: ManagerStrings.offerProductImages,
                       hint: ManagerStrings.offerProductImagesHint,
                       note: ManagerStrings.offerProductImagesHint2,
-                      file: addOfferController.pickedImage,
+                      file: controller.pickedImage,
                     ),
                     const SizedBoxBetweenFieldWidgets(),
 
@@ -115,7 +100,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                       widthButton: ManagerWidth.w40,
                       label: ManagerStrings.offerProductPrice,
                       hintText: ManagerStrings.offerProductPriceHint,
-                      controller: addOfferController.productPriceController,
+                      controller: controller.productPriceController,
                       buttonWidget: Padding(
                         padding: EdgeInsets.symmetric(
                             horizontal: 0, vertical: ManagerHeight.h2),
@@ -130,22 +115,22 @@ class AddOfferProviderScreen extends StatelessWidget {
                     Obx(() => LabeledDropdownField<String>(
                           label: ManagerStrings.offerType,
                           hint: ManagerStrings.offerTypeHint,
-                          value: addOfferController.offerType.value.isEmpty
+                          value: controller.offerType.value.isEmpty
                               ? null
-                              : addOfferController.offerType.value,
+                              : controller.offerType.value,
                           items: const [
                             DropdownMenuItem(value: "2", child: Text("عادي")),
                             DropdownMenuItem(
                                 value: "1", child: Text("خصم بالمئة")),
                           ],
                           onChanged: (value) {
-                            addOfferController.offerType.value = value ?? "";
+                            controller.offerType.value = value ?? "";
                           },
                         )),
 
                     /// ===== Extra Fields if Discount =====
                     Obx(() {
-                      if (addOfferController.offerType.value == "1") {
+                      if (controller.offerType.value == "1") {
                         return Column(
                           children: [
                             const SizedBoxBetweenFieldWidgets(),
@@ -153,10 +138,8 @@ class AddOfferProviderScreen extends StatelessWidget {
                               widthButton: ManagerWidth.w40,
                               label: "نسبة الخصم %",
                               hintText: "أدخل نسبة الخصم",
-                              controller:
-                                  addOfferController.offerPriceController,
+                              controller: controller.offerPriceController,
                               keyboardType: TextInputType.number,
-                              textInputAction: TextInputAction.done,
                             ),
                             const SizedBoxBetweenFieldWidgets(),
                             Row(
@@ -171,7 +154,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                                         lastDate: DateTime(2100),
                                       );
                                       if (picked != null) {
-                                        addOfferController
+                                        controller
                                                 .offerStartDateController.text =
                                             "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                                       }
@@ -181,9 +164,8 @@ class AddOfferProviderScreen extends StatelessWidget {
                                         widthButton: ManagerWidth.w130,
                                         label: ManagerStrings.offerFromDate,
                                         hintText: "اختر تاريخ البداية",
-                                        controller: addOfferController
-                                            .offerStartDateController,
-                                        textInputAction: TextInputAction.next,
+                                        controller:
+                                            controller.offerStartDateController,
                                       ),
                                     ),
                                   ),
@@ -199,8 +181,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                                         lastDate: DateTime(2100),
                                       );
                                       if (picked != null) {
-                                        addOfferController
-                                                .offerEndDateController.text =
+                                        controller.offerEndDateController.text =
                                             "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                                       }
                                     },
@@ -209,9 +190,8 @@ class AddOfferProviderScreen extends StatelessWidget {
                                         widthButton: ManagerWidth.w130,
                                         label: ManagerStrings.offerToDate,
                                         hintText: "اختر تاريخ النهاية",
-                                        controller: addOfferController
-                                            .offerEndDateController,
-                                        textInputAction: TextInputAction.next,
+                                        controller:
+                                            controller.offerEndDateController,
                                       ),
                                     ),
                                   ),
@@ -223,9 +203,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                               widthButton: ManagerWidth.w130,
                               label: ManagerStrings.offerDesc,
                               hintText: ManagerStrings.offerDescHint,
-                              controller:
-                                  addOfferController.offerDescriptionController,
-                              textInputAction: TextInputAction.next,
+                              controller: controller.offerDescriptionController,
                               minLines: 4,
                               maxLines: 5,
                             ),
@@ -241,9 +219,9 @@ class AddOfferProviderScreen extends StatelessWidget {
                     Obx(() => LabeledDropdownField<String>(
                           label: "حالة العرض",
                           hint: "اختر حالة العرض",
-                          value: addOfferController.offerStatus.value.isEmpty
+                          value: controller.offerStatus.value.isEmpty
                               ? null
-                              : addOfferController.offerStatus.value,
+                              : controller.offerStatus.value,
                           items: const [
                             DropdownMenuItem(value: "1", child: Text("نشر")),
                             DropdownMenuItem(
@@ -254,7 +232,7 @@ class AddOfferProviderScreen extends StatelessWidget {
                                 value: "5", child: Text("قيد المعاينة")),
                           ],
                           onChanged: (value) {
-                            addOfferController.offerStatus.value = value ?? "";
+                            controller.offerStatus.value = value ?? "";
                           },
                         )),
 
@@ -264,10 +242,6 @@ class AddOfferProviderScreen extends StatelessWidget {
                     ButtonApp(
                       title: ManagerStrings.offerSubmit,
                       onPressed: () {
-                        if (orgId == null) {
-                          Get.snackbar("خطأ", "لا توجد مؤسسة متاحة حالياً");
-                          return;
-                        }
                         showDialogConfirmRegisterCompanyOffer(
                           title: ManagerStrings.confirmAddProductTitle,
                           subTitle: ManagerStrings.confirmAddProductSubtitle,
@@ -276,9 +250,8 @@ class AddOfferProviderScreen extends StatelessWidget {
                           actionCancel: ManagerStrings.confirmAddProductCancel,
                           context,
                           onConfirm: () {
-                            // نمرر الـ id الحقيقي للمؤسسة
-                            addOfferController.submitOffer(
-                                organizationId: orgId);
+                            // سيستخدم الcontroller الـ organizationId المجلوب تلقائياً
+                            controller.submitOffer();
                           },
                           onCancel: () {},
                         );
@@ -290,7 +263,9 @@ class AddOfferProviderScreen extends StatelessWidget {
                 ),
               ),
             ),
-            if (addOfferController.isLoading.value) LoadingWidget(),
+
+            /// Loading Overlay عند أي عملية
+            if (controller.isLoading.value) const LoadingWidget(),
           ],
         );
       }),

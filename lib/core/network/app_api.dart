@@ -13,6 +13,7 @@ import '../../constants/env/env_constants.dart';
 import '../../constants/request_constants/request_constants.dart';
 import '../../constants/request_constants/request_constants_endpoints.dart';
 import '../../features/common/auth/data/response/verfiy_otp_response.dart';
+import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
 import '../service/env_service.dart';
 
@@ -117,5 +118,15 @@ abstract class AppService {
     @Query(RequestConstants.lastName) String lastName,
     @Query(RequestConstants.gender) int gender,
     @Query(RequestConstants.dateOfBirth) String dateOfBirth,
+  );
+
+  ///======= Get My Company Request.
+  @GET(RequestConstantsEndpoints.getCompany)
+  Future<GetMyCompanySetOfferResponse> getMyCompanySetOffer(
+    @Query(RequestConstants.language) String? language,
+    @Query(RequestConstants.id) int? id,
+    @Query(RequestConstants.my) bool? my,
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.lng) String? lng,
   );
 }
