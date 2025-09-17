@@ -1,11 +1,12 @@
 import 'dart:io';
-import 'package:app_mobile/core/util/snack_bar.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:dartz/dartz.dart';
+
 import 'package:app_mobile/core/error_handler/failure.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/features/providers/offers_provider/add_offer/data/request/create_offer_provider_request.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../domain/use_case/create_offer_provider_use_case.dart';
 
@@ -14,27 +15,33 @@ class CreateOfferProviderController extends GetxController {
 
   CreateOfferProviderController(this._createOfferProviderUseCase);
 
-  /// ======== Text Controllers =========
+  /// ===== Text Controllers =====
   final productNameController = TextEditingController();
   final productDescriptionController = TextEditingController();
   final productPriceController = TextEditingController();
-  final offerPriceController = TextEditingController();
+  final offerPriceController = TextEditingController(); // نسبة الخصم
   final offerStartDateController = TextEditingController();
   final offerEndDateController = TextEditingController();
   final offerDescriptionController = TextEditingController();
 
-  /// ======== Reactive Fields =========
-  var offerType = "".obs; // normal | offer
-  var offerStatus = "".obs; // (1,2,3,4,5)
+  /// ===== Reactive Fields =====
+  var offerType = "".obs; // "1" = خصم بالمئة, "2" = عادي
+  var offerStatus = "".obs; // 1..5
   var pickedImage = Rx<File?>(null);
-
   var isLoading = false.obs;
 
-  /// ======== Submit Offer =========
-  Future<void> submitOffer({required String organizationId}) async {
+  /// ===== Submit Offer =====
+  Future<void> submitOffer({required int organizationId}) async {
     if (productPriceController.text.isEmpty || offerType.value.isEmpty) {
-      AppSnackbar.warning( "يرجى تعبئة الحقول المطلوبة",
-      englishMessage: "Please fill in the required fields");
+      AppSnackbar.warning("يرجى تعبئة الحقول المطلوبة",
+          englishMessage: "Please fill in the required fields");
+      return;
+    }
+
+    // تحقق من نسبة الخصم عند اختيار خصم بالمئة
+    if (offerType.value == "1" && offerPriceController.text.isEmpty) {
+      AppSnackbar.warning("يرجى إدخال نسبة الخصم",
+          englishMessage: "Please enter discount percentage");
       return;
     }
 
@@ -55,15 +62,13 @@ class CreateOfferProviderController extends GetxController {
     );
 
     Either<Failure, WithOutDataModel> result =
-    await _createOfferProviderUseCase.execute(request);
+        await _createOfferProviderUseCase.execute(request);
 
     result.fold(
-          (failure) {
-            AppSnackbar.error(failure.message,);
-      },
-          (success) {
-       AppSnackbar.success("تمت إضافة العرض بنجاح",
-       englishMessage: "Offer has been added successfully");
+      (failure) => AppSnackbar.error(failure.message),
+      (success) {
+        AppSnackbar.success("تمت إضافة العرض بنجاح",
+            englishMessage: "Offer has been added successfully");
         clearForm();
       },
     );
@@ -71,7 +76,7 @@ class CreateOfferProviderController extends GetxController {
     isLoading.value = false;
   }
 
-  /// ======== Clear Form After Submit =========
+  /// ===== Clear Form =====
   void clearForm() {
     productNameController.clear();
     productDescriptionController.clear();

@@ -1,9 +1,8 @@
-import 'package:get/get.dart';
-import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/core/error_handler/failure.dart';
-
-import 'package:app_mobile/features/users/offer_user/list_offers/domain/model/offer_user_model.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/features/users/offer_user/list_offers/domain/model/offer_user_item_model.dart';
+import 'package:app_mobile/features/users/offer_user/list_offers/domain/model/offer_user_model.dart';
+import 'package:get/get.dart';
 
 import '../../domain/use_case/get_offer_use_case.dart';
 
@@ -19,7 +18,6 @@ class OffersController extends GetxController {
   /// البيانات
   final offers = <OfferUserItemModel>[].obs;
 
-  /// جلب البيانات الأولية
   Future<void> fetchOffers() async {
     isLoading.value = true;
     errorMessage.value = '';

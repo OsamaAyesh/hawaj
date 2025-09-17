@@ -1,15 +1,15 @@
-import 'package:app_mobile/core/util/snack_bar.dart';
-import 'package:get/get.dart';
 import 'package:app_mobile/core/error_handler/failure.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/model/plan_item_model.dart';
-import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/domain/model/get_my_organization_offer_provider_model.dart';
+import 'package:get/get.dart';
 
 import '../../../../../../core/model/orgnization_company_daily_offer_item_model.dart';
-import '../../domain/use_case/get_plans_use_case.dart';
-import '../../domain/use_case/get_my_organization_offer_provider_use_case.dart';
-import '../../domain/use_case/set_subscription_offer_provider_use_case.dart';
+import '../../data/request/get_organizations_request.dart';
 import '../../data/request/set_subscription_offer_provider_request.dart';
+import '../../domain/use_case/get_my_organization_offer_provider_use_case.dart';
+import '../../domain/use_case/get_plans_use_case.dart';
+import '../../domain/use_case/set_subscription_offer_provider_use_case.dart';
 import '../pages/success_subscription_offer_provider_screen.dart';
 
 class PlansController extends GetxController {
@@ -18,10 +18,10 @@ class PlansController extends GetxController {
   final SetSubscriptionOfferProviderUseCase _setSubscriptionUseCase;
 
   PlansController(
-      this._getPlansUseCase,
-      this._getMyOrganizationsUseCase,
-      this._setSubscriptionUseCase,
-      );
+    this._getPlansUseCase,
+    this._getMyOrganizationsUseCase,
+    this._setSubscriptionUseCase,
+  );
 
   /// Loading & Error
   var isLoading = false.obs;
@@ -34,7 +34,7 @@ class PlansController extends GetxController {
   /// Organizations
   var organizations = <OrganizationCompanyDailyOfferItemModel>[].obs;
   Rxn<OrganizationCompanyDailyOfferItemModel> selectedOrganization =
-  Rxn<OrganizationCompanyDailyOfferItemModel>();
+      Rxn<OrganizationCompanyDailyOfferItemModel>();
 
   /// -------- Fetch Plans --------
   Future<void> fetchPlans() async {
@@ -44,11 +44,11 @@ class PlansController extends GetxController {
     final result = await _getPlansUseCase.execute();
 
     result.fold(
-          (Failure failure) {
+      (Failure failure) {
         isLoading.value = false;
         errorMessage.value = failure.message;
       },
-          (planModel) {
+      (planModel) {
         isLoading.value = false;
         plans.value = planModel.data.data;
         if (plans.isNotEmpty) {
@@ -62,15 +62,15 @@ class PlansController extends GetxController {
   Future<void> fetchOrganizations() async {
     isLoading.value = true;
     errorMessage.value = '';
-
-    final result = await _getMyOrganizationsUseCase.execute();
+    final request = GetOrganizationsRequest(my: true);
+    final result = await _getMyOrganizationsUseCase.execute(request);
 
     result.fold(
-          (Failure failure) {
+      (Failure failure) {
         isLoading.value = false;
         errorMessage.value = failure.message;
       },
-          (organizationModel) {
+      (organizationModel) {
         isLoading.value = false;
         organizations.value = organizationModel.data.data;
         if (organizations.isNotEmpty) {
@@ -106,15 +106,15 @@ class PlansController extends GetxController {
     final result = await _setSubscriptionUseCase.execute(request);
 
     result.fold(
-          (Failure failure) {
+      (Failure failure) {
         isLoading.value = false;
         errorMessage.value = failure.message;
       },
-          (WithOutDataModel response) {
+      (WithOutDataModel response) {
         isLoading.value = false;
         AppSnackbar.success("تم الأشتراك بنجاح في هذه الخطة لمؤسستك",
-          englishMessage: "Successfully subscribed to this plan for your organization."
-        );
+            englishMessage:
+                "Successfully subscribed to this plan for your organization.");
         Get.offAll(const SuccessSubscriptionOfferProviderScreen());
       },
     );

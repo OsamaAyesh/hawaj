@@ -8,6 +8,7 @@ import 'package:app_mobile/features/users/offer_user/company_with_offer/data/res
 import 'package:app_mobile/features/users/offer_user/list_offers/data/response/offer_user_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
+
 import '../../constants/env/env_constants.dart';
 import '../../constants/request_constants/request_constants.dart';
 import '../../constants/request_constants/request_constants_endpoints.dart';
@@ -30,99 +31,91 @@ abstract class AppService {
 
   ///On Boarding Request
   @GET(RequestConstantsEndpoints.getOnBoarding)
-  Future<OnBoardingResponse> getOnBoardingData(
-      );
+  Future<OnBoardingResponse> getOnBoardingData();
 
   ///==== Send Otp Request
   @POST(RequestConstantsEndpoints.sendOtp)
   Future<SendOtpResponse> sendOtp(
-      @Field(RequestConstants.phone) String phone,
-      );
+    @Field(RequestConstants.phone) String phone,
+  );
 
   ///==== Verfiy Otp Request
   @POST(RequestConstantsEndpoints.verfiyOtp)
   Future<VerfiyOtpResponse> verfiyOtp(
-      @Field(RequestConstants.phone) String phone,
-      @Field(RequestConstants.otp) String otp,
-      );
+    @Field(RequestConstants.phone) String phone,
+    @Field(RequestConstants.otp) String otp,
+  );
 
   ///=> Offer Provider
   ///===== Get Plan Request
   @GET(RequestConstantsEndpoints.getPlans)
-  Future<PlanResponse> getPlansOfferProvider(
-      );
-
+  Future<PlanResponse> getPlansOfferProvider();
 
   ///==== Register My Company Custom Offer Provider
   @POST(RequestConstantsEndpoints.registerMyCompanyOfferProvider)
   @MultiPart()
   Future<WithOutDataResponse> registerMyCompanyOfferProviderRequest(
-      @Body() FormData formData
-      );
-
+      @Body() FormData formData);
 
   ///==== Create Offer Provider
   @POST(RequestConstantsEndpoints.createOfferProvider)
   @MultiPart()
-  Future<WithOutDataResponse> createOfferProvider(
-      @Body() FormData formData
-      );
+  Future<WithOutDataResponse> createOfferProvider(@Body() FormData formData);
 
   ///====== Set Subscription Offer Provider Request.
   @POST(RequestConstantsEndpoints.setSubscriptionOfferProvider)
   Future<WithOutDataResponse> setSubscriptionOfferProvider(
-      @Field(RequestConstants.organizationsId) int organizationsId,
-      @Field(RequestConstants.plansId) int plansId,
-      );
+    @Field(RequestConstants.organizationsId) int organizationsId,
+    @Field(RequestConstants.plansId) int plansId,
+  );
 
   ///=== Get My Offer
   @GET(RequestConstantsEndpoints.getMyOffer)
-  Future<OfferResponse> getMyOffer(
-      );
+  Future<OfferResponse> getMyOffer();
 
   ///===== Update Profile Request .======
   @PUT(RequestConstantsEndpoints.getMyOffer)
   Future<WithOutDataResponse> updateProfile(
-      @Query(RequestConstants.name) String? name,
-      );
+    @Query(RequestConstants.name) String? name,
+  );
 
   ///====== Update Avatar =====
   @POST(RequestConstantsEndpoints.updateAvatar)
   @MultiPart()
-  Future<WithOutDataResponse> updateAvatar(
-      @Body() FormData formData
-      );
+  Future<WithOutDataResponse> updateAvatar(@Body() FormData formData);
 
   ///=====Get Profile Request
   @GET(RequestConstantsEndpoints.getProfile)
-  Future<GetProfileResponse> getProfile(
-      );
-
+  Future<GetProfileResponse> getProfile();
 
   ///===== Get Offers Data
   @GET(RequestConstantsEndpoints.getOffers)
   Future<OfferUserResponse> getOffers(
-      @Query(RequestConstants.language) String language,
-      );
+    @Query(RequestConstants.language) String language,
+  );
 
   ///=== Get My Organization Request.
-  @GET(RequestConstantsEndpoints.getMyOrganizations)
+  @GET(RequestConstantsEndpoints.getCompany)
   Future<GetMyOrganizationOfferProviderResponse> getMyOrganizations(
-      );
+    @Query(RequestConstants.language) String? language,
+    @Query(RequestConstants.id) int? id,
+    @Query(RequestConstants.my) bool? my,
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.lng) String? lng,
+  );
 
   ///===== Get Company Request By Id Org.
-  @GET(RequestConstantsEndpoints.getMyOrganizations)
+  @GET(RequestConstantsEndpoints.getCompany)
   Future<GetCompanyResponse> getCompany(
-      @Query(RequestConstants.id) int id,
-      );
+    @Query(RequestConstants.id) int id,
+  );
 
   ///===== Completed Profile Request.
   @POST(RequestConstantsEndpoints.completedProfile)
   Future<WithOutDataResponse> completedProfile(
-      @Query(RequestConstants.firstName) String firstName,
-      @Query(RequestConstants.lastName) String lastName,
-      @Query(RequestConstants.gender) int gender,
-      @Query(RequestConstants.dateOfBirth) String dateOfBirth,
-      );
-
+    @Query(RequestConstants.firstName) String firstName,
+    @Query(RequestConstants.lastName) String lastName,
+    @Query(RequestConstants.gender) int gender,
+    @Query(RequestConstants.dateOfBirth) String dateOfBirth,
+  );
 }

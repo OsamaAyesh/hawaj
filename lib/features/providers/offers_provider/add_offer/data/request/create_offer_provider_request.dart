@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dio/dio.dart';
 
 class CreateOfferProviderRequest {
@@ -6,13 +7,14 @@ class CreateOfferProviderRequest {
   final String? productDescription;
   final File? productImage;
   final String productPrice; // مطلوب
-  final String offerType;    // مطلوب (1, 2, 3)
+  final String offerType; // مطلوب (1, 2, 3)
   final String? offerPrice;
   final String? offerStartDate;
   final String? offerEndDate;
   final String? offerDescription;
-  final String organizationId; // مطلوب
-  final String? offerStatus;   // (1 نشر, 2 غير منشور, 3 منتهي, 4 ملغي, 5 قيد المعاينة)
+  final int organizationId; // مطلوب
+  final String?
+      offerStatus; // (1 نشر, 2 غير منشور, 3 منتهي, 4 ملغي, 5 قيد المعاينة)
 
   CreateOfferProviderRequest({
     this.productName,
@@ -40,7 +42,7 @@ class CreateOfferProviderRequest {
     }
     formData.fields.add(MapEntry('product_price', productPrice));
     formData.fields.add(MapEntry('offer_type', offerType));
-    formData.fields.add(MapEntry('organization_id', organizationId));
+    formData.fields.add(MapEntry('organization_id', organizationId.toString()));
 
     if (offerPrice?.isNotEmpty ?? false) {
       formData.fields.add(MapEntry('offer_price', offerPrice!));

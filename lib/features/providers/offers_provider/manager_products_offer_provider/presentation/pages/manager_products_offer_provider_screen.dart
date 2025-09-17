@@ -8,19 +8,26 @@ import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/storage/local/app_settings_prefs.dart';
 import '../../../../../../core/widgets/quick_access_widget.dart';
+import '../../../add_offer/domain/di/di.dart';
+import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
+import '../../../subscription_offer_provider/domain/di/di.dart';
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
   const ManagerProductsOfferProviderScreen({super.key});
 
   @override
-  State<ManagerProductsOfferProviderScreen> createState() => _ManagerProductsOfferProviderScreenState();
+  State<ManagerProductsOfferProviderScreen> createState() =>
+      _ManagerProductsOfferProviderScreenState();
 }
 
-class _ManagerProductsOfferProviderScreenState extends State<ManagerProductsOfferProviderScreen>
+class _ManagerProductsOfferProviderScreenState
+    extends State<ManagerProductsOfferProviderScreen>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fade;
@@ -42,22 +49,23 @@ class _ManagerProductsOfferProviderScreenState extends State<ManagerProductsOffe
     _fade = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _slide =
         Tween<Offset>(begin: const Offset(0, 0.05), end: Offset.zero).animate(
-          CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-        );
+      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
+    );
     quickAccessActions = [
-          () {
-        if (kDebugMode) {
-          print("إدارة المنتجات");
-        }
-
-      },
-          () {
+      () {
         if (kDebugMode) {
           print("إضافة منتج");
         }
-
+        initCreateOfferProvider();
+        initGetPlan();
+        Get.to(AddOfferProviderScreen());
       },
-          () {
+      () {
+        if (kDebugMode) {
+          print("إدارة المنتجات");
+        }
+      },
+      () {
         if (kDebugMode) {
           print("تفاصيل المنشأة");
         }
@@ -72,14 +80,15 @@ class _ManagerProductsOfferProviderScreenState extends State<ManagerProductsOffe
     super.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ScaffoldWithBackButton(
       title: ManagerStrings.productManagement,
       body: Column(
         children: [
-          SizedBox(height: ManagerHeight.h14,),
+          SizedBox(
+            height: ManagerHeight.h14,
+          ),
           Expanded(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -91,8 +100,8 @@ class _ManagerProductsOfferProviderScreenState extends State<ManagerProductsOffe
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ManagerWidth.w16),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
                         child: Text(
                           ManagerStrings.quickAccess,
                           style: getBoldTextStyle(
@@ -101,21 +110,23 @@ class _ManagerProductsOfferProviderScreenState extends State<ManagerProductsOffe
                           ),
                         ),
                       ),
-                      SizedBox(height: ManagerHeight.h4,),
+                      SizedBox(
+                        height: ManagerHeight.h4,
+                      ),
                       Padding(
-                        padding: EdgeInsets.symmetric(
-                            horizontal: ManagerWidth.w16),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
                         child: GridView.builder(
                           padding: EdgeInsets.only(top: ManagerHeight.h8),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
-                          SliverGridDelegateWithFixedCrossAxisCount(
+                              SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: 2,
                             crossAxisSpacing: 12,
                             mainAxisSpacing: 12,
                             childAspectRatio:
-                            ManagerWidth.w164 / ManagerHeight.h156,
+                                ManagerWidth.w164 / ManagerHeight.h156,
                           ),
                           itemCount: itemsOfferManagerProvider.length,
                           itemBuilder: (context, index) {
@@ -143,6 +154,5 @@ class _ManagerProductsOfferProviderScreenState extends State<ManagerProductsOffe
         ],
       ),
     );
-
   }
 }
