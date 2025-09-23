@@ -13,6 +13,7 @@ import '../../constants/env/env_constants.dart';
 import '../../constants/request_constants/request_constants.dart';
 import '../../constants/request_constants/request_constants_endpoints.dart';
 import '../../features/common/auth/data/response/verfiy_otp_response.dart';
+import '../../features/common/hawaj_voice/data/response/send_data_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
@@ -140,5 +141,16 @@ abstract class AppService {
     @Query(RequestConstants.my) bool? my,
     @Query(RequestConstants.lat) String? lat,
     @Query(RequestConstants.lng) String? lng,
+  );
+
+//===== Hawaj AI Send Data Request
+  @POST(RequestConstantsEndpoints.sendData)
+  Future<SendDataResponse> sendData(
+    @Field(RequestConstants.stringUser) String stringUser,
+    @Field(RequestConstants.lat) String lat,
+    @Field(RequestConstants.lng) String lng,
+    @Field(RequestConstants.language) String language,
+    @Field(RequestConstants.q) String q,
+    @Field(RequestConstants.s) String s,
   );
 }

@@ -59,4 +59,11 @@ class ResponseConstants {
   static const String offerImage = "offer_image";
   static const String offerPercentage = "offer_percentage";
   static const String offerTypeLabel = "offer_type_label";
+  static const String q = "q";
+  static const String s = "s";
+  static const String d = "d";
+  static const String section = "section";
+  static const String screen = "screen";
+  static const String parameters = "parameters";
+  static const String mp3 = "mp3";
 }

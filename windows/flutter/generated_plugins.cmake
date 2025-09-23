@@ -3,7 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
   connectivity_plus
+  flutter_tts
   geolocator_windows
   permission_handler_windows
   speech_to_text_windows

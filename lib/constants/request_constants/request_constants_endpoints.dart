@@ -19,4 +19,5 @@ class RequestConstantsEndpoints {
   static const String getOffers = '$apiUrlBase/getoffer';
   static const String completedProfile = '$apiUrlBase/myprofile';
   static const String getCompany = '$apiUrlBase/getorganization';
+  static const String sendData = '$apiUrlBase/senddata';
 }
