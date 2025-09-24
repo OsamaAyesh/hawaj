@@ -1,4 +1,5 @@
 import 'package:app_mobile/core/util/snack_bar.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_voice_extension.dart';
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
@@ -429,32 +430,32 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                 //     curve: Curves.elasticOut,
                 //   ),
                 //   child:
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20.0),
-                    child: ElevatedButton.icon(
-                      onPressed: _navigateToResults,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ManagerColors.primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 8,
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: ElevatedButton.icon(
+                    onPressed: _navigateToResults,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ManagerColors.primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
                       ),
-                      icon: const Icon(Icons.search, size: 24),
-                      label: Text(
-                        "استمر للنتائج",
-                        style: getBoldTextStyle(
-                          fontSize: ManagerFontSize.s12,
-                          color: ManagerColors.white,
-                        ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      elevation: 8,
+                    ),
+                    icon: const Icon(Icons.search, size: 24),
+                    label: Text(
+                      "استمر للنتائج",
+                      style: getBoldTextStyle(
+                        fontSize: ManagerFontSize.s12,
+                        color: ManagerColors.white,
                       ),
                     ),
                   ),
+                ),
                 // ),
 
                 if (!_showActionButton) SizedBox(height: ManagerHeight.h20),
@@ -463,7 +464,7 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
           ),
         ],
       ),
-    );
+    ).withHawajVoiceSmart();
   }
 }
 

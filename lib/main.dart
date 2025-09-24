@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+
 import 'constants/constants/constants.dart';
 import 'constants/env/env_constants.dart';
 import 'core/locale/locales.dart';
@@ -46,9 +47,9 @@ class MyApp extends StatelessWidget {
           // locale: const Locale("en"),
           locale: localeSettings.defaultLocale,
           debugShowCheckedModeBanner:
-          dotenv.env[EnvConstants.debug].onNullBool(),
+              dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.managerProductsOfferProviderScreen,
+          initialRoute: Routes.splash,
           navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,
