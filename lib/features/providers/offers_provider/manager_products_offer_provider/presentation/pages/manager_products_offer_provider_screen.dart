@@ -1,12 +1,10 @@
 import 'package:app_mobile/constants/constants/constants.dart';
-import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_global_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/storage/local/app_settings_prefs.dart';
-import '../../../../../common/hawaj_voice/presentation/controller/hawaj_ai_controller.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
 // إضافة هذا الـ import
@@ -74,22 +72,22 @@ class _ManagerProductsOfferProviderScreenState
   }
 
   void _initializeHawaj() {
-    try {
-      final controller = Get.find<HawajAIController>();
-      controller.show();
-      controller.updateContext('2', '1', message: '''
-🛍️ أهلاً بك في إدارة المنتجات!
-
-يمكنني مساعدتك في:
-- إضافة منتجات جديدة
-- إدارة المنتجات الحالية  
-- عرض تفاصيل المنشأة
-
-فقط اضغط علي واسألني أي شيء!
-        ''');
-    } catch (e) {
-      print('خطأ في تهيئة حواج: $e');
-    }
+//     try {
+//       final controller = Get.find<HawajAIController>();
+//       controller.show();
+//       controller.updateContext('2', '1', message: '''
+// 🛍️ أهلاً بك في إدارة المنتجات!
+//
+// يمكنني مساعدتك في:
+// - إضافة منتجات جديدة
+// - إدارة المنتجات الحالية
+// - عرض تفاصيل المنشأة
+//
+// فقط اضغط علي واسألني أي شيء!
+//         ''');
+//     } catch (e) {
+//       print('خطأ في تهيئة حواج: $e');
+//     }
   }
 
   @override
@@ -170,7 +168,7 @@ class _ManagerProductsOfferProviderScreenState
         //     ],
         //   ),
         // ),
-        HawajGlobalWidget(section: "1", screen: "2")
+        // HawajGlobalWidget(section: "1", screen: "2")
         // حواج المساعد الذكي - مباشرة
         // GetX<HawajAIController>(
         //   builder: (controller) {
@@ -216,92 +214,92 @@ class _ManagerProductsOfferProviderScreenState
     );
   }
 
-  Widget _buildCompactHawaj(HawajAIController controller) {
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: Icon(
-            controller.stateIcon,
-            key: ValueKey(controller.currentState),
-            color: Colors.white,
-            size: 32,
-          ),
-        ),
-        if (controller.isProcessing)
-          const SizedBox(
-            width: 50,
-            height: 50,
-            child: CircularProgressIndicator(
-              color: Colors.white70,
-              strokeWidth: 3,
-            ),
-          ),
-      ],
-    );
-  }
+  // Widget _buildCompactHawaj(HawajAIController controller) {
+  //   return Stack(
+  //     alignment: Alignment.center,
+  //     children: [
+  //       AnimatedSwitcher(
+  //         duration: const Duration(milliseconds: 300),
+  //         child: Icon(
+  //           controller.stateIcon,
+  //           key: ValueKey(controller.currentState),
+  //           color: Colors.white,
+  //           size: 32,
+  //         ),
+  //       ),
+  //       if (controller.isProcessing)
+  //         const SizedBox(
+  //           width: 50,
+  //           height: 50,
+  //           child: CircularProgressIndicator(
+  //             color: Colors.white70,
+  //             strokeWidth: 3,
+  //           ),
+  //         ),
+  //     ],
+  //   );
+  // }
 
-  Widget _buildExpandedHawaj(HawajAIController controller) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Header
-          Row(
-            children: [
-              Icon(controller.stateIcon, color: Colors.white, size: 20),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  '${controller.stateEmoji} حواج',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              GestureDetector(
-                onTap: () => controller.collapse(),
-                child: const Icon(Icons.close, color: Colors.white, size: 18),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          // Message
-          Expanded(
-            child: SingleChildScrollView(
-              child: Text(
-                controller.currentMessage,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ),
-
-          // Controls
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildMiniButton(
-                controller.isListening ? Icons.mic_off : Icons.mic,
-                () => controller.toggleListening(),
-              ),
-              if (controller.isSpeaking)
-                _buildMiniButton(Icons.stop, () => controller.stopSpeaking()),
-              _buildMiniButton(Icons.refresh, () => controller.clearResponse()),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildExpandedHawaj(HawajAIController controller) {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(16),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         // Header
+  //         Row(
+  //           children: [
+  //             Icon(controller.stateIcon, color: Colors.white, size: 20),
+  //             const SizedBox(width: 8),
+  //             Expanded(
+  //               child: Text(
+  //                 '${controller.stateEmoji} حواج',
+  //                 style: const TextStyle(
+  //                   color: Colors.white,
+  //                   fontSize: 16,
+  //                   fontWeight: FontWeight.bold,
+  //                 ),
+  //               ),
+  //             ),
+  //             GestureDetector(
+  //               onTap: () => controller.collapse(),
+  //               child: const Icon(Icons.close, color: Colors.white, size: 18),
+  //             ),
+  //           ],
+  //         ),
+  //
+  //         const SizedBox(height: 8),
+  //
+  //         // Message
+  //         Expanded(
+  //           child: SingleChildScrollView(
+  //             child: Text(
+  //               controller.currentMessage,
+  //               style: const TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 12,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //
+  //         // Controls
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //           children: [
+  //             _buildMiniButton(
+  //               controller.isListening ? Icons.mic_off : Icons.mic,
+  //               () => controller.toggleListening(),
+  //             ),
+  //             if (controller.isSpeaking)
+  //               _buildMiniButton(Icons.stop, () => controller.stopSpeaking()),
+  //             _buildMiniButton(Icons.refresh, () => controller.clearResponse()),
+  //           ],
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildMiniButton(IconData icon, VoidCallback onTap) {
     return GestureDetector(
@@ -318,13 +316,13 @@ class _ManagerProductsOfferProviderScreenState
     );
   }
 
-  void _handleHawajTap(HawajAIController controller) {
-    if (controller.isExpanded) {
-      controller.toggleListening();
-    } else {
-      controller.expand();
-    }
-  }
+// void _handleHawajTap(HawajAIController controller) {
+//   if (controller.isExpanded) {
+//     controller.toggleListening();
+//   } else {
+//     controller.expand();
+//   }
+// }
 }
 // import 'package:app_mobile/constants/constants/constants.dart';
 // import 'package:app_mobile/core/resources/manager_colors.dart';

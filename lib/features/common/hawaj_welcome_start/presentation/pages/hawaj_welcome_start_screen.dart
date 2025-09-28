@@ -1,18 +1,17 @@
-import 'package:app_mobile/core/util/snack_bar.dart';
-import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_voice_extension.dart';
-import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
-import 'package:flutter/material.dart';
-import 'dart:math' as math;
-import 'package:permission_handler/permission_handler.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
-import 'package:get/get.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
+import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:confetti/confetti.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:speech_to_text/speech_to_text.dart';
+
 import '../../../map/domain/di/di.dart';
 
 class HawajWelcomeStartScreen extends StatefulWidget {
@@ -461,10 +460,18 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                 if (!_showActionButton) SizedBox(height: ManagerHeight.h20),
               ],
             ),
-          ),
+          )
+          //           .withHawajVoiceAdvanced(
+          //         section: "2",
+          // screen: "1",
+          // welcomeMessage: "مرحباً بك في المنتجات",
+          // x: 20,
+          // y: 100,
+          // ),
         ],
       ),
-    ).withHawajVoiceSmart();
+    );
+    // .withHawajVoiceSmart();
   }
 }
 
