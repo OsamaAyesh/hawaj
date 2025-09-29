@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../data/request/create_offer_provider_request.dart';
 import '../../data/request/get_my_company_set_offer_request.dart';
 import '../../domain/model/get_my_company_set_offer_model.dart';
@@ -184,7 +185,7 @@ class AddOfferController extends GetxController {
           );
           if (kDebugMode) print('[AddOffer] ✅ تم إضافة العرض بنجاح');
           clearForm();
-          Get.back(result: true);
+          Get.offAll(ManagerProductsOfferProviderScreen());
         },
       );
     } catch (e) {

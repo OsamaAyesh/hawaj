@@ -52,7 +52,6 @@ class MapSectionsController extends GetxController {
     try {
       if (kDebugMode) print('[MapSections] جاري جلب بيانات: ${section.name}');
 
-      // هنا يتم استدعاء الـ UseCase المناسب لكل قسم
       switch (section) {
         case MapSectionType.dailyOffers:
           await _fetchDailyOffers();
