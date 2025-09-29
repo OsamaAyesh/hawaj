@@ -1,8 +1,11 @@
 import 'dart:io';
-import 'package:get/get.dart';
-import 'package:app_mobile/core/model/with_out_data_model.dart';
+
 import 'package:app_mobile/core/error_handler/failure.dart';
+import 'package:app_mobile/core/model/with_out_data_model.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/features/providers/offers_provider/register_company_offer_provider/data/request/register_my_company_offer_provider_request.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../domain/use_case/register_my_company_offer_provider_use_case.dart';
 
@@ -11,86 +14,175 @@ class RegisterMyCompanyOfferProviderController extends GetxController {
 
   RegisterMyCompanyOfferProviderController(this._useCase);
 
-  /// ================= Observables =================
-  var isLoading = false.obs;
-  var errorMessage = ''.obs;
-  var isSuccess = false.obs;
+  // ===== Text Controllers =====
+  final organizationNameController = TextEditingController();
+  final organizationServicesController = TextEditingController();
+  final organizationLocationController = TextEditingController();
+  final organizationDetailedAddressController = TextEditingController();
+  final managerNameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+  final workingHoursController = TextEditingController();
+  final commercialRegistrationNumberController = TextEditingController();
 
-  /// Form fields
-  var organizationName = ''.obs;
-  var organizationServices = ''.obs;
-  var organizationType = ''.obs;
-  var organizationLocation = ''.obs;
-  var organizationDetailedAddress = ''.obs;
-  var managerName = ''.obs;
-  var phoneNumber = ''.obs;
-  var workingHours = ''.obs;
-  var commercialRegistrationNumber = ''.obs;
-  var organizationStatus = ''.obs;
+  // ===== State =====
+  final isLoading = false.obs;
+  final errorMessage = ''.obs;
+  final isSuccess = false.obs;
 
-  /// File pickers
-  File? organizationLogo;
-  File? organizationBanner;
-  File? commercialRegistrationFile;
+  // ===== Files =====
+  final organizationLogo = Rx<File?>(null);
+  final organizationBanner = Rx<File?>(null);
+  final commercialRegistrationFile = Rx<File?>(null);
 
-  /// ================== Methods ==================
+  // ===== Dropdown Values =====
+  final organizationType = ''.obs;
+  final organizationStatus = '1'.obs; // افتراضياً: نشط
 
-  /// Update file fields
-  void setOrganizationLogo(File file) {
-    organizationLogo = file;
-    update();
+  // ===== Validation =====
+  bool _validateForm() {
+    if (organizationNameController.text.trim().isEmpty) {
+      AppSnackbar.warning(
+        'يرجى إدخال اسم الشركة',
+        englishMessage: 'Please enter company name',
+      );
+      return false;
+    }
+    if (organizationServicesController.text.trim().isEmpty) {
+      AppSnackbar.warning(
+        'يرجى إدخال خدمات الشركة',
+        englishMessage: 'Please enter company services',
+      );
+      return false;
+    }
+    if (organizationLocationController.text.trim().isEmpty) {
+      AppSnackbar.warning(
+        'يرجى تحديد الموقع',
+        englishMessage: 'Please set location',
+      );
+      return false;
+    }
+    if (managerNameController.text.trim().isEmpty) {
+      AppSnackbar.warning(
+        'يرجى إدخال اسم المسؤول',
+        englishMessage: 'Please enter manager name',
+      );
+      return false;
+    }
+    if (phoneNumberController.text.trim().isEmpty) {
+      AppSnackbar.warning(
+        'يرجى إدخال رقم الهاتف',
+        englishMessage: 'Please enter phone number',
+      );
+      return false;
+    }
+    if (commercialRegistrationNumberController.text.trim().isEmpty) {
+      AppSnackbar.warning(
+        'يرجى إدخال السجل التجاري',
+        englishMessage: 'Please enter commercial registration',
+      );
+      return false;
+    }
+    if (organizationLogo.value == null) {
+      AppSnackbar.warning(
+        'يرجى رفع شعار الشركة',
+        englishMessage: 'Please upload company logo',
+      );
+      return false;
+    }
+    if (commercialRegistrationFile.value == null) {
+      AppSnackbar.warning(
+        'يرجى رفع السجل التجاري',
+        englishMessage: 'Please upload commercial registration',
+      );
+      return false;
+    }
+    return true;
   }
 
-  void setOrganizationBanner(File file) {
-    organizationBanner = file;
-    update();
-  }
-
-  void setCommercialRegistrationFile(File file) {
-    commercialRegistrationFile = file;
-    update();
-  }
-
-  /// Main submit
+  // ===== Register Organization =====
   Future<void> registerOrganization() async {
+    if (!_validateForm()) return;
+
     isLoading.value = true;
     errorMessage.value = '';
     isSuccess.value = false;
 
     final request = RegisterMyCompanyOfferProviderRequest(
-      organizationName: organizationName.value,
-      organizationServices: organizationServices.value,
+      organizationName: organizationNameController.text.trim(),
+      organizationServices: organizationServicesController.text.trim(),
       organizationType: organizationType.value,
-      organizationLocation: organizationLocation.value,
-      organizationDetailedAddress: organizationDetailedAddress.value,
-      managerName: managerName.value,
-      phoneNumber: phoneNumber.value,
-      workingHours: workingHours.value,
-      commercialRegistrationNumber: commercialRegistrationNumber.value,
+      organizationLocation: organizationLocationController.text.trim(),
+      organizationDetailedAddress:
+          organizationDetailedAddressController.text.trim(),
+      managerName: managerNameController.text.trim(),
+      phoneNumber: phoneNumberController.text.trim(),
+      workingHours: workingHoursController.text.trim(),
+      commercialRegistrationNumber:
+          commercialRegistrationNumberController.text.trim(),
       organizationStatus: organizationStatus.value,
-      organizationLogo: organizationLogo,
-      organizationBanner: organizationBanner,
-      commercialRegistrationFile: commercialRegistrationFile,
+      organizationLogo: organizationLogo.value,
+      organizationBanner: organizationBanner.value,
+      commercialRegistrationFile: commercialRegistrationFile.value,
     );
 
     final result = await _useCase.execute(request);
 
     result.fold(
-          (Failure failure) {
+      (Failure failure) {
         errorMessage.value = failure.message;
-        isLoading.value = false;
+        AppSnackbar.error(
+          failure.message,
+          englishMessage: 'Registration failed',
+        );
       },
-          (WithOutDataModel response) {
+      (WithOutDataModel response) {
         isSuccess.value = true;
-        isLoading.value = false;
+        AppSnackbar.success(
+          'تم تسجيل الشركة بنجاح',
+          englishMessage: 'Company registered successfully',
+        );
+        _clearForm();
+        Get.back(result: true);
       },
     );
+
+    isLoading.value = false;
   }
 
-  /// Reset state
+  // ===== Clear Form =====
+  void _clearForm() {
+    organizationNameController.clear();
+    organizationServicesController.clear();
+    organizationLocationController.clear();
+    organizationDetailedAddressController.clear();
+    managerNameController.clear();
+    phoneNumberController.clear();
+    workingHoursController.clear();
+    commercialRegistrationNumberController.clear();
+    organizationLogo.value = null;
+    organizationBanner.value = null;
+    commercialRegistrationFile.value = null;
+    organizationType.value = '';
+    organizationStatus.value = '1';
+  }
+
+  // ===== Reset State =====
   void resetState() {
     isLoading.value = false;
     errorMessage.value = '';
     isSuccess.value = false;
+  }
+
+  @override
+  void onClose() {
+    organizationNameController.dispose();
+    organizationServicesController.dispose();
+    organizationLocationController.dispose();
+    organizationDetailedAddressController.dispose();
+    managerNameController.dispose();
+    phoneNumberController.dispose();
+    workingHoursController.dispose();
+    commercialRegistrationNumberController.dispose();
+    super.onClose();
   }
 }

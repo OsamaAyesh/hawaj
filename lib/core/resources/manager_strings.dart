@@ -450,6 +450,20 @@ class ManagerStrings {
 
   static String get offerStatusHint => tr('offer_status_hint');
 
+  /// ===== Map / Location Strings =====
+  static String get errorTitle => tr('error_title');
+
+  static String get locationPermissionDenied =>
+      tr('location_permission_denied');
+
+  static String get setLocationTitle => tr('set_location_title');
+
+  static String get setLocationError => tr('set_location_error');
+
+  static String get retryLocation => tr('retry_location');
+
+  static String get setLocationConfirm => tr('set_location_confirm');
+
   // Used when the provider has not registered a company yet
   static String get noCompanyTitle => tr('no_company_title');
 

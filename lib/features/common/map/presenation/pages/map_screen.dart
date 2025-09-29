@@ -210,7 +210,7 @@ class _MapScreenState extends State<MapScreen> {
 // import '../../../../../core/resources/manager_width.dart';
 // import '../../../../../core/widgets/loading_widget.dart';
 // import '../controller/drawer_controller.dart';
-// import '../controller/map_controller.dart';
+// import '../controller/map_ticker_controller.dart';
 // import '../controller/map_sections_controller.dart';
 // import '../managers/marker_icon_manager.dart';
 // import '../managers/permission_manager.dart';
@@ -446,7 +446,7 @@ class _MapScreenState extends State<MapScreen> {
 // // import '../../../../../core/widgets/loading_widget.dart';
 // // import '../../../../users/offer_user/company_with_offer/domain/di/di.dart';
 // // import '../../../../users/offer_user/list_offers/presentation/controller/get_offers_controller.dart';
-// // import '../controller/map_controller.dart';
+// // import '../controller/map_ticker_controller.dart';
 // // import '../widgets/drawer_widget.dart';
 // // import '../widgets/handel_permission_function.dart';
 // // import '../widgets/location_error_widget.dart';
