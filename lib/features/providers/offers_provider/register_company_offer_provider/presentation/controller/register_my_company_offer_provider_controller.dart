@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../domain/use_case/register_my_company_offer_provider_use_case.dart';
+import '../pages/success_register_company_offer_provider_screen.dart';
 
 class RegisterMyCompanyOfferProviderController extends GetxController {
   final RegisterMyCompanyOfferProviderUseCase _useCase;
@@ -142,7 +143,7 @@ class RegisterMyCompanyOfferProviderController extends GetxController {
           englishMessage: 'Company registered successfully',
         );
         _clearForm();
-        Get.back(result: true);
+        Get.offAll(const SuccessRegisterCompanyOfferProviderScreen());
       },
     );
 

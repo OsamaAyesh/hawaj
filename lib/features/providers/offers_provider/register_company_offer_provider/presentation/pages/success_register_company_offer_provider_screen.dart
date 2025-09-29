@@ -1,32 +1,26 @@
-import 'package:app_mobile/core/resources/manager_icons.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
-import 'package:app_mobile/core/resources/manager_images.dart';
-import 'package:app_mobile/core/resources/manager_radius.dart';
+import 'package:app_mobile/core/resources/manager_icons.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
-import 'package:app_mobile/core/routes/custom_transitions.dart';
-import 'package:app_mobile/core/storage/local/app_settings_prefs.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
+import 'package:app_mobile/core/widgets/loading_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-import '../../../../../../core/widgets/loading_widget.dart';
+import '../../../../../../core/routes/routes.dart';
 
 class SuccessRegisterCompanyOfferProviderScreen extends StatefulWidget {
   const SuccessRegisterCompanyOfferProviderScreen({super.key});
 
   @override
   State<SuccessRegisterCompanyOfferProviderScreen> createState() =>
-      _SuccessVerfiyAccountScreenState();
+      _SuccessRegisterCompanyOfferProviderScreenState();
 }
 
-class _SuccessVerfiyAccountScreenState
+class _SuccessRegisterCompanyOfferProviderScreenState
     extends State<SuccessRegisterCompanyOfferProviderScreen> {
   bool _isLoading = false;
 
@@ -35,55 +29,77 @@ class _SuccessVerfiyAccountScreenState
     return Stack(
       children: [
         Scaffold(
+          backgroundColor: Colors.white,
           body: SingleChildScrollView(
             child: SizedBox(
               width: double.infinity,
-              child:   Column(
+              child: Column(
                 children: [
-                  SizedBox(height: ManagerHeight.h248),
-                  /// =========== Icon Success Image In Screen ======
-                  Image.asset(
-                    ManagerIcons.successIcon,
-                    height: ManagerHeight.h62,
-                    width: ManagerWidth.w62,
-                    fit: BoxFit.contain,
+                  SizedBox(height: ManagerHeight.h200),
+
+                  /// ===== Success Icon =====
+                  Container(
+                    padding: EdgeInsets.all(ManagerWidth.w20),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: ManagerColors.primaryColor.withOpacity(0.1),
+                    ),
+                    child: Image.asset(
+                      ManagerIcons.successIcon,
+                      height: ManagerHeight.h62,
+                      width: ManagerWidth.w62,
+                      fit: BoxFit.contain,
+                    ),
                   ),
+
                   SizedBox(height: ManagerHeight.h24),
 
-                  /// =========== Title Screen Text Widget ======
+                  /// ===== Title =====
                   Text(
-                    ManagerStrings.orgAddedMainTitle,
+                    ManagerStrings.completeSubscriptionTitle,
                     style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s16,
+                      fontSize: ManagerFontSize.s18,
                       color: ManagerColors.black,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+
+                  SizedBox(height: ManagerHeight.h8),
+
+                  /// ===== Subtitle =====
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w32),
+                    child: Text(
+                      ManagerStrings.completeSubscriptionSubtitle,
+                      style: getRegularTextStyle(
+                        fontSize: ManagerFontSize.s12,
+                        color: ManagerColors.gery1OnBoarding,
+                      ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
 
-                  SizedBox(height: ManagerHeight.h4),
-                  /// =========== Sub Title Screen Text Widget ======
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w24),
-                    child: Text(ManagerStrings.orgAddedSubtitle,
-                      style: getRegularTextStyle(
-                        fontSize: ManagerFontSize.s12, color: ManagerColors.gery1OnBoarding,
-                      ),
-                      maxLines: 2,
-                      textAlign: TextAlign.center,),
-                  ),
                   SizedBox(height: ManagerHeight.h48),
+
+                  /// ===== Primary Button: Go to Subscription Plans =====
                   ButtonApp(
-                    title: ManagerStrings.orgAddedPrimaryBtn,
-                    onPressed: (){},
+                    title: ManagerStrings.completeSubscriptionButton,
                     paddingWidth: ManagerWidth.w24,
+                    onPressed: () {
+                      // Navigate to choose subscription plan screen
+                      // Get.toNamed(Routes.);
+                    },
                   ),
-                  SizedBox(height: ManagerHeight.h8),
+
+                  SizedBox(height: ManagerHeight.h12),
+
+                  /// ===== Secondary Text =====
                   Text(
-                    ManagerStrings.orgAddedSecondaryBtn,
+                    ManagerStrings.completeSubscriptionLater,
                     style: getRegularTextStyle(
-                      fontSize: ManagerFontSize.s10,
+                      fontSize: ManagerFontSize.s12,
                       color: ManagerColors.black,
                     ),
-                    maxLines: 1,
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -91,7 +107,9 @@ class _SuccessVerfiyAccountScreenState
             ),
           ),
         ),
-        if (_isLoading) LoadingWidget(),
+
+        /// ===== Loading Overlay =====
+        if (_isLoading) const LoadingWidget(),
       ],
     );
   }

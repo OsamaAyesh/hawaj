@@ -1,6 +1,8 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
@@ -10,8 +12,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../../../../core/resources/manager_font_size.dart';
 
 class DetailsMyCompanyScreen extends StatefulWidget {
   const DetailsMyCompanyScreen({super.key});
@@ -34,13 +34,15 @@ class _DetailsMyCompanyScreenState extends State<DetailsMyCompanyScreen> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldWithBackButton(
-      title: "تفاصيل الشركة",
+      title: ManagerStrings.companyDetailsTitle,
       body: GetBuilder<DetailsMyCompanyController>(
         builder: (_) {
           return Stack(
             children: [
               if (controller.isLoading)
                 const LoadingWidget()
+              else if (controller.hasError)
+                _buildEmptyState()
               else
                 RefreshIndicator(
                   onRefresh: controller.onRefresh,
@@ -56,7 +58,7 @@ class _DetailsMyCompanyScreenState extends State<DetailsMyCompanyScreen> {
                         _buildStatisticsCards(),
                         SizedBox(height: ManagerHeight.h24),
                         Text(
-                          'قائمة الإعدادات',
+                          ManagerStrings.settingsList,
                           style: getBoldTextStyle(
                             fontSize: ManagerFontSize.s12,
                             color: ManagerColors.black,
@@ -64,17 +66,17 @@ class _DetailsMyCompanyScreenState extends State<DetailsMyCompanyScreen> {
                         ),
                         SizedBox(height: ManagerHeight.h16),
                         _settingTile(
-                          'تعديل بيانات المكتب او الشركة',
+                          ManagerStrings.editCompanyData,
                           Icons.edit_outlined,
                           onTap: () {},
                         ),
                         _settingTile(
-                          'معلومات الإشتراك وتفاصيله',
+                          ManagerStrings.subscriptionInfo,
                           Icons.info_outline,
                           onTap: () {},
                         ),
                         _settingTile(
-                          'التواصل مع الدعم الفني',
+                          ManagerStrings.contactSupport,
                           Icons.headset_mic_outlined,
                           onTap: () {},
                         ),
@@ -86,6 +88,86 @@ class _DetailsMyCompanyScreenState extends State<DetailsMyCompanyScreen> {
             ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return RefreshIndicator(
+      onRefresh: controller.onRefresh,
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: Container(
+          height: MediaQuery.of(context).size.height - 200,
+          padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w32),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(32),
+                  decoration: BoxDecoration(
+                    color: ManagerColors.primaryColor.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.business_outlined,
+                    size: 80,
+                    color: ManagerColors.primaryColor,
+                  ),
+                ),
+                SizedBox(height: ManagerHeight.h24),
+
+                /// العنوان
+                Text(
+                  ManagerStrings.noRegisteredCompanyTitle,
+                  style: getBoldTextStyle(
+                    fontSize: ManagerFontSize.s18,
+                    color: ManagerColors.black,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                SizedBox(height: ManagerHeight.h12),
+
+                /// الوصف
+                Text(
+                  ManagerStrings.noRegisteredCompanySubtitle,
+                  style: getRegularTextStyle(
+                    fontSize: ManagerFontSize.s14,
+                    color: Colors.grey,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+
+                SizedBox(height: ManagerHeight.h32),
+
+                /// زر إعادة المحاولة
+                ElevatedButton.icon(
+                  onPressed: controller.onRefresh,
+                  icon: const Icon(Icons.refresh, color: Colors.white),
+                  label: Text(
+                    ManagerStrings.retryButton,
+                    style: getBoldTextStyle(
+                      fontSize: ManagerFontSize.s14,
+                      color: Colors.white,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ManagerColors.primaryColor,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ManagerWidth.w32,
+                      vertical: ManagerHeight.h14,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -192,10 +274,11 @@ class _DetailsMyCompanyScreenState extends State<DetailsMyCompanyScreen> {
 
     return Row(
       children: [
-        _infoCard(
-            '$offersCount+', 'العروض الحالية', Icons.local_offer_outlined),
-        _infoCard(workingHours, 'ساعات العمل', Icons.access_time_outlined),
-        _infoCard(city, 'الموقع', Icons.location_on_outlined),
+        _infoCard('$offersCount+', ManagerStrings.currentOffers,
+            Icons.local_offer_outlined),
+        _infoCard(workingHours, ManagerStrings.workingHours,
+            Icons.access_time_outlined),
+        _infoCard(city, ManagerStrings.location, Icons.location_on_outlined),
       ],
     );
   }

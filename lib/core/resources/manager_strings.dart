@@ -485,6 +485,38 @@ class ManagerStrings {
 
   static String get legendTitle => tr('legend_title');
 
+  static String get companyDetailsTitle => tr('company_details_title');
+
+  static String get settingsList => tr('settings_list');
+
+  static String get editCompanyData => tr('edit_company_data');
+
+  static String get subscriptionInfo => tr('subscription_info');
+
+  static String get currentOffers => tr('current_offers');
+
+  static String get location => tr('location');
+
+  static String get noRegisteredCompanyTitle =>
+      tr('no_registered_company_title');
+
+  static String get noRegisteredCompanySubtitle =>
+      tr('no_registered_company_subtitle');
+
+  static String get retryButton => tr('retry_button');
+
+  static String get completeSubscriptionTitle =>
+      tr('complete_subscription_title');
+
+  static String get completeSubscriptionSubtitle =>
+      tr('complete_subscription_subtitle');
+
+  static String get completeSubscriptionButton =>
+      tr('complete_subscription_button');
+
+  static String get completeSubscriptionLater =>
+      tr('complete_subscription_later');
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

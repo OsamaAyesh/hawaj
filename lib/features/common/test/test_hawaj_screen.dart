@@ -34,7 +34,9 @@ class TestScreen extends StatelessWidget {
             right: 30,
             child: HawajWidget(
               welcomeMessage: 'مرحباً! كيف أستطيع مساعدتك اليوم؟',
-              showOnInit: true,
+              screen: "1",
+              section: "1",
+              // showOnInit: true,
             ),
           ),
         ],

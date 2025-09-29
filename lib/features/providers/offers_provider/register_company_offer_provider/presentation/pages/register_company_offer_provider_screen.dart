@@ -20,9 +20,16 @@ import '../../../../../common/map_ticker/domain/entities/location_ticker_entity.
 import '../../../../../common/map_ticker/presenation/pages/map_ticker_screen.dart';
 import '../controller/register_my_company_offer_provider_controller.dart';
 
-class RegisterCompanyOfferProviderScreen extends StatelessWidget {
+class RegisterCompanyOfferProviderScreen extends StatefulWidget {
   const RegisterCompanyOfferProviderScreen({super.key});
 
+  @override
+  State<RegisterCompanyOfferProviderScreen> createState() =>
+      _RegisterCompanyOfferProviderScreenState();
+}
+
+class _RegisterCompanyOfferProviderScreenState
+    extends State<RegisterCompanyOfferProviderScreen> {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<RegisterMyCompanyOfferProviderController>();
@@ -36,10 +43,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
-                bottom: MediaQuery
-                    .of(context)
-                    .viewInsets
-                    .bottom +
+                bottom: MediaQuery.of(context).viewInsets.bottom +
                     ManagerHeight.h16,
               ),
               physics: const BouncingScrollPhysics(),
@@ -85,13 +89,13 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                     enabled: true,
                     onButtonTap: () async {
                       final result = await Get.to(
-                            () => const MapTickerScreen(),
+                        () => const MapTickerScreen(),
                         binding: MapTickerBindings(),
                       );
 
                       if (result != null && result is LocationTickerEntity) {
                         controller.organizationLocationController.text =
-                        '${result.latitude},${result.longitude}';
+                            '${result.latitude},${result.longitude}';
                       }
                     },
                     buttonWidget: Row(
@@ -118,7 +122,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                     label: ManagerStrings.detailedAddress,
                     hintText: ManagerStrings.detailedAddressHint,
                     controller:
-                    controller.organizationDetailedAddressController,
+                        controller.organizationDetailedAddressController,
                     textInputAction: TextInputAction.next,
                     widthButton: ManagerWidth.w130,
                   ),
@@ -169,7 +173,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                     label: ManagerStrings.commercialNumber,
                     hintText: ManagerStrings.commercialNumberHint,
                     controller:
-                    controller.commercialRegistrationNumberController,
+                        controller.commercialRegistrationNumberController,
                     textInputAction: TextInputAction.done,
                     widthButton: ManagerWidth.w130,
                   ),
