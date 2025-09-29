@@ -44,12 +44,12 @@ class MyApp extends StatelessWidget {
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           defaultGlobalState: dotenv.env[EnvConstants.debug].onNullBool(),
-          // locale: const Locale("en"),
+          // locale: const Locale("ar"),
           locale: localeSettings.defaultLocale,
           debugShowCheckedModeBanner:
               dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.testScreen,
+          initialRoute: Routes.splash,
           navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,

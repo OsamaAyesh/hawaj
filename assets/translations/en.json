@@ -5,7 +5,6 @@
   "english": "English",
   "arabic_en": "العربية",
   "english_ar": "الإنجليزية",
-
   "skip": "Skip",
   "next": "Next",
   "login": "Login",
@@ -15,24 +14,20 @@
   "page2_text": "Hawaj uses artificial intelligence to understand you and suggest services tailored to your needs, saving you time and effort.",
   "page3_title": "Goodbye to multiple apps – Hawaj combines them all",
   "page3_text": "From real estate to jobs, and from accessing your contracts… Hawaj has simplified everything into one smart, seamless experience with a simple design that supports your needs.",
-
   "welcome_title": "Welcome back! I’m Hawaj 👋",
   "welcome_subtitle": "Log in to continue your journey, and we’ll help you find the services that best suit your needs easily and quickly.",
   "phone_label": "Phone Number",
   "phone_hint": "Enter your phone number",
   "login_button": "Login",
-
   "otp_title": "Enter Verification Code",
   "otp_subtitle": "We have sent a confirmation code to the following phone number",
   "otp_did_not_receive": "Didn’t receive a code?",
   "otp_resend": "Request a new code",
   "otp_verify_button": "Verify",
-
   "verification_success_title": "Verification Successful!",
   "verification_success_subtitle": "Welcome! Your number has been verified. You can now enjoy Hawaj services quickly and seamlessly.",
   "complete_profile_button": "Complete Profile",
   "view_policies_text": "View Terms of Use and Privacy Policy",
-
   "profile_setup_title": "Let’s start your first step with Hawaj",
   "profile_setup_subtitle": "Create your account in simple steps and let Hawaj help you reach every service easily and smartly.",
   "full_name_label": "Full Name",
@@ -46,8 +41,6 @@
   "profile_image_hint": "Upload profile picture",
   "profile_image_note": "Note: It is recommended to upload a clear and recent high-quality photo.",
   "continue_button": "Continue",
-
-
   "profile_title": "Profile",
   "new_user": "New User",
   "phone_number": "Phone Number",
@@ -59,7 +52,6 @@
   "contact_support": "Contact Support",
   "terms_conditions": "Terms & Conditions / User Agreement",
   "logout": "Log Out",
-
   "product_management": "Product Management",
   "quick_access": "Quick Access",
   "add_product": "Add Product",
@@ -68,11 +60,9 @@
   "manage_products_desc": "Full control over your products and manage them from one place",
   "business_details": "Business Details",
   "business_details_desc": "Review and update your business’s basic information for accurate reference",
-
   "subscribe_now": "Subscribe Now",
   "subscribe_description1": "Publish your daily offers now with Hawaj!",
   "subscribe_description": "Subscribe to the plan that suits you and start publishing your offers smartly and professionally, reaching nearby customers with an interactive map.",
-
   "popular_plan": "Popular Plan",
   "plan_name": "Super",
   "plan_price": "59.99 ₪",
@@ -85,12 +75,9 @@
   "feature_4": "Showcase your products or services professionally",
   "subscribe_button": "Subscribe to this plan",
   "note_text": "You can change the plan you selected after the current one ends or by contacting support.",
-
-
   "subscription_success_title": "Congratulations! Your subscription has been completed successfully",
   "subscription_success_desc": "To complete your professional experience on Hawaj, please provide your company information and registration details to ensure your offers appear trustworthy and attractive to customers.",
   "subscription_success_button": "Complete Information",
-
   "register_company": "Register Company",
   "register_company_title": "Complete your company information",
   "register_company_subtitle": "to ensure your offers appear professional and easily accessible to your customers. Please fill in the company details accurately.",
@@ -116,18 +103,14 @@
   "commercial_record_hint": "Upload the commercial record",
   "commercial_record_hint2": "Upload one image or file with commercial registration details.",
   "submit_button": "Add Company",
-
-
   "confirm_add_org_title": "Confirm Adding the Organization",
   "confirm_add_org_subtitle": "Are you sure you want to add this organization? Please verify all data before proceeding.",
   "confirm_add_org_confirm": "Continue",
   "confirm_add_org_cancel": "Cancel",
-
   "org_added_main_title": "Organization added successfully!",
   "org_added_subtitle": "Great first step! Now add your offers or products to appear to thousands of users on Dawaj",
   "org_added_primary_btn": "Continue adding products",
   "org_added_secondary_btn": "Add products later",
-
   "offer_register_title": "Register Offer",
   "offer_add_new": "Add New Offer",
   "offer_product_desc1": "Enter product name for users",
@@ -154,30 +137,24 @@
   "offer_submit": "Register Product",
   "offer_type_discount": "Discount Price",
   "offer_type_normal": "Normal Price",
-
   "confirm_add_product_title": "Confirm Adding the Product",
   "confirm_add_product_subtitle": "Are you sure you want to add this product? Please verify all data before proceeding.",
   "confirm_add_product_confirm": "Continue",
   "confirm_add_product_cancel": "Cancel",
-
   "product_list": "Product List",
-
   "title_confirmation": "Are you sure you want to log out?",
   "message_signout": "You will be signed out of your current account. You can sign in again at any time using your saved credentials.",
   "button_continue": "Continue",
   "button_cancel": "Cancel",
-
   "personal_account_info": "Personal Account Information",
   "full_name": "Full Name",
   "edit": "Edit",
-
   "contact_us_title": "Contact Us",
   "contact_us_header": "We are here for you",
   "contact_us_subtitle": "Feel free to contact us, your opinion matters and your first step starts here. We are always by your side to make everything easier and faster.",
   "contact_us_field_label": "Contact Us",
   "contact_us_field_hint": "The message you want to send, don’t hesitate to reach out",
   "send_message_button": "Send Message",
-
   "user_profile": "Profile",
   "user_daily_offers": "Daily Offers",
   "user_contracts": "Commercial Contracts",
@@ -189,7 +166,6 @@
   "provider_real_estate_manage": "My Listed Properties & Real Estate Management",
   "provider_delivery_dashboard": "Delivery Dashboard - My Delivery Requests",
   "provider_manage_jobs": "My Job Ads - Job Management",
-
   "publish_offers_title": "Publish your daily offers now with Hawaj!",
   "publish_offers_subtitle": "Subscribe to your suitable plan and start publishing your offers in a professional and attractive way, reaching nearby customers with an interactive map.",
   "my_organization": "My Organization",
@@ -198,7 +174,6 @@
   "subscribe_this_plan": "Subscribe to this plan",
   "change_plan_note": "You can change the selected plan after the current duration ends or by contacting support.",
   "no_data": "No data available",
-
   "first_name": "First Name",
   "last_name": "Last Name",
   "gender": "Gender",
@@ -206,18 +181,37 @@
   "continue": "Continue",
   "gender_male": "Male",
   "gender_female": "Female",
-
   "first_name_required": "Please enter your first name",
   "last_name_required": "Please enter your last name",
   "gender_required": "Please select your gender",
   "dob_required": "Please enter your date of birth",
-
+  "service_provider_subscription": "Service Provider Subscription",
+  "service_provider_description": "Join the service providers team and start offering your services to earn extra income and manage your business with ease",
+  "business_name": "Business Name",
+  "activity_type": "Activity Type",
+  "commercial_license_number": "Commercial or License Number",
+  "about_provider": "About the Service Provider",
+  "establishment_date": "Establishment Date",
+  "mobile_number": "Mobile Number",
+  "office_license": "Office/Company License",
+  "office_logo": "Office/Company Logo",
+  "subscribe_service_provider": "Subscribe as Service Provider",
+  "set_your_location": "Set Your Location",
   "noRouteFound": "No route found",
   "success": "Success",
   "noContent": "No content",
   "badRequest": "Bad request",
   "forbidden": "Forbidden",
   "unAuthorized": "Unauthorized",
+  "offer_register_title": "Register New Offer",
+  "no_company_title": "Company Registration Required",
+  "no_company_subtitle": "To add offers, you need to register your company first in the daily offers section.",
+  "go_to_register_company": "Go to Company Registration",
+  "retry": "Retry",
+  "offer_discount_percent": "Discount Percentage %",
+  "offer_discount_percent_hint": "Enter discount percentage",
+  "offer_status": "Offer Status",
+  "offer_status_hint": "Select offer status",
   "notFound": "Not found",
   "internalServerError": "Internal server error",
   "connectTimeOut": "Connection timeout",

@@ -2,272 +2,462 @@ import 'package:easy_localization/easy_localization.dart';
 
 /// A class defined for strings the app
 class ManagerStrings {
-
   ///Change Language Screen
   static String get chooseLanguageTitle => tr('choose_language_title');
-  static String get chooseLanguageSubtitle => tr('choose_language_subtitle');
-  static String get arabic => tr('arabic');
-  static String get english => tr('english');
-  static String get arabicEn => tr('arabic_en');
-  static String get englishAr => tr('english_ar');
 
+  static String get chooseLanguageSubtitle => tr('choose_language_subtitle');
+
+  static String get arabic => tr('arabic');
+
+  static String get english => tr('english');
+
+  static String get arabicEn => tr('arabic_en');
+
+  static String get englishAr => tr('english_ar');
 
   ///On Boarding Screen
   // General Actions
   static String get skip => tr('skip');
+
   static String get next => tr('next');
+
   static String get login => tr('login');
 
   // First Page
   static String get page1Title => tr('page1_title');
+
   static String get page1Text => tr('page1_text');
 
   // Second Page
   static String get page2Title => tr('page2_title');
+
   static String get page2Text => tr('page2_text');
 
   // Third Page
   static String get page3Title => tr('page3_title');
-  static String get page3Text => tr('page3_text');
 
+  static String get page3Text => tr('page3_text');
 
   ///Login Screen
   static String get welcomeTitle => tr('welcome_title');
-  static String get welcomeSubtitle => tr('welcome_subtitle');
-  static String get phoneLabel => tr('phone_label');
-  static String get phoneHint => tr('phone_hint');
-  static String get loginButton => tr('login_button');
 
+  static String get welcomeSubtitle => tr('welcome_subtitle');
+
+  static String get phoneLabel => tr('phone_label');
+
+  static String get phoneHint => tr('phone_hint');
+
+  static String get loginButton => tr('login_button');
 
   ///Otp Login Screen
   static String get otpTitle => tr('otp_title');
+
   static String get otpSubtitle => tr('otp_subtitle');
+
   static String get otpDidNotReceive => tr('otp_did_not_receive');
+
   static String get otpResend => tr('otp_resend');
+
   static String get otpVerifyButton => tr('otp_verify_button');
 
-
   ///Success Login Screen
-  static String get verificationSuccessTitle => tr('verification_success_title');
-  static String get verificationSuccessSubtitle => tr('verification_success_subtitle');
-  static String get completeProfileButton => tr('complete_profile_button');
-  static String get viewPoliciesText => tr('view_policies_text');
+  static String get verificationSuccessTitle =>
+      tr('verification_success_title');
 
+  static String get verificationSuccessSubtitle =>
+      tr('verification_success_subtitle');
+
+  static String get completeProfileButton => tr('complete_profile_button');
+
+  static String get viewPoliciesText => tr('view_policies_text');
 
   ///Complete Information Screen Strings
   static String get profileSetupTitle => tr('profile_setup_title');
+
   static String get profileSetupSubtitle => tr('profile_setup_subtitle');
+
   static String get fullNameLabel => tr('full_name_label');
+
   static String get fullNameHint => tr('full_name_hint');
+
   static String get emailLabel => tr('email_label');
+
   static String get emailHint => tr('email_hint');
+
   static String get locationLabel => tr('location_label');
+
   static String get locationHint => tr('location_hint');
+
   static String get locationButton => tr('location_button');
+
   static String get profileImageLabel => tr('profile_image_label');
+
   static String get profileImageHint => tr('profile_image_hint');
+
   static String get profileImageNote => tr('profile_image_note');
+
   static String get continueButton => tr('continue_button');
+
   /// Fields
   static String get firstName => tr('first_name');
+
   static String get lastName => tr('last_name');
+
   static String get gender => tr('gender');
+
   static String get dob => tr('dob');
+
   /// Gender options
   static String get genderMale => tr('gender_male');
-  static String get genderFemale => tr('gender_female');
 
+  static String get genderFemale => tr('gender_female');
 
   ///Profile Screen Strings
   static String get profileTitle => tr('profile_title');
-  static String get newUser => tr('new_user');
-  static String get phoneNumber => tr('phone_number');
-  static String get listSettings => tr('list_settings');
-  static String get subscribedServices => tr('subscribed_services');
-  static String get manageServices => tr('manage_services');
-  static String get changePassword => tr('change_password');
-  static String get editProfile => tr('edit_profile');
-  static String get contactSupport => tr('contact_support');
-  static String get termsConditions => tr('terms_conditions');
-  static String get logout => tr('logout');
 
+  static String get newUser => tr('new_user');
+
+  static String get phoneNumber => tr('phone_number');
+
+  static String get listSettings => tr('list_settings');
+
+  static String get subscribedServices => tr('subscribed_services');
+
+  static String get manageServices => tr('manage_services');
+
+  static String get changePassword => tr('change_password');
+
+  static String get editProfile => tr('edit_profile');
+
+  static String get contactSupport => tr('contact_support');
+
+  static String get termsConditions => tr('terms_conditions');
+
+  static String get logout => tr('logout');
 
   ///Manager Products
   static String get productManagement => tr('product_management');
+
   static String get quickAccess => tr('quick_access');
+
   static String get addProduct => tr('add_product');
+
   static String get addProductDesc => tr('add_product_desc');
+
   static String get manageProducts => tr('manage_products');
+
   static String get manageProductsDesc => tr('manage_products_desc');
+
   static String get businessDetails => tr('business_details');
+
   static String get businessDetailsDesc => tr('business_details_desc');
-
-
 
   ///Subscription Offer Provider Strings
   static String get subscribeNow => tr('subscribe_now');
+
   static String get subscribeDescription => tr('subscribe_description');
+
   static String get subscribeDescription1 => tr('subscribe_description1');
+
   static String get popularPlan => tr('popular_plan');
+
   static String get planName => tr('plan_name');
+
   static String get planPrice => tr('plan_price');
+
   static String get institutionType => tr('institution_type');
+
   static String get subscriptionDuration => tr('subscription_duration');
+
   static String get includedFeatures => tr('included_features');
+
   static String get feature1 => tr('feature_1');
+
   static String get feature2 => tr('feature_2');
+
   static String get feature3 => tr('feature_3');
+
   static String get feature4 => tr('feature_4');
+
   static String get subscribeButton => tr('subscribe_button');
+
   static String get noteText => tr('note_text');
 
-
   ///Success Subscription Screen Strings.
-  static String get subscriptionSuccessTitle => tr('subscription_success_title');
+  static String get subscriptionSuccessTitle =>
+      tr('subscription_success_title');
+
   static String get subscriptionSuccessDesc => tr('subscription_success_desc');
-  static String get subscriptionSuccessButton => tr('subscription_success_button');
 
-
+  static String get subscriptionSuccessButton =>
+      tr('subscription_success_button');
 
   /// Register Company Offer Provider Screen Strings.
   static String get registerCompany => tr('register_company');
+
   static String get registerCompanyTitle => tr('register_company_title');
+
   static String get registerCompanySubtitle => tr('register_company_subtitle');
+
   static String get companyName => tr('company_name');
+
   static String get companyNameHint => tr('company_name_hint');
+
   static String get companyServices => tr('company_services');
+
   static String get companyServicesHint => tr('company_services_hint');
+
   static String get setLocation => tr('set_location');
+
   static String get setLocationButton => tr('set_location_button');
+
   static String get detailedAddress => tr('detailed_address');
+
   static String get detailedAddressHint => tr('detailed_address_hint');
+
   static String get responsiblePerson => tr('responsible_person');
+
   static String get responsiblePersonHint => tr('responsible_person_hint');
+
   static String get phoneNumberHint => tr('phone_number_hint');
+
   static String get workingHours => tr('working_hours');
+
   static String get workingHoursHint => tr('working_hours_hint');
+
   static String get companyLogo => tr('company_logo');
+
   static String get companyLogoHint => tr('company_logo_hint');
+
   static String get companyLogoHint2 => tr('company_logo_hint2');
+
   static String get commercialNumber => tr('commercial_number');
+
   static String get commercialNumberHint => tr('commercial_number_hint');
+
   static String get commercialRecord => tr('commercial_record');
+
   static String get commercialRecordHint => tr('commercial_record_hint');
+
   static String get commercialRecordHint2 => tr('commercial_record_hint2');
+
   static String get submitButton => tr('submit_button');
-    ///======> Confirm Dialog Strings Offer Provider
+
+  ///======> Confirm Dialog Strings Offer Provider
   static String get confirmAddOrgTitle => tr('confirm_add_org_title');
+
   static String get confirmAddOrgSubtitle => tr('confirm_add_org_subtitle');
+
   static String get confirmAddOrgConfirm => tr('confirm_add_org_confirm');
+
   static String get confirmAddOrgCancel => tr('confirm_add_org_cancel');
 
   static String get orgAddedMainTitle => tr('org_added_main_title');
-  static String get orgAddedSubtitle => tr('org_added_subtitle');
-  static String get orgAddedPrimaryBtn => tr('org_added_primary_btn');
-  static String get orgAddedSecondaryBtn => tr('org_added_secondary_btn');
 
+  static String get orgAddedSubtitle => tr('org_added_subtitle');
+
+  static String get orgAddedPrimaryBtn => tr('org_added_primary_btn');
+
+  static String get orgAddedSecondaryBtn => tr('org_added_secondary_btn');
 
   ///===== Add Offer Provider Screen Strings
   static String get offerRegisterTitle => tr('offer_register_title');
+
   static String get offerAddNew => tr('offer_add_new');
+
   static String get offerSubtitle => tr('offer_subtitle');
+
   static String get offerProductName => tr('offer_product_name');
+
   static String get offerProductDesc1 => tr('offer_product_desc1');
+
   static String get offerProductDesc => tr('offer_product_desc');
+
   static String get offerProductDescHint => tr('offer_product_desc_hint');
+
   static String get offerProductImages => tr('offer_product_images');
+
   static String get offerProductImagesHint => tr('offer_product_images_hint');
+
   static String get offerProductImagesHint2 => tr('offer_product_images_hint2');
+
   static String get offerProductPrice => tr('offer_product_price');
+
   static String get offerProductPriceHint => tr('offer_product_price_hint');
+
   static String get offerProductType => tr('offer_product_type');
+
   static String get offerType => tr('offer_type');
+
   static String get offerTypeHint => tr('offer_type_hint');
+
   static String get offerPrice => tr('offer_price');
+
   static String get offerPriceHint => tr('offer_price_hint');
+
   static String get offerFromDate => tr('offer_from_date');
+
   static String get offerFromDateHint => tr('offer_from_date_hint');
+
   static String get offerToDate => tr('offer_to_date');
+
   static String get offerTDateHint => tr('offer_to_date_hint');
+
   static String get offerDesc => tr('offer_desc');
+
   static String get offerDescHint => tr('offer_desc_hint');
+
   static String get offerSubmit => tr('offer_submit');
+
   static String get offerTypeDiscount => tr('offer_type_discount');
+
   static String get offerTypeNormal => tr('offer_type_normal');
+
   static String get confirmAddProductTitle => tr('confirm_add_product_title');
-  static String get confirmAddProductSubtitle => tr('confirm_add_product_subtitle');
-  static String get confirmAddProductConfirm => tr('confirm_add_product_confirm');
+
+  static String get confirmAddProductSubtitle =>
+      tr('confirm_add_product_subtitle');
+
+  static String get confirmAddProductConfirm =>
+      tr('confirm_add_product_confirm');
+
   static String get confirmAddProductCancel => tr('confirm_add_product_cancel');
+
   static String get productList => tr('product_list');
-
-
-
 
   ///Logout Dialog Confirm
   static String get titleConfirmation => tr('title_confirmation');
+
   static String get messageSignout => tr('message_signout');
+
   static String get buttonContinue => tr('button_continue');
+
   static String get buttonCancel => tr('button_cancel');
 
-
-
-/// Edit Profile Screen Strings.
+  /// Edit Profile Screen Strings.
   static String get personalAccountInfo => tr('personal_account_info');
-  static String get fullName => tr('full_name');
-  static String get edit => tr('edit');
 
+  static String get fullName => tr('full_name');
+
+  static String get edit => tr('edit');
 
   ///Contact Us Screen
   static String get contactUsTitle => tr('contact_us_title');
-  static String get contactUsHeader => tr('contact_us_header');
-  static String get contactUsSubtitle => tr('contact_us_subtitle');
-  static String get contactUsFieldLabel => tr('contact_us_field_label');
-  static String get contactUsFieldHint => tr('contact_us_field_hint');
-  static String get sendMessageButton => tr('send_message_button');
 
+  static String get contactUsHeader => tr('contact_us_header');
+
+  static String get contactUsSubtitle => tr('contact_us_subtitle');
+
+  static String get contactUsFieldLabel => tr('contact_us_field_label');
+
+  static String get contactUsFieldHint => tr('contact_us_field_hint');
+
+  static String get sendMessageButton => tr('send_message_button');
 
   ///Drawer Strings.
   // User
   static String get userProfile => tr('user_profile');
+
   static String get userDailyOffers => tr('user_daily_offers');
+
   static String get userContracts => tr('user_contracts');
+
   static String get userRealEstate => tr('user_real_estate');
+
   static String get userDelivery => tr('user_delivery');
+
   static String get userJobs => tr('user_jobs');
 
   // Provider
   static String get providerManageOffers => tr('provider_manage_offers');
+
   static String get providerManageContracts => tr('provider_manage_contracts');
-  static String get providerRealEstateManage => tr('provider_real_estate_manage');
-  static String get providerDeliveryDashboard => tr('provider_delivery_dashboard');
+
+  static String get providerRealEstateManage =>
+      tr('provider_real_estate_manage');
+
+  static String get providerDeliveryDashboard =>
+      tr('provider_delivery_dashboard');
+
   static String get providerManageJobs => tr('provider_manage_jobs');
 
-
-
-
   static String get publishOffersTitle => tr('publish_offers_title');
+
   static String get publishOffersSubTitle => tr('publish_offers_subtitle');
+
   static String get myOrganization => tr('my_organization');
+
   static String get selectedPlan => tr('selected_plan');
-  static String get chooseSubscriptionDuration => tr('choose_subscription_duration');
+
+  static String get chooseSubscriptionDuration =>
+      tr('choose_subscription_duration');
+
   static String get subscribeThisPlan => tr('subscribe_this_plan');
+
   static String get changePlanNote => tr('change_plan_note');
+
   static String get noData => tr('no_data');
-
-
-
-
 
   ///  Validation Completed Screen Strings.
   static String get firstNameRequired => tr('first_name_required');
+
   static String get lastNameRequired => tr('last_name_required');
+
   static String get genderRequired => tr('gender_required');
+
   static String get dobRequired => tr('dob_required');
 
+  ///Register Company Service Provider Contract Commercial
+  static String get serviceProviderSubscription =>
+      tr('service_provider_subscription');
 
+  static String get serviceProviderDescription =>
+      tr('service_provider_description');
 
+  static String get businessName => tr('business_name');
 
+  static String get activityType => tr('activity_type');
 
+  static String get commercialLicenseNumber => tr('commercial_license_number');
+
+  static String get aboutProvider => tr('about_provider');
+
+  static String get establishmentDate => tr('establishment_date');
+
+  static String get mobileNumber => tr('mobile_number');
+
+  static String get officeLicense => tr('office_license');
+
+  static String get officeLogo => tr('office_logo');
+
+  static String get continueBtn => tr('continue');
+
+  static String get subscribeServiceProvider =>
+      tr('subscribe_service_provider');
+
+  static String get setYourLocation => tr('set_your_location');
+
+  // الخصم
+  static String get offerDiscountPercent => tr('offer_discount_percent');
+
+  static String get offerDiscountPercentHint =>
+      tr('offer_discount_percent_hint');
+
+  static String get offerToDateHint => tr('offer_to_date_hint');
+
+  // حالة العرض
+  static String get offerStatus => tr('offer_status');
+
+  static String get offerStatusHint => tr('offer_status_hint');
+
+  // Used when the provider has not registered a company yet
+  static String get noCompanyTitle => tr('no_company_title');
+
+  static String get noCompanySubtitle => tr('no_company_subtitle');
+
+  static String get goToRegisterCompany => tr('go_to_register_company');
+
+  static String get retry => tr('retry');
 
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');

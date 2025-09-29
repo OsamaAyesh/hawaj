@@ -1,10 +1,12 @@
+import 'package:app_mobile/core/error_handler/failure.dart';
+import 'package:app_mobile/core/model/with_out_data_model.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/util/snack_bar.dart';
+import 'package:app_mobile/features/common/auth/data/request/completed_profile_request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:app_mobile/core/model/with_out_data_model.dart';
-import 'package:app_mobile/core/error_handler/failure.dart';
-import 'package:app_mobile/features/common/auth/data/request/completed_profile_request.dart';
-import 'package:app_mobile/core/resources/manager_strings.dart';
+
+import '../../../../../core/routes/routes.dart';
 import '../../domain/use_case/completed_profile_use_case.dart';
 
 class CompletedProfileController extends GetxController {
@@ -59,15 +61,15 @@ class CompletedProfileController extends GetxController {
     final result = await _completedProfileUseCase.execute(request);
 
     result.fold(
-          (Failure failure) {
+      (Failure failure) {
         errorMessage.value = failure.message ?? ManagerStrings.noContent;
         isSuccess.value = false;
       },
-          (WithOutDataModel response) {
+      (WithOutDataModel response) {
         isSuccess.value = true;
         AppSnackbar.success("تم إكمال الملف الشخصي بنجاح، استمتع مع حواج!",
-        englishMessage: "Profile completed successfully. Enjoy Hawaj!");
-
+            englishMessage: "Profile completed successfully. Enjoy Hawaj!");
+        Get.offAllNamed(Routes.hawajWelcomeStartScreen);
       },
     );
 

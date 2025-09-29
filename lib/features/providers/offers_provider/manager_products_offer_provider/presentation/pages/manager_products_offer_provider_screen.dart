@@ -4,10 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
+import '../../../../../../core/resources/manager_colors.dart';
+import '../../../../../../core/resources/manager_font_size.dart';
+import '../../../../../../core/resources/manager_height.dart';
+import '../../../../../../core/resources/manager_strings.dart';
+import '../../../../../../core/resources/manager_styles.dart';
+import '../../../../../../core/resources/manager_width.dart';
 import '../../../../../../core/storage/local/app_settings_prefs.dart';
+import '../../../../../../core/widgets/quick_access_widget.dart';
+import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
-// إضافة هذا الـ import
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
   const ManagerProductsOfferProviderScreen({super.key});
@@ -64,30 +71,6 @@ class _ManagerProductsOfferProviderScreenState
     ];
 
     _controller.forward();
-
-    // تفعيل حواج بعد بناء الشاشة
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializeHawaj();
-    });
-  }
-
-  void _initializeHawaj() {
-//     try {
-//       final controller = Get.find<HawajAIController>();
-//       controller.show();
-//       controller.updateContext('2', '1', message: '''
-// 🛍️ أهلاً بك في إدارة المنتجات!
-//
-// يمكنني مساعدتك في:
-// - إضافة منتجات جديدة
-// - إدارة المنتجات الحالية
-// - عرض تفاصيل المنشأة
-//
-// فقط اضغط علي واسألني أي شيء!
-//         ''');
-//     } catch (e) {
-//       print('خطأ في تهيئة حواج: $e');
-//     }
   }
 
   @override
@@ -100,116 +83,74 @@ class _ManagerProductsOfferProviderScreenState
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // ScaffoldWithBackButton(
-        //   title: ManagerStrings.productManagement,
-        //   body: Column(
-        //     children: [
-        //       SizedBox(height: ManagerHeight.h14),
-        //       Expanded(
-        //         child: SingleChildScrollView(
-        //           physics: const BouncingScrollPhysics(),
-        //           child: FadeTransition(
-        //             opacity: _fade,
-        //             child: SlideTransition(
-        //               position: _slide,
-        //               child: Column(
-        //                 crossAxisAlignment: CrossAxisAlignment.start,
-        //                 children: [
-        //                   Padding(
-        //                     padding: EdgeInsets.symmetric(
-        //                         horizontal: ManagerWidth.w16),
-        //                     child: Text(
-        //                       ManagerStrings.quickAccess,
-        //                       style: getBoldTextStyle(
-        //                         fontSize: ManagerFontSize.s12,
-        //                         color: ManagerColors.black,
-        //                       ),
-        //                     ),
-        //                   ),
-        //                   SizedBox(height: ManagerHeight.h4),
-        //                   Padding(
-        //                     padding: EdgeInsets.symmetric(
-        //                         horizontal: ManagerWidth.w16),
-        //                     child: GridView.builder(
-        //                       padding: EdgeInsets.only(top: ManagerHeight.h8),
-        //                       shrinkWrap: true,
-        //                       physics: const NeverScrollableScrollPhysics(),
-        //                       gridDelegate:
-        //                           SliverGridDelegateWithFixedCrossAxisCount(
-        //                         crossAxisCount: 2,
-        //                         crossAxisSpacing: 12,
-        //                         mainAxisSpacing: 12,
-        //                         childAspectRatio:
-        //                             ManagerWidth.w164 / ManagerHeight.h156,
-        //                       ),
-        //                       itemCount: itemsOfferManagerProvider.length,
-        //                       itemBuilder: (context, index) {
-        //                         final item = itemsOfferManagerProvider[index];
-        //                         return QuickAccessWidget(
-        //                           iconPath: item['icon'] ?? "",
-        //                           title: item['title'] ?? "",
-        //                           subtitle: item['subtitle'] ?? "",
-        //                           onTap: quickAccessActions[index],
-        //                           top: ManagerHeight.h8,
-        //                           right: ManagerWidth.w6,
-        //                           left: ManagerWidth.w6,
-        //                           bottom: ManagerHeight.h8,
-        //                         );
-        //                       },
-        //                     ),
-        //                   ),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //         ),
-        //       ),
-        //       SizedBox(height: ManagerHeight.h16),
-        //     ],
-        //   ),
-        // ),
-        // HawajGlobalWidget(section: "1", screen: "2")
-        // حواج المساعد الذكي - مباشرة
-        // GetX<HawajAIController>(
-        //   builder: (controller) {
-        //     if (!controller.isVisible) {
-        //       return const SizedBox.shrink();
-        //     }
-        //
-        //     return Positioned(
-        //       left: 20,
-        //       bottom: 100,
-        //       child: GestureDetector(
-        //         onTap: () => _handleHawajTap(controller),
-        //         child: AnimatedContainer(
-        //           duration: const Duration(milliseconds: 400),
-        //           width: controller.isExpanded ? 280 : 70,
-        //           height: controller.isExpanded ? 150 : 70,
-        //           decoration: BoxDecoration(
-        //             gradient: LinearGradient(
-        //               colors: [
-        //                 controller.stateColor,
-        //                 controller.stateColor.withOpacity(0.8),
-        //               ],
-        //             ),
-        //             borderRadius:
-        //                 BorderRadius.circular(controller.isExpanded ? 20 : 35),
-        //             boxShadow: [
-        //               BoxShadow(
-        //                 color: controller.stateColor.withOpacity(0.4),
-        //                 blurRadius: controller.isListening ? 20 : 10,
-        //                 spreadRadius: controller.isListening ? 5 : 2,
-        //               ),
-        //             ],
-        //           ),
-        //           child: controller.isExpanded
-        //               ? _buildExpandedHawaj(controller)
-        //               : _buildCompactHawaj(controller),
-        //         ),
-        //       ),
-        //     );
-        //   },
-        // ),
+        ScaffoldWithBackButton(
+          title: ManagerStrings.productManagement,
+          body: Column(
+            children: [
+              SizedBox(height: ManagerHeight.h14),
+              Expanded(
+                child: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: FadeTransition(
+                    opacity: _fade,
+                    child: SlideTransition(
+                      position: _slide,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: ManagerWidth.w16),
+                            child: Text(
+                              ManagerStrings.quickAccess,
+                              style: getBoldTextStyle(
+                                fontSize: ManagerFontSize.s12,
+                                color: ManagerColors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: ManagerHeight.h4),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: ManagerWidth.w16),
+                            child: GridView.builder(
+                              padding: EdgeInsets.only(top: ManagerHeight.h8),
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
+                                childAspectRatio:
+                                    ManagerWidth.w164 / ManagerHeight.h156,
+                              ),
+                              itemCount: itemsOfferManagerProvider.length,
+                              itemBuilder: (context, index) {
+                                final item = itemsOfferManagerProvider[index];
+                                return QuickAccessWidget(
+                                  iconPath: item['icon'] ?? "",
+                                  title: item['title'] ?? "",
+                                  subtitle: item['subtitle'] ?? "",
+                                  onTap: quickAccessActions[index],
+                                  top: ManagerHeight.h8,
+                                  right: ManagerWidth.w6,
+                                  left: ManagerWidth.w6,
+                                  bottom: ManagerHeight.h8,
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: ManagerHeight.h16),
+            ],
+          ),
+        ),
       ],
     );
   }

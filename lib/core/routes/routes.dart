@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
 import '../../features/common/test/test_hawaj_screen.dart';
+import '../../features/providers/commercial_contracts/register_service_provider_contract/pages/register_service_provider_contract_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
@@ -56,6 +57,10 @@ class Routes {
 
   ///Offer Daily User Screens
   static const String companyWithOfferScreen = '/company_with_offer_screen';
+
+  ///Commercial Contract Provider Screen
+  static const String registerServiceProviderContractScreen =
+      '/register_service_provider_contract_screen';
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -126,6 +131,9 @@ class RouteGenerator {
             builder: (_) => const CompanyWithOfferScreen(
                   idOrganization: 1,
                 ));
+      case Routes.registerServiceProviderContractScreen:
+        return MaterialPageRoute(
+            builder: (_) => RegisterServiceProviderContractScreen());
 
       default:
         return unDefinedRoute();
