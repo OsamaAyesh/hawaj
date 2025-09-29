@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 import '../../../../constants/di/dependency_injection.dart';
 import '../../../../core/config/app_config.dart';
@@ -85,7 +84,8 @@ class _SplashScreenState extends State<SplashScreen>
       } else if (!hasSeenOnboarding) {
         Get.offAllNamed(Routes.onBoardingScreen);
       } else if (isLoggedIn) {
-        Get.offAllNamed(Routes.hawajWelcomeStartScreen); // ✅ لازم يكون في Navigation هنا
+        Get.offAllNamed(
+            Routes.hawajWelcomeStartScreen); // ✅ لازم يكون في Navigation هنا
       } else {
         Get.offAllNamed(Routes.loginScreen);
       }
@@ -105,40 +105,44 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: ManagerColors.primaryColor,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          /// Logo + Animations
-          FadeTransition(
-            opacity: _fadeAnimation,
-            child: SlideTransition(
-              position: _slideAnimation,
-              child: const LogoInSplashWidget(),
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Scaffold(
+        backgroundColor: ManagerColors.primaryColor,
+        body: Stack(
+          alignment: Alignment.center,
+          children: [
+            /// Logo + Animations
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: const LogoInSplashWidget(),
+              ),
             ),
-          ),
 
-          /// Loader
-          Positioned(
-            bottom: ManagerHeight.h90,
-            child: const CircularProgressIndicator(
-              color: ManagerColors.secondColor,
-            ),
-          ),
-
-          /// Version Text
-          Positioned(
-            bottom: ManagerHeight.h20,
-            child: Text(
-              "v${AppConfig.version}",
-              style: getBoldTextStyle(
-                fontSize: ManagerFontSize.s14,
+            /// Loader
+            Positioned(
+              bottom: ManagerHeight.h90,
+              child: const CircularProgressIndicator(
                 color: ManagerColors.secondColor,
               ),
             ),
-          ),
-        ],
+
+            /// Version Text
+            Positioned(
+              bottom: ManagerHeight.h20,
+              child: Text(
+                "${AppConfig.version}",
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: ManagerColors.secondColor,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

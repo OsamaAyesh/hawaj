@@ -1,7 +1,6 @@
 import 'package:app_mobile/core/response/with_out_data_response.dart';
 import 'package:app_mobile/features/common/auth/data/response/send_otp_response.dart';
 import 'package:app_mobile/features/common/profile/data/response/get_profile_response.dart';
-import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/data/response/offer_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
 import 'package:app_mobile/features/users/offer_user/company_with_offer/data/response/get_company_response.dart';
@@ -72,9 +71,9 @@ abstract class AppService {
     @Field(RequestConstants.plansId) int plansId,
   );
 
-  ///=== Get My Offer
-  @GET(RequestConstantsEndpoints.getMyOffer)
-  Future<OfferResponse> getMyOffer();
+  // ///=== Get My Offer
+  // @GET(RequestConstantsEndpoints.getMyOffer)
+  // Future<OfferResponse> getMyOffer();
 
   ///===== Update Profile Request .======
   @PUT(RequestConstantsEndpoints.getMyOffer)
@@ -91,11 +90,11 @@ abstract class AppService {
   @GET(RequestConstantsEndpoints.getProfile)
   Future<GetProfileResponse> getProfile();
 
-  ///===== Get Offers Data
-  @GET(RequestConstantsEndpoints.getOffers)
-  Future<OfferUserResponse> getOffers(
-    @Query(RequestConstants.language) String language,
-  );
+  // ///===== Get Offers Data
+  // @GET(RequestConstantsEndpoints.getOffers)
+  // Future<OfferUserResponse> getOffers(
+  //   @Query(RequestConstants.language) String language,
+  // );
 
   ///=== Get My Organization Request.
   @GET(RequestConstantsEndpoints.getCompany)

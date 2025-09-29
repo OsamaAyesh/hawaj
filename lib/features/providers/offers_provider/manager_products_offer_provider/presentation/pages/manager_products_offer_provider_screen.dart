@@ -15,6 +15,7 @@ import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
+import '../../../manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
   const ManagerProductsOfferProviderScreen({super.key});
@@ -60,6 +61,8 @@ class _ManagerProductsOfferProviderScreenState
       },
       () {
         if (kDebugMode) {
+          initGetMyCompany();
+          Get.to(ManageListOfferProviderScreen());
           print("إدارة المنتجات");
         }
       },

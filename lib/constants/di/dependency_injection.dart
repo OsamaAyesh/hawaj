@@ -67,7 +67,7 @@ initModule() async {
   initSendOtp();
   initCreateOfferProvider();
   initGetPlan();
-  initGetOfferUser();
+  // initGetOfferUser();
   initRegisterMyCompanyOfferProvider();
 
   Get.put(LocaleController());

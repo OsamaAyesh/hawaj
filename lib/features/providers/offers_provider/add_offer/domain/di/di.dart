@@ -8,6 +8,7 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
+import '../../../manage_list_offer/presentation/controller/manage_list_offer_provider_controller.dart';
 import '../../presentation/controller/add_offer_controller.dart';
 import '../use_case/get_my_company_set_offer_use_case.dart';
 
@@ -87,4 +88,16 @@ disposeGetMyCompanySetOfferRequest() {
   if (GetIt.I.isRegistered<GetMyCompanySetOfferUseCase>()) {
     instance.unregister<GetMyCompanySetOfferUseCase>();
   }
+}
+
+void initGetMyCompany() {
+  initGetMyCompanySetOfferRequest();
+  Get.put(ManageListOfferProviderController(
+    instance<GetMyCompanySetOfferUseCase>(),
+  ));
+}
+
+void disposeGetMyCompany() {
+  disposeGetMyCompanySetOfferRequest();
+  Get.delete<ManageListOfferProviderController>();
 }

@@ -1,39 +1,80 @@
+import 'package:app_mobile/core/error_handler/failure.dart';
+import 'package:app_mobile/core/model/offer_general_item_model.dart';
+import 'package:app_mobile/core/model/orgnization_company_daily_offer_item_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/domain/model/offer_item_model.dart';
-import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/domain/use_case/get_my_offer_use_case.dart';
 
-class GetMyOfferController extends GetxController {
-  final GetMyOfferUseCase _getMyOfferUseCase;
+import '../../../add_offer/data/request/get_my_company_set_offer_request.dart';
+import '../../../add_offer/domain/use_case/get_my_company_set_offer_use_case.dart';
 
-  GetMyOfferController(this._getMyOfferUseCase);
+class ManageListOfferProviderController extends GetxController {
+  final GetMyCompanySetOfferUseCase _getMyCompanySetOfferUseCase;
 
-  /// ====== Reactive Variables ======
+  ManageListOfferProviderController(this._getMyCompanySetOfferUseCase);
+
+  // ========== State ==========
   var isLoading = false.obs;
-  var offers = <OfferItemModel>[].obs;
-  var errorMessage = "".obs;
+  var isRefreshing = false.obs;
+  var errorMessage = ''.obs;
 
-  /// ====== Load Offers ======
-  Future<void> loadOffers() async {
-    isLoading.value = true;
-    errorMessage.value = "";
+  // ========== Data ==========
+  Rxn<OrganizationCompanyDailyOfferItemModel> myCompany =
+      Rxn<OrganizationCompanyDailyOfferItemModel>();
 
-    final result = await _getMyOfferUseCase.execute();
+  // ========== Getters ==========
+  List<OfferGeneralItemModel> get offers => myCompany.value?.offers ?? [];
 
-    result.fold(
-          (failure) {
-        errorMessage.value = failure.message;
-      },
-          (offerModel) {
-        offers.value = offerModel.data.data;
-      },
-    );
+  bool get hasOffers => offers.isNotEmpty;
 
-    isLoading.value = false;
+  bool get hasCompany => myCompany.value != null;
+
+  // ========== Statistics ==========
+  int get publishedCount => offers.where((o) => o.offerStatus == 1).length;
+
+  int get unpublishedCount => offers.where((o) => o.offerStatus == 2).length;
+
+  int get expiredCount => offers.where((o) => o.offerStatus == 3).length;
+
+  // ========== API Call ==========
+  Future<void> fetchOffers({bool isRefresh = false}) async {
+    try {
+      if (isRefresh) {
+        isRefreshing.value = true;
+      } else {
+        isLoading.value = true;
+      }
+      errorMessage.value = '';
+
+      final request = GetMyOrganizationSetOfferRequest(my: true);
+      final result = await _getMyCompanySetOfferUseCase.execute(request);
+
+      result.fold(
+        (Failure failure) {
+          errorMessage.value = failure.message;
+          if (!isRefresh) myCompany.value = null;
+          if (kDebugMode) print('❌ Error: ${failure.message}');
+        },
+        (success) {
+          myCompany.value = success.data;
+          errorMessage.value = '';
+          if (kDebugMode) {
+            print('✅ Success: ${offers.length} offers loaded');
+          }
+        },
+      );
+    } catch (e) {
+      errorMessage.value = 'حدث خطأ غير متوقع';
+      if (kDebugMode) print('💥 Exception: $e');
+    } finally {
+      isLoading.value = false;
+      isRefreshing.value = false;
+    }
   }
 
+  // ========== Lifecycle ==========
   @override
   void onInit() {
     super.onInit();
-    loadOffers();
+    fetchOffers();
   }
 }

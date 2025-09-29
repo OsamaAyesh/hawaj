@@ -1,12 +1,20 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/util/empty_state_widget.dart';
+import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
-import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/presentation/controller/manage_list_offer_provider_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/widgets/status_legend.dart';
+import '../../../add_offer/domain/di/di.dart';
+import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
+import '../controller/manage_list_offer_provider_controller.dart';
 import '../widgets/offer_card_widget.dart';
 
 class ManageListOfferProviderScreen extends StatelessWidget {
@@ -14,135 +22,134 @@ class ManageListOfferProviderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<GetMyOfferController>();
+    // ✅ الحصول على الـController المسجل مسبقاً عبر الـBindings
+    final controller = Get.find<ManageListOfferProviderController>();
 
     return ScaffoldWithBackButton(
       title: ManagerStrings.productList,
       body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+        // ===== حالة التحميل =====
+        if (controller.isLoading.value && !controller.hasCompany) {
+          return const LoadingWidget();
         }
 
-        if (controller.errorMessage.isNotEmpty) {
-          return Center(
-            child: Text(
-              controller.errorMessage.value,
-              style: const TextStyle(color: Colors.red),
+        // ===== حالة الخطأ =====
+        if (controller.errorMessage.isNotEmpty && !controller.hasCompany) {
+          // يمكنك لاحقاً إضافة Widget مخصص لعرض رسالة الخطأ
+          // return ErrorOffersWidget(
+          //   message: controller.errorMessage.value,
+          //   onRetry: () => controller.fetchOffers(),
+          // );
+        }
+
+        // ===== حالة عدم وجود بيانات =====
+        if (!controller.hasOffers) {
+          return const EmptyStateWidget();
+        }
+
+        // ===== حالة النجاح =====
+        return Column(
+          children: [
+            // شريط توضيح حالة العروض
+            const StatusLegendWidget(),
+            SizedBox(height: ManagerHeight.h8),
+
+            // قائمة العروض
+            Expanded(
+              child: RefreshIndicator(
+                color: ManagerColors.primaryColor,
+                backgroundColor: Colors.white,
+                onRefresh: () => controller.fetchOffers(isRefresh: true),
+                child: Stack(
+                  children: [
+                    // GridView لعرض العروض
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
+                      child: GridView.builder(
+                        padding: EdgeInsets.only(
+                          top: ManagerHeight.h8,
+                          bottom: ManagerHeight.h80,
+                        ),
+                        physics: const AlwaysScrollableScrollPhysics(
+                          parent: BouncingScrollPhysics(),
+                        ),
+                        itemCount: controller.offers.length,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          mainAxisExtent: ManagerHeight.h210,
+                          crossAxisSpacing: ManagerWidth.w12,
+                          mainAxisSpacing: ManagerHeight.h12,
+                        ),
+                        itemBuilder: (context, index) {
+                          final offer = controller.offers[index];
+                          return OfferCardWidget(offer: offer);
+                        },
+                      ),
+                    ),
+
+                    // شريط علوي يظهر عند التحديث بالسحب
+                    if (controller.isRefreshing.value)
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: Container(
+                          padding: EdgeInsets.all(ManagerWidth.w8),
+                          decoration: BoxDecoration(
+                            color: ManagerColors.primaryColor.withOpacity(0.9),
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(ManagerRadius.r12),
+                              bottomRight: Radius.circular(ManagerRadius.r12),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(width: ManagerWidth.w8),
+                              Text(
+                                'جاري التحديث...',
+                                style: getMediumTextStyle(
+                                  fontSize: ManagerFontSize.s12,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
             ),
-          );
-        }
-
-        if (controller.offers.isEmpty) {
-          return const Center(
-            child: Text("No offers found"),
-          );
-        }
-
-        return Padding(
-          padding: EdgeInsets.all(ManagerWidth.w12),
-          child: GridView.builder(
-            padding: EdgeInsets.zero,
-            physics: const BouncingScrollPhysics(),
-            itemCount: controller.offers.length,
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              mainAxisExtent: ManagerHeight.h192,
-              crossAxisSpacing: ManagerWidth.w12,
-              mainAxisSpacing: ManagerHeight.h12,
-            ),
-            itemBuilder: (context, index) {
-              final offer = controller.offers[index];
-              return OfferCard(
-                offer: offer,
-              );
-            },
-          ),
+          ],
         );
       }),
-      floatingActionButton: FloatingActionButton(
+
+      // زر إضافة عرض جديد
+      floatingActionButton: FloatingActionButton.extended(
         backgroundColor: ManagerColors.primaryColor,
         onPressed: () {
-          // TODO: navigate to AddOfferProviderScreen
-          // Get.to(() => const AddOfferProviderScreen());
+          initCreateOfferProvider();
+          Get.to(AddOfferProviderScreen());
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        icon: const Icon(Icons.add, color: Colors.white),
+        label: Text(
+          'إضافة عرض',
+          style: getBoldTextStyle(
+            fontSize: ManagerFontSize.s14,
+            color: Colors.white,
+          ),
+        ),
       ),
     );
   }
 }
-
-
-
-// import 'package:app_mobile/core/resources/manager_colors.dart';
-// import 'package:app_mobile/core/resources/manager_font_size.dart';
-// import 'package:app_mobile/core/resources/manager_height.dart';
-// import 'package:app_mobile/core/resources/manager_radius.dart';
-// import 'package:app_mobile/core/resources/manager_strings.dart';
-// import 'package:app_mobile/core/resources/manager_width.dart';
-// import 'package:app_mobile/core/resources/manager_styles.dart';
-// import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
-// import 'package:flutter/material.dart';
-//
-// import '../model_view/offer_model.dart';
-// import '../widgets/offer_card_widget.dart';
-//
-// /// ====================== DEMO DATA ======================
-// final List<OfferModel> demoOffers = [
-//   OfferModel(
-//       name: "شوربة المأكولات البحرية",
-//       image: "assets/images/food1.jpg",
-//       price: 45,
-//       status: "active"),
-//   OfferModel(
-//       name: "بيتزا مارغريتا",
-//       image: "assets/images/food2.jpg",
-//       price: 30,
-//       status: "ongoing"),
-//   OfferModel(
-//       name: "سلطة خضراء",
-//       image: "assets/images/food3.jpg",
-//       price: 20,
-//       status: "expired"),
-//   OfferModel(
-//       name: "باستا بالمشروم",
-//       image: "assets/images/food4.jpg",
-//       price: 35,
-//       status: "active"),
-// ];
-// class ManageListOfferProviderScreen extends StatelessWidget {
-//   const ManageListOfferProviderScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ScaffoldWithBackButton(
-//       title: ManagerStrings.productList,
-//       body: Padding(
-//         padding: EdgeInsets.all(ManagerWidth.w12),
-//         child: GridView.builder(
-//           padding: EdgeInsets.zero,
-//           physics: const BouncingScrollPhysics(),
-//           itemCount: demoOffers.length,
-//           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//             crossAxisCount: 2,
-//             mainAxisExtent: ManagerHeight.h192,
-//             crossAxisSpacing: ManagerWidth.w12,
-//             mainAxisSpacing: ManagerHeight.h12,
-//           ),
-//           itemBuilder: (context, index) {
-//             final offer = demoOffers[index];
-//             return OfferCard(offer: offer);
-//           },
-//         ),
-//       ),
-//       floatingActionButton: FloatingActionButton(
-//         backgroundColor: ManagerColors.primaryColor,
-//         onPressed: () {
-//           // TODO: add new product
-//         },
-//         child: const Icon(Icons.add, color: Colors.white),
-//       ),
-//     );
-//   }
-// }
-//
-//

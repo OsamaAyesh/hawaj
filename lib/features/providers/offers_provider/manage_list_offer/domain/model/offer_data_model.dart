@@ -1,8 +1,0 @@
-import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/domain/model/offer_item_model.dart';
-
-class OfferDataModel {
-  List<OfferItemModel> data;
-  OfferDataModel({
-    required this.data,
-});
-}

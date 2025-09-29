@@ -473,6 +473,18 @@ class ManagerStrings {
 
   static String get retry => tr('retry');
 
+  static String get offerStatusPending => tr('offer_status_pending');
+
+  static String get offerStatusPublished => tr('offer_status_published');
+
+  static String get offerStatusUnpublished => tr('offer_status_unpublished');
+
+  static String get offerStatusFinished => tr('offer_status_finished');
+
+  static String get offerStatusCanceled => tr('offer_status_canceled');
+
+  static String get legendTitle => tr('legend_title');
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

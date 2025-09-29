@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../core/resources/manager_colors.dart';
 import '../../../../../../core/resources/manager_height.dart';
+import '../../../../../../core/resources/manager_radius.dart';
 import '../../../../../../core/resources/manager_width.dart';
 import '../../../../../../core/routes/routes.dart';
 import '../../../../../../core/widgets/labeled_text_field.dart';
@@ -61,11 +62,7 @@ class _AddOfferProviderScreenState extends State<AddOfferProviderScreen> {
         return Stack(
           children: [
             _buildOfferForm(context, controller),
-            if (controller.isSubmitting.value)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: const Center(child: LoadingWidget()),
-              ),
+            if (controller.isSubmitting.value) LoadingWidget()
           ],
         );
       }),
@@ -166,22 +163,57 @@ class _AddOfferProviderScreenState extends State<AddOfferProviderScreen> {
             Container(
               padding: EdgeInsets.all(ManagerWidth.w12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.blue.shade200),
+                color: ManagerColors.primaryColor.withOpacity(0.08),
+                // خلفية لطيفة من الـprimary
+                borderRadius: BorderRadius.circular(ManagerRadius.r12),
+                border: Border.all(
+                  color: ManagerColors.primaryColor.withOpacity(0.4),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: ManagerColors.primaryColor.withOpacity(0.15),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(Icons.business, color: Colors.blue.shade700, size: 20),
-                  SizedBox(width: ManagerWidth.w8),
+                  // أيقونة المؤسسة
+                  Container(
+                    width: ManagerHeight.h36,
+                    height: ManagerHeight.h36,
+                    decoration: BoxDecoration(
+                      color: ManagerColors.primaryColor,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: ManagerColors.primaryColor.withOpacity(0.3),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.business,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                  SizedBox(width: ManagerWidth.w12),
+
+                  // النص
                   Expanded(
                     child: Text(
-                      '${ManagerStrings.businessName}: ${controller.company.value?.organization ?? ManagerStrings.noData}',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue.shade900,
-                        fontWeight: FontWeight.w500,
+                      '${ManagerStrings.businessName}: '
+                      '${controller.company.value?.organization ?? ManagerStrings.noData}',
+                      style: getMediumTextStyle(
+                        fontSize: ManagerFontSize.s14,
+                        color: ManagerColors.primaryColor,
                       ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -348,12 +380,27 @@ class _AddOfferProviderScreenState extends State<AddOfferProviderScreen> {
                   value: controller.offerStatus.value.isEmpty
                       ? null
                       : controller.offerStatus.value,
-                  items: const [
-                    DropdownMenuItem(value: "5", child: Text("قيد المعاينة")),
-                    DropdownMenuItem(value: "1", child: Text("نشر")),
-                    DropdownMenuItem(value: "2", child: Text("غير منشور")),
-                    DropdownMenuItem(value: "3", child: Text("منتهي")),
-                    DropdownMenuItem(value: "4", child: Text("ملغي")),
+                  items: [
+                    DropdownMenuItem(
+                      value: "5",
+                      child: Text(ManagerStrings.offerStatusPending),
+                    ),
+                    DropdownMenuItem(
+                      value: "1",
+                      child: Text(ManagerStrings.offerStatusPublished),
+                    ),
+                    DropdownMenuItem(
+                      value: "2",
+                      child: Text(ManagerStrings.offerStatusUnpublished),
+                    ),
+                    DropdownMenuItem(
+                      value: "3",
+                      child: Text(ManagerStrings.offerStatusFinished),
+                    ),
+                    DropdownMenuItem(
+                      value: "4",
+                      child: Text(ManagerStrings.offerStatusCanceled),
+                    ),
                   ],
                   onChanged: (v) => controller.offerStatus.value = v ?? "5",
                 )),

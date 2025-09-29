@@ -1,400 +1,329 @@
-import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/model/offer_general_item_model.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../../../core/resources/manager_icons.dart';
-import '../../domain/model/offer_item_model.dart';
 import 'offer_status_color.dart';
 
-class OfferCard extends StatelessWidget {
-  final OfferItemModel offer;
+class OfferCardWidget extends StatelessWidget {
+  final OfferGeneralItemModel offer;
 
-  const OfferCard({required this.offer, super.key});
+  const OfferCardWidget({required this.offer, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(ManagerRadius.r8),
-        color: getStatusColor(offer),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// صورة المنتج (من الشبكة)
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius:
-                BorderRadius.vertical(top: Radius.circular(ManagerRadius.r8)),
-                child: offer.productImages.isNotEmpty
-                    ? Image.network(
-                  offer.productImages.first,
-                  width: double.infinity,
-                  height: ManagerHeight.h109,
-                  fit: BoxFit.cover,
-                )
-                    : Container(
-                  width: double.infinity,
-                  height: ManagerHeight.h109,
-                  color: Colors.grey[300],
-                  child: const Icon(Icons.image_not_supported),
-                ),
-              ),
-              Positioned(
-                top: ManagerHeight.h6,
-                left: ManagerWidth.w6,
-                child: Container(
-                  height: ManagerHeight.h24,
-                  width: ManagerWidth.w24,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.15),
-                        blurRadius: 4,
-                      ),
-                    ],
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(ManagerWidth.w4),
-                    child: Image.asset(ManagerIcons.editIconWidget),
-                  ),
-                ),
-              ),
+    final statusColor = OfferStatusHelper.getStatusColor(offer.offerStatus);
+
+    return GestureDetector(
+      onTap: () {
+        // TODO: Navigate to offer details
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(ManagerRadius.r6),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              statusColor,
+              statusColor.withOpacity(0.85),
             ],
           ),
+          boxShadow: [
+            BoxShadow(
+              color: statusColor.withOpacity(0.3),
+              blurRadius: ManagerRadius.r6,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildImageSection(statusColor),
+            SizedBox(height: ManagerHeight.h8),
+            _buildContentSection(),
+          ],
+        ),
+      ),
+    );
+  }
 
-          SizedBox(height: ManagerHeight.h8),
+  Widget _buildImageSection(Color statusColor) {
+    return Stack(
+      children: [
+        // Image
+        ClipRRect(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(ManagerRadius.r6),
+          ),
+          child: CachedNetworkImage(
+            imageUrl: offer.offerImage ?? '',
+            width: double.infinity,
+            height: ManagerHeight.h120,
+            fit: BoxFit.cover,
+            placeholder: (context, url) => Container(
+              color: Colors.grey[200],
+              child: Center(
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: statusColor,
+                ),
+              ),
+            ),
+            errorWidget: (context, url, error) => Container(
+              color: Colors.grey[200],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image_not_supported_outlined,
+                    color: Colors.grey[400],
+                    size: 40,
+                  ),
+                  SizedBox(height: ManagerHeight.h4),
+                  Text(
+                    'لا توجد صورة',
+                    style: getRegularTextStyle(
+                      fontSize: ManagerFontSize.s10,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
 
-          /// الاسم والسعر
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
-            child: Text(
-              offer.productName,
+        // Status Badge
+        Positioned(
+          top: ManagerHeight.h8,
+          right: ManagerWidth.w8,
+          child: Container(
+            padding: EdgeInsets.symmetric(
+              horizontal: ManagerWidth.w8,
+              vertical: ManagerHeight.h4,
+            ),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.95),
+              borderRadius: BorderRadius.circular(ManagerRadius.r8),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 4,
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _getStatusIcon(),
+                  size: 12,
+                  color: statusColor,
+                ),
+                SizedBox(width: ManagerWidth.w4),
+                Text(
+                  OfferStatusHelper.getStatusText(offer.offerStatus),
+                  style: getBoldTextStyle(
+                    fontSize: ManagerFontSize.s9,
+                    color: statusColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Edit Button
+        Positioned(
+          top: ManagerHeight.h8,
+          left: ManagerWidth.w8,
+          child: Container(
+            height: ManagerHeight.h28,
+            width: ManagerWidth.w28,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 6,
+                ),
+              ],
+            ),
+            child: Icon(
+              Icons.edit_outlined,
+              size: ManagerWidth.w14,
+              color: statusColor,
+            ),
+          ),
+        ),
+
+        // Discount Badge (if applicable)
+        if (offer.offerPercentage != null && offer.offerPercentage! > 0)
+          Positioned(
+            bottom: ManagerHeight.h8,
+            right: ManagerWidth.w8,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ManagerWidth.w10,
+                vertical: ManagerHeight.h4,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.amber,
+                borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.amber.withOpacity(0.5),
+                    blurRadius: 6,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.local_offer,
+                    size: 12,
+                    color: Colors.white,
+                  ),
+                  SizedBox(width: ManagerWidth.w4),
+                  Text(
+                    '%${offer.offerPercentage!.toInt()}-',
+                    style: getBoldTextStyle(
+                      fontSize: ManagerFontSize.s10,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildContentSection() {
+    return Expanded(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Product Name
+            Text(
+              offer.offerName ?? 'عرض',
               style: getBoldTextStyle(
-                fontSize: ManagerFontSize.s10,
-                color: ManagerColors.white,
+                fontSize: ManagerFontSize.s11,
+                color: Colors.white,
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-          ),
-          SizedBox(height: ManagerHeight.h6),
 
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
-            child: Row(
+            SizedBox(height: ManagerHeight.h6),
+
+            // Price Section
+            Row(
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(ManagerRadius.r2),
-                    color: Colors.white.withOpacity(0.2),
-                  ),
-                  child: Padding(
+                if (offer.offerPrice != null) ...[
+                  Container(
                     padding: EdgeInsets.symmetric(
-                      vertical: ManagerHeight.h2,
-                      horizontal: ManagerWidth.w12,
+                      horizontal: ManagerWidth.w10,
+                      vertical: ManagerHeight.h4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.25),
+                      borderRadius: BorderRadius.circular(ManagerRadius.r6),
                     ),
                     child: Text(
-                      "${offer.offerPrice} ر.س",
+                      "${offer.offerPrice!.toStringAsFixed(0)} ر.س",
                       style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s6,
+                        fontSize: ManagerFontSize.s10,
                         color: Colors.white,
                       ),
                     ),
                   ),
-                ),
-                SizedBox(width: ManagerWidth.w4),
-                if (offer.productPrice > offer.offerPrice)
-                  Text(
-                    "${offer.productPrice} ر.س",
-                    style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s9,
-                      color: Colors.white,
-                      decoration: TextDecoration.lineThrough,
+                ] else
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ManagerWidth.w10,
+                      vertical: ManagerHeight.h4,
                     ),
-                    textDirection: TextDirection.rtl,
-                  )
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.25),
+                      borderRadius: BorderRadius.circular(ManagerRadius.r6),
+                    ),
+                    child: Text(
+                      'لا يوجد سعر',
+                      style: getRegularTextStyle(
+                        fontSize: ManagerFontSize.s9,
+                        color: Colors.white70,
+                      ),
+                    ),
+                  ),
               ],
             ),
-          ),
 
-          SizedBox(height: ManagerHeight.h6),
+            const Spacer(),
 
-          /// تاريخ انتهاء العرض
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(ManagerRadius.r2),
-                color: Colors.white.withOpacity(0.2),
-              ),
-              child: Padding(
+            // Date Section
+            if (offer.offerEndDate != null)
+              Container(
                 padding: EdgeInsets.symmetric(
-                  vertical: ManagerHeight.h2,
-                  horizontal: ManagerWidth.w12,
+                  horizontal: ManagerWidth.w8,
+                  vertical: ManagerHeight.h4,
                 ),
-                child: Text(
-                  offer.offerEndDate,
-                  style: getBoldTextStyle(
-                    fontSize: ManagerFontSize.s6,
-                    color: Colors.white,
-                  ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(ManagerRadius.r6),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 10,
+                      color: Colors.white,
+                    ),
+                    SizedBox(width: ManagerWidth.w4),
+                    Text(
+                      offer.offerEndDate!,
+                      style: getMediumTextStyle(
+                        fontSize: ManagerFontSize.s9,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ),
-        ],
+
+            SizedBox(height: ManagerHeight.h8),
+          ],
+        ),
       ),
     );
   }
+
+  IconData _getStatusIcon() {
+    switch (offer.offerStatus) {
+      case 1:
+        return Icons.check_circle;
+      case 2:
+        return Icons.visibility_off;
+      case 3:
+        return Icons.schedule;
+      case 4:
+        return Icons.cancel;
+      case 5:
+        return Icons.pending;
+      default:
+        return Icons.help_outline;
+    }
+  }
 }
-
-
-
-// import 'package:app_mobile/core/resources/manager_colors.dart';
-// import 'package:app_mobile/core/resources/manager_font_size.dart';
-// import 'package:app_mobile/core/resources/manager_height.dart';
-// import 'package:app_mobile/core/resources/manager_radius.dart';
-// import 'package:app_mobile/core/resources/manager_styles.dart';
-// import 'package:app_mobile/core/resources/manager_width.dart';
-// import 'package:app_mobile/core/resources/manager_images.dart';
-// import 'package:app_mobile/features/providers/offers_provider/manage_list_offer/presentation/model_view/offer_model.dart';
-// import 'package:flutter/material.dart';
-//
-// import '../../../../../../core/resources/manager_icons.dart';
-// import 'offer_status_color.dart';
-//
-// class OfferCard extends StatelessWidget {
-//   final OfferModel offer;
-//
-//   const OfferCard({required this.offer, super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       decoration: BoxDecoration(
-//         borderRadius: BorderRadius.circular(ManagerRadius.r8),
-//         color: getStatusColor(offer),
-//         boxShadow: [
-//           BoxShadow(
-//             color: Colors.black.withOpacity(0.05),
-//             blurRadius: 6,
-//             offset: const Offset(0, 3),
-//           ),
-//         ],
-//       ),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Stack(
-//             children: [
-//               ClipRRect(
-//                 borderRadius: BorderRadius.vertical(
-//                     top: Radius.circular(ManagerRadius.r8)),
-//                 child: Image.asset(
-//                   ManagerImages.imageFoodOneRemove,
-//                   width: double.infinity,
-//                   height: ManagerHeight.h109,
-//                   fit: BoxFit.cover,
-//                 ),
-//               ),
-//               Positioned(
-//                 top: ManagerHeight.h6,
-//                 left: ManagerWidth.w6,
-//                 child: Container(
-//                   height: ManagerHeight.h24,
-//                   width: ManagerWidth.w24,
-//                   decoration: BoxDecoration(
-//                     color: Colors.white,
-//                     shape: BoxShape.circle,
-//                     boxShadow: [
-//                       BoxShadow(
-//                         color: Colors.black.withOpacity(0.15),
-//                         blurRadius: 4,
-//                       ),
-//                     ],
-//                   ),
-//                   child: Padding(
-//                     padding: EdgeInsets.symmetric(
-//                       horizontal: ManagerWidth.w4,
-//                       vertical: ManagerHeight.h4,
-//                     ),
-//                     child: Image.asset(
-//                       ManagerIcons.editIconWidget,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//
-//           SizedBox(height: ManagerHeight.h8),
-//           Row(
-//             children: [
-//               Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Padding(
-//                     padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
-//                     child: Text(
-//                       offer.name,
-//                       style: getBoldTextStyle(
-//                         fontSize: ManagerFontSize.s10,
-//                         color: ManagerColors.white,
-//                       ),
-//                       maxLines: 1,
-//                       overflow: TextOverflow.ellipsis,
-//                     ),
-//                   ),
-//                   SizedBox(
-//                     height: ManagerHeight.h6,
-//                   ),
-//                   Padding(
-//                     padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
-//                     child: Row(
-//                       children: [
-//                         Container(
-//                           // width: ManagerWidth.w70,
-//                           decoration: BoxDecoration(
-//                             borderRadius:
-//                                 BorderRadius.circular(ManagerRadius.r2),
-//                             color: ManagerColors.white.withOpacity(0.2),
-//                           ),
-//                           child: Center(
-//                             child: Padding(
-//                               padding: EdgeInsets.symmetric(
-//                                 vertical: ManagerHeight.h2,
-//                                 horizontal: ManagerWidth.w12,
-//                               ),
-//                               child: Text(
-//                                 "40 ريال سعودي",
-//                                 style: getBoldTextStyle(
-//                                   fontSize: ManagerFontSize.s6,
-//                                   color: ManagerColors.white,
-//                                 ),
-//                               ),
-//                             ),
-//                           ),
-//                         ),
-//                         SizedBox(width: ManagerWidth.w4,),
-//                         Text(
-//                           "45 ر.س",
-//                           style: getBoldTextStyle(
-//                             fontSize: ManagerFontSize.s9,
-//                             color: ManagerColors.white,
-//                             decoration: TextDecoration.lineThrough,
-//                           ),
-//                           textDirection: TextDirection.rtl,
-//                         )
-//                       ],
-//                     ),
-//                   )
-//                 ],
-//               )
-//             ],
-//           ),
-//           SizedBox(
-//             height: ManagerHeight.h6,
-//           ),
-//
-//           //
-//           Padding(
-//             padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w5),
-//             child: Container(
-//               // width: ManagerWidth.w70,
-//               decoration: BoxDecoration(
-//                 borderRadius:
-//                 BorderRadius.circular(ManagerRadius.r2),
-//                 color: ManagerColors.white.withOpacity(0.2),
-//               ),
-//               child: Center(
-//                 child: Padding(
-//                   padding: EdgeInsets.symmetric(
-//                     vertical: ManagerHeight.h2,
-//                     horizontal: ManagerWidth.w12,
-//                   ),
-//                   child: Text(
-//                     "05-07-2025",
-//                     style: getBoldTextStyle(
-//                       fontSize: ManagerFontSize.s6,
-//                       color: ManagerColors.white,
-//                     ),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),          //
-//           // Padding(
-//           //   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w8),
-//           //   child: Row(
-//           //     children: [
-//           //       /// السعر القديم مشطوب
-//           //       Text(
-//           //         "40 ريال سعودي",
-//           //         style: getRegularTextStyle(
-//           //           fontSize: ManagerFontSize.s12,
-//           //           color: ManagerColors.greyWithColor,
-//           //         ).copyWith(decoration: TextDecoration.lineThrough),
-//           //       ),
-//           //       SizedBox(width: ManagerWidth.w8),
-//           //
-//           //       /// السعر الجديد داخل Container
-//           //       Container(
-//           //         padding: EdgeInsets.symmetric(
-//           //           horizontal: ManagerWidth.w8,
-//           //           vertical: ManagerHeight.h2,
-//           //         ),
-//           //         decoration: BoxDecoration(
-//           //           color: Colors.white.withOpacity(0.2),
-//           //           borderRadius: BorderRadius.circular(ManagerRadius.r4),
-//           //         ),
-//           //         child: Text(
-//           //           "10 ريال سعودي",
-//           //           style: getBoldTextStyle(
-//           //             fontSize: ManagerFontSize.s12,
-//           //             color: Colors.white,
-//           //           ),
-//           //         ),
-//           //       ),
-//           //     ],
-//           //   ),
-//           // ),
-//           //
-//           // const Spacer(),
-//           //
-//           // /// زر أسفل الكارد (إعادة تفعيل العرض)
-//           // Container(
-//           //   width: double.infinity,
-//           //   decoration: BoxDecoration(
-//           //     color: Colors.white.withOpacity(0.15),
-//           //     borderRadius: BorderRadius.vertical(bottom: Radius.circular(ManagerRadius.r8)),
-//           //   ),
-//           //   padding: EdgeInsets.symmetric(vertical: ManagerHeight.h6),
-//           //   alignment: Alignment.center,
-//           //   child: Text(
-//           //     "إعادة تفعيل العرض",
-//           //     style: getBoldTextStyle(
-//           //       fontSize: ManagerFontSize.s12,
-//           //       color: Colors.white,
-//           //     ),
-//           //   ),
-//           // ),
-//         ],
-//       ),
-//     );
-//   }
-// }

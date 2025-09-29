@@ -36,7 +36,10 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
             child: SingleChildScrollView(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom +
+                bottom: MediaQuery
+                    .of(context)
+                    .viewInsets
+                    .bottom +
                     ManagerHeight.h16,
               ),
               physics: const BouncingScrollPhysics(),
@@ -54,7 +57,6 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
 
                   SizedBox(height: ManagerHeight.h20),
 
-                  // اسم الشركة
                   LabeledTextField(
                     label: ManagerStrings.companyName,
                     hintText: ManagerStrings.companyNameHint,
@@ -76,21 +78,20 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  // الموقع
                   LabeledTextField(
                     label: ManagerStrings.setLocation,
                     hintText: 'اضغط لتحديد الموقع',
                     controller: controller.organizationLocationController,
-                    enabled: false,
+                    enabled: true,
                     onButtonTap: () async {
                       final result = await Get.to(
-                        () => const MapTickerScreen(),
+                            () => const MapTickerScreen(),
                         binding: MapTickerBindings(),
                       );
 
                       if (result != null && result is LocationTickerEntity) {
                         controller.organizationLocationController.text =
-                            '${result.latitude},${result.longitude}';
+                        '${result.latitude},${result.longitude}';
                       }
                     },
                     buttonWidget: Row(
@@ -117,7 +118,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                     label: ManagerStrings.detailedAddress,
                     hintText: ManagerStrings.detailedAddressHint,
                     controller:
-                        controller.organizationDetailedAddressController,
+                    controller.organizationDetailedAddressController,
                     textInputAction: TextInputAction.next,
                     widthButton: ManagerWidth.w130,
                   ),
@@ -168,7 +169,7 @@ class RegisterCompanyOfferProviderScreen extends StatelessWidget {
                     label: ManagerStrings.commercialNumber,
                     hintText: ManagerStrings.commercialNumberHint,
                     controller:
-                        controller.commercialRegistrationNumberController,
+                    controller.commercialRegistrationNumberController,
                     textInputAction: TextInputAction.done,
                     widthButton: ManagerWidth.w130,
                   ),
