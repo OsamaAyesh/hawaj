@@ -1,15 +1,15 @@
-import 'package:app_mobile/core/resources/manager_strings.dart';
-import 'package:app_mobile/core/resources/manager_icons.dart';
-import 'package:app_mobile/features/common/profile/presentation/pages/profile_screen.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 
-import '../../../profile/domain/di/di.dart';
+import '../../../../../core/resources/manager_icons.dart';
+import '../../../../../core/resources/manager_strings.dart';
+import '../../../../common/profile/domain/di/di.dart';
+import '../../../../common/profile/presentation/pages/profile_screen.dart';
+import '../../../../providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import 'drawer_widget.dart';
 
-/// Constant keys for features (must match the JSON keys used in localization).
+/// مفاتيح الأقسام المتاحة
 class DrawerFeatures {
-  // User
+  // ===== أقسام المستخدم =====
   static const userProfile = 'user_profile';
   static const userDailyOffers = 'user_daily_offers';
   static const userContracts = 'user_contracts';
@@ -17,14 +17,14 @@ class DrawerFeatures {
   static const userDelivery = 'user_delivery';
   static const userJobs = 'user_jobs';
 
-  // Provider
+  // ===== أقسام مزود الخدمة =====
   static const providerManageOffers = 'provider_manage_offers';
   static const providerManageContracts = 'provider_manage_contracts';
   static const providerRealEstateManage = 'provider_real_estate_manage';
   static const providerDeliveryDashboard = 'provider_delivery_dashboard';
   static const providerManageJobs = 'provider_manage_jobs';
 
-  /// Helper groups
+  /// مجموعات الأقسام
   static const Set<String> userGroup = {
     userProfile,
     userDailyOffers,
@@ -43,127 +43,213 @@ class DrawerFeatures {
   };
 }
 
-/// Drawer manager that handles visibility of items based on enabled features.
+/// نظام التنقلات - أضف روابط الصفحات هنا
+class DrawerNavigationRoutes {
+  // ===== User Routes =====
+  static void navigateToProfile() {
+    initGetProfile();
+    Get.to(() => ProfileScreen());
+  }
+
+  static void navigateToDailyOffers() {
+    // TODO: أضف التنقل لصفحة العروض اليومية
+    // initDailyOffers();
+    // Get.to(() => DailyOffersScreen());
+    Get.snackbar('قيد التطوير', 'صفحة العروض اليومية');
+  }
+
+  static void navigateToContracts() {
+    // TODO: أضف التنقل لصفحة العقود
+    // initContracts();
+    // Get.to(() => ContractsScreen());
+    Get.snackbar('قيد التطوير', 'صفحة العقود');
+  }
+
+  static void navigateToRealEstate() {
+    // TODO: أضف التنقل لصفحة العقارات
+    // initRealEstate();
+    // Get.to(() => RealEstateScreen());
+    Get.snackbar('قيد التطوير', 'صفحة العقارات');
+  }
+
+  static void navigateToDelivery() {
+    // TODO: أضف التنقل لصفحة التوصيل
+    // initDelivery();
+    // Get.to(() => DeliveryScreen());
+    Get.snackbar('قيد التطوير', 'صفحة التوصيل');
+  }
+
+  static void navigateToJobs() {
+    // TODO: أضف التنقل لصفحة الوظائف
+    // initJobs();
+    // Get.to(() => JobsScreen());
+    Get.snackbar('قيد التطوير', 'صفحة الوظائف');
+  }
+
+  // ===== Provider Routes =====
+  static void navigateToManageOffers() {
+    // TODO: أضف التنقل لإدارة العروض
+    // initManageOffers();
+    Get.to(() => ManagerProductsOfferProviderScreen());
+  }
+
+  static void navigateToManageContracts() {
+    // TODO: أضف التنقل لإدارة العقود
+    // initManageContracts();
+    // Get.to(() => ManageContractsScreen());
+    Get.snackbar('قيد التطوير', 'إدارة العقود');
+  }
+
+  static void navigateToManageRealEstate() {
+    // TODO: أضف التنقل لإدارة العقارات
+    // initManageRealEstate();
+    // Get.to(() => ManageRealEstateScreen());
+    Get.snackbar('قيد التطوير', 'إدارة العقارات');
+  }
+
+  static void navigateToDeliveryDashboard() {
+    // TODO: أضف التنقل للوحة التوصيل
+    // initDeliveryDashboard();
+    // Get.to(() => DeliveryDashboardScreen());
+    Get.snackbar('قيد التطوير', 'لوحة التوصيل');
+  }
+
+  static void navigateToManageJobs() {
+    // TODO: أضف التنقل لإدارة الوظائف
+    // initManageJobs();
+    // Get.to(() => ManageJobsScreen());
+    Get.snackbar('قيد التطوير', 'إدارة الوظائف');
+  }
+}
+
+/// مدير رؤية الأقسام والتنقلات
 class DrawerVisibilityManager {
-  /// Set of enabled feature keys (based on user subscription or permissions).
   final Set<String> _enabled;
 
   DrawerVisibilityManager({Set<String>? enabled})
       : _enabled = {...(enabled ?? const <String>{})};
 
-  /// Check if a feature is enabled
+  /// التحقق من تفعيل قسم
   bool isEnabled(String featureKey) => _enabled.contains(featureKey);
 
-  /// Enable a feature
+  /// تفعيل قسم
   void enable(String featureKey) => _enabled.add(featureKey);
 
-  /// Disable a feature
+  /// تعطيل قسم
   void disable(String featureKey) => _enabled.remove(featureKey);
 
-  /// Toggle a feature
+  /// عكس حالة القسم
   void toggle(String featureKey) =>
       isEnabled(featureKey) ? disable(featureKey) : enable(featureKey);
 
-  /// Build a single Drawer item by its feature key
+  /// بناء عنصر واحد من الـ Drawer
   DrawerItemModel? _buildItem(String featureKey) {
     switch (featureKey) {
-    // ===== User =====
+      // ===== أقسام المستخدم =====
       case DrawerFeatures.userProfile:
         return DrawerItemModel(
           iconPath: ManagerIcons.userProfileIcon,
           title: ManagerStrings.userProfile,
-          onTap: () {
-            initGetProfile();
-            Get.to(ProfileScreen());
-          },
+          onTap: DrawerNavigationRoutes.navigateToProfile,
         );
+
       case DrawerFeatures.userDailyOffers:
         return DrawerItemModel(
           iconPath: ManagerIcons.userDailyOffersIcon,
           title: ManagerStrings.userDailyOffers,
-          onTap: () => print("Open daily offers"),
+          onTap: DrawerNavigationRoutes.navigateToDailyOffers,
         );
+
       case DrawerFeatures.userContracts:
         return DrawerItemModel(
           iconPath: ManagerIcons.userContractsIcon,
           title: ManagerStrings.userContracts,
-          onTap: () => print("Open contracts"),
+          onTap: DrawerNavigationRoutes.navigateToContracts,
         );
+
       case DrawerFeatures.userRealEstate:
         return DrawerItemModel(
           iconPath: ManagerIcons.userRealEstateIcon,
           title: ManagerStrings.userRealEstate,
-          onTap: () => print("Open real estate"),
+          onTap: DrawerNavigationRoutes.navigateToRealEstate,
         );
+
       case DrawerFeatures.userDelivery:
         return DrawerItemModel(
           iconPath: ManagerIcons.userDeliveryIcon,
           title: ManagerStrings.userDelivery,
-          onTap: () => print("Open delivery"),
+          onTap: DrawerNavigationRoutes.navigateToDelivery,
         );
+
       case DrawerFeatures.userJobs:
         return DrawerItemModel(
           iconPath: ManagerIcons.userJobsIcon,
           title: ManagerStrings.userJobs,
-          onTap: () => print("Open jobs"),
+          onTap: DrawerNavigationRoutes.navigateToJobs,
         );
 
-    // ===== Provider =====
+      // ===== أقسام مزود الخدمة =====
       case DrawerFeatures.providerManageOffers:
         return DrawerItemModel(
           iconPath: ManagerIcons.providerOffersIcon,
           title: ManagerStrings.providerManageOffers,
-          onTap: () => print("Open manage offers"),
+          onTap: DrawerNavigationRoutes.navigateToManageOffers,
         );
+
       case DrawerFeatures.providerManageContracts:
         return DrawerItemModel(
           iconPath: ManagerIcons.providerContractsIcon,
           title: ManagerStrings.providerManageContracts,
-          onTap: () => print("Open manage contracts"),
+          onTap: DrawerNavigationRoutes.navigateToManageContracts,
         );
+
       case DrawerFeatures.providerRealEstateManage:
         return DrawerItemModel(
           iconPath: ManagerIcons.providerRealEstateIcon,
           title: ManagerStrings.providerRealEstateManage,
-          onTap: () => print("Open manage real estate"),
+          onTap: DrawerNavigationRoutes.navigateToManageRealEstate,
         );
+
       case DrawerFeatures.providerDeliveryDashboard:
         return DrawerItemModel(
           iconPath: ManagerIcons.providerDeliveryIcon,
           title: ManagerStrings.providerDeliveryDashboard,
-          onTap: () => print("Open delivery dashboard"),
+          onTap: DrawerNavigationRoutes.navigateToDeliveryDashboard,
         );
+
       case DrawerFeatures.providerManageJobs:
         return DrawerItemModel(
           iconPath: ManagerIcons.providerJobsIcon,
           title: ManagerStrings.providerManageJobs,
-          onTap: () => print("Open manage jobs"),
+          onTap: DrawerNavigationRoutes.navigateToManageJobs,
         );
+
+      default:
+        return null;
     }
-    return null;
   }
 
-  /// Build visible user items based on enabled keys
+  /// بناء أقسام المستخدم المرئية
   List<DrawerItemModel> buildUserItems() {
     final visibleKeys =
-    DrawerFeatures.userGroup.where((k) => _enabled.contains(k));
+        DrawerFeatures.userGroup.where((k) => _enabled.contains(k));
     return visibleKeys
         .map(_buildItem)
         .whereType<DrawerItemModel>()
         .toList(growable: false);
   }
 
-  /// Build visible provider items based on enabled keys
+  /// بناء أقسام مزود الخدمة المرئية
   List<DrawerItemModel> buildProviderItems() {
     final visibleKeys =
-    DrawerFeatures.providerGroup.where((k) => _enabled.contains(k));
+        DrawerFeatures.providerGroup.where((k) => _enabled.contains(k));
     return visibleKeys
         .map(_buildItem)
         .whereType<DrawerItemModel>()
         .toList(growable: false);
   }
 
-  /// Build all items (user + provider) based on enabled keys
+  /// بناء جميع الأقسام
   List<DrawerItemModel> buildAllItems() {
     final allKeys = {
       ...DrawerFeatures.userGroup,
@@ -172,6 +258,6 @@ class DrawerVisibilityManager {
     return allKeys.map(_buildItem).whereType<DrawerItemModel>().toList();
   }
 
-  /// Get all enabled keys (useful for saving/restoring state)
+  /// الحصول على الأقسام المفعّلة
   Set<String> get enabledKeys => {..._enabled};
 }
