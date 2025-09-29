@@ -15,6 +15,8 @@ import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
+import '../../../details_my_company/domain/di/di.dart';
+import '../../../details_my_company/presentation/pages/details_my_company_screen.dart';
 import '../../../manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
@@ -70,6 +72,8 @@ class _ManagerProductsOfferProviderScreenState
         if (kDebugMode) {
           print("تفاصيل المنشأة");
         }
+        initGetMyCompanyDetails();
+        Get.to(DetailsMyCompanyScreen());
       },
     ];
 
