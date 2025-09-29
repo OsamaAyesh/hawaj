@@ -90,7 +90,6 @@ class MapSectionsController extends GetxController {
   // ===== Private Methods لجلب البيانات =====
 
   Future<void> _fetchDailyOffers() async {
-    // TODO: استدعاء UseCase الخاص بالعروض اليومية
     await Future.delayed(const Duration(seconds: 1)); // Placeholder
   }
 
