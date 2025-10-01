@@ -55,7 +55,7 @@ class Constants {
     },
   ];
 
-  ///======= Manager Contracts Widget =======
+  ///======= Manager Contracts User Widget =======
   static List<Map<String, String>> itemsManagerContracts = [
     {
       'icon': ManagerIcons.addRequestContractIcon,
@@ -66,6 +66,35 @@ class Constants {
       'icon': ManagerIcons.myRequestsIcon,
       'title': ManagerStrings.myRequestsTitle,
       'subtitle': ManagerStrings.myRequestsSubtitle,
+    },
+  ];
+
+  ///===== Manger Contract Provider Widget. =======
+  static List<Map<String, String>> itemsManagerProviderContracts = [
+    {
+      'icon': ManagerIcons.addServiceIcon,
+      'title': ManagerStrings.contractsAddServiceTitle,
+      'subtitle': ManagerStrings.contractsAddServiceSubTitle,
+    },
+    {
+      'icon': ManagerIcons.managerDataProviderIcon,
+      'title': ManagerStrings.contractsDataManagementTitle,
+      'subtitle': ManagerStrings.contractsDataManagementSubTitle,
+    },
+    {
+      'icon': ManagerIcons.managerMyServicesProviderIcon,
+      'title': ManagerStrings.contractsMyServicesTitle,
+      'subtitle': ManagerStrings.contractsMyServicesSubTitle,
+    },
+    {
+      'icon': ManagerIcons.myProposalRequested,
+      'title': ManagerStrings.contractsSubmittedOffersTitle,
+      'subtitle': ManagerStrings.contractsSubmittedOffersSubTitle,
+    },
+    {
+      'icon': ManagerIcons.needsMapIcon,
+      'title': ManagerStrings.contractsNeedsMapTitle,
+      'subtitle': ManagerStrings.contractsNeedsMapSubTitle,
     },
   ];
 }

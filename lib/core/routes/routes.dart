@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
 import '../../features/common/test/test_hawaj_screen.dart';
+import '../../features/providers/commercial_contracts/manager_commercial_contracts_services_provider/presentation/pages/manager_commercial_contracts_services_provider_screen.dart';
 import '../../features/providers/commercial_contracts/register_service_provider_contract/pages/register_service_provider_contract_screen.dart';
 import '../../features/providers/commercial_contracts/subscription_commercial_contracts_provider/presentation/pages/subscription_commercial_contracts_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
@@ -68,6 +69,8 @@ class Routes {
       '/register_service_provider_contract_screen';
   static const String subscriptionCommercialContractsProviderScreen =
       '/subscriptionCommercialContractsProviderScreen';
+  static const String managerCommercialContractsServicesProviderScreen =
+      '/managerCommercialContractsServicesProviderScreen';
 
   ///Commercial Contract User Screens
   static const String showDetailsContractProviderScreen =
@@ -164,6 +167,9 @@ class RouteGenerator {
       case Routes.subscriptionCommercialContractsProviderScreen:
         return MaterialPageRoute(
             builder: (_) => SubscriptionCommercialContractsProviderScreen());
+      case Routes.managerCommercialContractsServicesProviderScreen:
+        return MaterialPageRoute(
+            builder: (_) => ManagerCommercialContractsServicesProviderScreen());
       default:
         return unDefinedRoute();
     }

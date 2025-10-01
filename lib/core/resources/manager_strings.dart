@@ -692,6 +692,37 @@ class ManagerStrings {
   static String get subscriptionCommercialNote =>
       tr("subscriptionCommercialNote");
 
+  ///Manager Commercial Contract Service Strings.
+  // Contracts Services
+  static String get contractsQuickAccess => tr("contractsQuickAccess");
+
+  static String get contractsAddServiceTitle => tr("contractsAddServiceTitle");
+
+  static String get contractsAddServiceSubTitle =>
+      tr("contractsAddServiceSubTitle");
+
+  static String get contractsNeedsMapTitle => tr("contractsNeedsMapTitle");
+
+  static String get contractsNeedsMapSubTitle =>
+      tr("contractsNeedsMapSubTitle");
+
+  static String get contractsDataManagementTitle =>
+      tr("contractsDataManagementTitle");
+
+  static String get contractsDataManagementSubTitle =>
+      tr("contractsDataManagementSubTitle");
+
+  static String get contractsMyServicesTitle => tr("contractsMyServicesTitle");
+
+  static String get contractsMyServicesSubTitle =>
+      tr("contractsMyServicesSubTitle");
+
+  static String get contractsSubmittedOffersTitle =>
+      tr("contractsSubmittedOffersTitle");
+
+  static String get contractsSubmittedOffersSubTitle =>
+      tr("contractsSubmittedOffersSubTitle");
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

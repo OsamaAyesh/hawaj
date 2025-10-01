@@ -42,6 +42,16 @@ class ManagerIcons {
       "$iconsPath/add_request_contract_icon.png";
   static const String myRequestsIcon = "$iconsPath/my_requests_icon.png";
 
+  ///Manager Icons Provider Commercial Contract Icons
+  static const String addServiceIcon = "$iconsPath/add_service_icon.png";
+  static const String managerDataProviderIcon =
+      "$iconsPath/manager_data_provider_icon.png";
+  static const String managerMyServicesProviderIcon =
+      "$iconsPath/manager_my_services_provider_icon.png";
+  static const String myProposalRequested =
+      "$iconsPath/my_proposal_requested.png";
+  static const String needsMapIcon = "$iconsPath/needs_map_icon.png";
+
   /// ============Drawer Icons List.
   /// ======> Provides Icons
   static const String providerOffersIcon = "$iconsPath/providerOffersIcon.png";
