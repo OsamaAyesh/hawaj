@@ -647,6 +647,51 @@ class ManagerStrings {
 
   static String get serviceProviderCancel => tr("serviceProviderCancel");
 
+  static String get subscriptionCommercialTitle =>
+      tr("subscriptionCommercialTitle");
+
+  static String get subscriptionCommercialMainTitle =>
+      tr("subscriptionCommercialMainTitle");
+
+  static String get subscriptionCommercialSubTitle =>
+      tr("subscriptionCommercialSubTitle");
+
+  static String get subscriptionCommercialPlanTitle =>
+      tr("subscriptionCommercialPlanTitle");
+
+  static String get subscriptionCommercialPlanName =>
+      tr("subscriptionCommercialPlanName");
+
+  static String get subscriptionCommercialPlanPrice =>
+      tr("subscriptionCommercialPlanPrice");
+
+  static String get subscriptionCommercialDuration =>
+      tr("subscriptionCommercialDuration");
+
+  static String get subscriptionCommercialDurationHint =>
+      tr("subscriptionCommercialDurationHint");
+
+  static String get subscriptionCommercialIncludedFeatures =>
+      tr("subscriptionCommercialIncludedFeatures");
+
+  static String get subscriptionCommercialFeature1 =>
+      tr("subscriptionCommercialFeature1");
+
+  static String get subscriptionCommercialFeature2 =>
+      tr("subscriptionCommercialFeature2");
+
+  static String get subscriptionCommercialFeature3 =>
+      tr("subscriptionCommercialFeature3");
+
+  static String get subscriptionCommercialFeature4 =>
+      tr("subscriptionCommercialFeature4");
+
+  static String get subscriptionCommercialButton =>
+      tr("subscriptionCommercialButton");
+
+  static String get subscriptionCommercialNote =>
+      tr("subscriptionCommercialNote");
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

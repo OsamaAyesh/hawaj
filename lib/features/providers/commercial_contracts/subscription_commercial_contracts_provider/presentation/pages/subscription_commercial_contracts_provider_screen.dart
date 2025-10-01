@@ -1,6 +1,7 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
@@ -22,7 +23,7 @@ class SubscriptionCommercialContractsProviderScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: ManagerColors.primaryColor,
         appBar: CustomHeader(
-          title: "اشترك الآن",
+          title: ManagerStrings.subscriptionCommercialTitle,
           onBack: () => Navigator.pop(context),
         ),
         body: SingleChildScrollView(
@@ -33,12 +34,11 @@ class SubscriptionCommercialContractsProviderScreen extends StatelessWidget {
               SizedBox(height: ManagerHeight.h32),
 
               /// ===== العنوان الرئيسي =====
-              const TitleSubscriptionOfferProviderWidget(
-                  title: "قدّم خدماتك من خلال حواج!"),
+              TitleSubscriptionOfferProviderWidget(
+                  title: ManagerStrings.subscriptionCommercialMainTitle),
               SizedBox(height: ManagerHeight.h4),
-              const SubTitleSubscriptionOfferProviderWidget(
-                subTitleString:
-                    "اشترك كمقدم خدمة وابدأ بعرض خدماتك والتعاقد مع العملاء بسهولة. كن ظاهراً على الخريطة واستقبل الطلبات من مستخدمين أو شركات.",
+              SubTitleSubscriptionOfferProviderWidget(
+                subTitleString: ManagerStrings.subscriptionCommercialSubTitle,
               ),
               SizedBox(height: ManagerHeight.h21),
 
@@ -55,21 +55,25 @@ class SubscriptionCommercialContractsProviderScreen extends StatelessWidget {
                     SizedBox(height: ManagerHeight.h16),
 
                     /// عنوان الخطة
-                    const TitleContainerWidget(title: "الخطة الرائجة"),
+                    TitleContainerWidget(
+                        title: ManagerStrings.subscriptionCommercialPlanTitle),
                     SizedBox(height: ManagerHeight.h8),
 
                     /// اسم الخطة
-                    const TitlePlanNameWidget(title: "Super"),
+                    TitlePlanNameWidget(
+                        title: ManagerStrings.subscriptionCommercialPlanName),
                     SizedBox(height: ManagerHeight.h4),
 
                     /// السعر
-                    const RowWithDollarIconPriceWidget(pricePlan: "59.99"),
+                    RowWithDollarIconPriceWidget(
+                        pricePlan:
+                            ManagerStrings.subscriptionCommercialPlanPrice),
                     SizedBox(height: ManagerHeight.h12),
 
                     /// Dropdown لاختيار مدة الاشتراك
                     LabelDropDownSubscriptionWidget<String>(
-                      label: "مدة الاشتراك",
-                      hint: "اختر مدة الاشتراك",
+                      label: ManagerStrings.subscriptionCommercialDuration,
+                      hint: ManagerStrings.subscriptionCommercialDurationHint,
                       value: "شهرية",
                       items: const [
                         DropdownMenuItem(value: "شهرية", child: Text("شهرية")),
@@ -91,29 +95,33 @@ class SubscriptionCommercialContractsProviderScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "الفوائد المشمولة",
+                            ManagerStrings
+                                .subscriptionCommercialIncludedFeatures,
                             style: getBoldTextStyle(
                               fontSize: ManagerFontSize.s14,
                               color: ManagerColors.black,
                             ),
                           ),
                           SizedBox(height: ManagerHeight.h4),
-                          const FeatureItem(
-                              text: "الظهور كمزود خدمة على الخريطة"),
-                          const FeatureItem(
-                              text:
-                                  "استقبال طلبات التعاقد من شركات أو عملاء أفراد"),
-                          const FeatureItem(
-                              text: "إدارة الطلبات والرد على العملاء بسهولة"),
-                          const FeatureItem(
-                              text: "عرض خدماتك المصنفة في منصة العروض"),
+                          FeatureItem(
+                              text: ManagerStrings
+                                  .subscriptionCommercialFeature1),
+                          FeatureItem(
+                              text: ManagerStrings
+                                  .subscriptionCommercialFeature2),
+                          FeatureItem(
+                              text: ManagerStrings
+                                  .subscriptionCommercialFeature3),
+                          FeatureItem(
+                              text: ManagerStrings
+                                  .subscriptionCommercialFeature4),
                         ],
                       ),
                     ),
 
                     SizedBox(height: ManagerHeight.h16),
                     ButtonApp(
-                      title: "الاشتراك في هذه الخطة",
+                      title: ManagerStrings.subscriptionCommercialButton,
                       onPressed: () {
                         // TODO: منطق الاشتراك
                       },
@@ -128,7 +136,7 @@ class SubscriptionCommercialContractsProviderScreen extends StatelessWidget {
 
               /// الملاحظة في الأسفل
               Text(
-                "يمكنك تغيير الباقة التي اشتركت بها بعد انتهاء المدة الحالية أو عبر التواصل مع الدعم الفني.",
+                ManagerStrings.subscriptionCommercialNote,
                 textAlign: TextAlign.center,
                 style: getRegularTextStyle(
                   fontSize: ManagerFontSize.s10,
