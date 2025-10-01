@@ -19,35 +19,60 @@ class ManagerMyServicesCommercialContractsScreen extends StatelessWidget {
           ManagerStrings.disabledServices,
         ],
         views: [
-          ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
-            itemCount: 5,
+          // ===== Tab 1: Active Services =====
+          GridView.builder(
+            padding: EdgeInsets.symmetric(
+              horizontal: ManagerWidth.w16,
+              vertical: 12,
+            ),
+            itemCount: 6,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.78,
+            ),
             itemBuilder: (context, index) {
-              return const MyServiceCardWidget(
+              return MyServiceGridCardWidget(
                 imageUrl:
                     "https://images.unsplash.com/photo-1518770660439-4636190af475",
                 title: "تحليل البيانات",
                 description:
-                    "استخدام الذكاء الاصطناعي وتحليل البيانات باستخدام أحدث الأدوات لتحسين الأداء واتخاذ القرار.",
-                price: "1499",
+                    "استخراج رؤى ذكية من بياناتك باستخدام تقنيات التحليل والتعلم الآلي لتحسين اتخاذ القرار.",
+                price: "699",
                 isActive: true,
+                onToggle: () {
+                  // TODO: فتح دايلوج تأكيد تعطيل الخدمة
+                },
               );
             },
           ),
 
-          /// ===== Tab 2: Disabled Services =====
-          ListView.builder(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
-            itemCount: 5,
+          // ===== Tab 2: Disabled Services =====
+          GridView.builder(
+            padding: EdgeInsets.symmetric(
+              horizontal: ManagerWidth.w16,
+              vertical: 12,
+            ),
+            itemCount: 6,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.78,
+            ),
             itemBuilder: (context, index) {
-              return const MyServiceCardWidget(
+              return MyServiceGridCardWidget(
                 imageUrl:
                     "https://images.unsplash.com/photo-1518770660439-4636190af475",
                 title: "تحليل البيانات",
                 description:
-                    "استخدام الذكاء الاصطناعي وتحليل البيانات باستخدام أحدث الأدوات لتحسين الأداء واتخاذ القرار.",
-                price: "1499",
+                    "استخراج رؤى ذكية من بياناتك باستخدام تقنيات التحليل والتعلم الآلي لتحسين اتخاذ القرار.",
+                price: "699",
                 isActive: false,
+                onToggle: () {
+                  // TODO: فتح دايلوج تأكيد تفعيل الخدمة
+                },
               );
             },
           ),
