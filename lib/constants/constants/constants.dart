@@ -36,7 +36,7 @@ class Constants {
   ///Base Url Attachments.
   static const String baseUrlAttachments = 'https://hawaj.lezaz.org/storage';
 
-
+  ///===== provider Offer Manager Widget =====
   static List<Map<String, String>> itemsOfferManagerProvider = [
     {
       'icon': ManagerIcons.offerManagerIcons1,
@@ -55,4 +55,17 @@ class Constants {
     },
   ];
 
+  ///======= Manager Contracts Widget =======
+  static List<Map<String, String>> itemsManagerContracts = [
+    {
+      'icon': ManagerIcons.addRequestContractIcon,
+      'title': ManagerStrings.addRequestTitle,
+      'subtitle': ManagerStrings.addRequestSubtitle,
+    },
+    {
+      'icon': ManagerIcons.myRequestsIcon,
+      'title': ManagerStrings.myRequestsTitle,
+      'subtitle': ManagerStrings.myRequestsSubtitle,
+    },
+  ];
 }

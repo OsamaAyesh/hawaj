@@ -532,17 +532,35 @@ class ManagerStrings {
 
   static String get serviceBtnSubmit => tr('service_btn_submit');
 
-  static String get confirmSendRequestTitle =>
-      tr('confirm_send_request_title'); // تأكيد إرسال الطلب
+  static String get confirmSendRequestTitle => tr('confirm_send_request_title');
 
   static String get confirmSendRequestSubtitle =>
-      tr('confirm_send_request_subtitle'); // هل أنت متأكد...
+      tr('confirm_send_request_subtitle');
 
   static String get confirmSendRequestConfirm =>
-      tr('confirm_send_request_confirm'); // متابعة
+      tr('confirm_send_request_confirm');
 
   static String get confirmSendRequestCancel =>
-      tr('confirm_send_request_cancel'); // إلغاء
+      tr('confirm_send_request_cancel');
+
+  static String get contractsServicesTitle => tr('contracts_services_title');
+
+  static String get quickAccessTitle => tr('quick_access_title');
+
+  static String get myRequestsTitle => tr('my_requests_title');
+
+  static String get myRequestsSubtitle => tr('my_requests_subtitle');
+
+  static String get addRequestTitle => tr('add_request_title');
+
+  static String get addRequestSubtitle => tr('add_request_subtitle');
+
+  static String get manageRequestsTitle => tr('manage_requests_title');
+
+  static String get pendingRequestsTab => tr('pending_requests_tab');
+
+  static String get activeRequestsTab => tr('active_requests_tab');
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

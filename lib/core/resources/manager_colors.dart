@@ -14,19 +14,16 @@ class ManagerColors {
   static const Color colorGreySubscription = Color(0XFF666666);
   static const Color titleDropDownSubscriptionWidget = Color(0XFF6D6D6D);
   static const Color colorGrey = Color(0XFF9F9696);
-  static const Color bariarColor=Color(0XFFD9D9D9);
-  static const Color redNew=Color(0XFFFF0000);
-  static const Color redStatus=Color(0XFFA52303);
-  static const Color greyStatus=Color(0XFF6B6B6B);
-  static const Color strokColor=Color(0XFFD4D4D4);
-  static const Color titleTextFieldPassword= Color(0XFF959595);
-  static const Color colorCompanyDetails= Color(0XFFA8A8A8);
-  static const Color colorCompanyDetails2= Color(0XFFF5F5F8);
+  static const Color bariarColor = Color(0XFFD9D9D9);
+  static const Color redNew = Color(0XFFFF0000);
+  static const Color redStatus = Color(0XFFA52303);
+  static const Color greyStatus = Color(0XFF6B6B6B);
+  static const Color strokColor = Color(0XFFD4D4D4);
+  static const Color titleTextFieldPassword = Color(0XFF959595);
+  static const Color colorCompanyDetails = Color(0XFFA8A8A8);
+  static const Color colorCompanyDetails2 = Color(0XFFF5F5F8);
+  static const Color backGroundColorTab = Color(0XFFF4F4F4);
 
   ///Choose Language Screen
   static const Color chooseLanguageSubtitleColor = Color(0XFF8E8C8E);
-
-
-
-
 }
