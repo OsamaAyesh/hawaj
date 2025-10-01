@@ -20,8 +20,10 @@ void main() async {
     EasyLocalization(
       supportedLocales: localeSettings.locales,
       path: translationPath,
-      fallbackLocale: localeSettings.defaultLocale,
-      startLocale: localeSettings.defaultLocale,
+      fallbackLocale: Locale("ar"),
+      // fallbackLocale: localeSettings.defaultLocale,
+      startLocale: Locale("ar"),
+      // startLocale: localeSettings.defaultLocale,
       child: const MyApp(),
     ),
   );
@@ -49,7 +51,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner:
               dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.addNewServiceCommercialContractsScreen,
+          initialRoute: Routes.managerMyServicesCommercialContractsScreen,
           navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,

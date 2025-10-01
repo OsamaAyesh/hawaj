@@ -790,6 +790,20 @@ class ManagerStrings {
 
   static String get confirm => tr("confirm");
 
+  static String get manageServicesTitle => tr("manageServicesTitle");
+
+  static String get activeServices => tr("activeServices");
+
+  static String get disabledServices => tr("disabledServices");
+
+  static String get servicePrice => tr("servicePrice");
+
+  static String get updateService => tr("updateService");
+
+  static String get disableService => tr("disableService");
+
+  static String get enableService => tr("enableService");
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 
