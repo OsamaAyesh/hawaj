@@ -517,6 +517,21 @@ class ManagerStrings {
   static String get completeSubscriptionLater =>
       tr('complete_subscription_later');
 
+  static String get requestNewServiceTitle => tr('request_new_service_title');
+
+  static String get requestNewServiceSubtitle =>
+      tr('request_new_service_subtitle');
+
+  static String get serviceLabel => tr('service_label');
+
+  static String get serviceHint => tr('service_hint');
+
+  static String get serviceDescLabel => tr('service_desc_label');
+
+  static String get serviceDescHint => tr('service_desc_hint');
+
+  static String get serviceBtnSubmit => tr('service_btn_submit');
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 
