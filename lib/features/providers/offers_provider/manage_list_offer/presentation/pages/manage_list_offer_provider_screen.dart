@@ -133,8 +133,6 @@ class ManageListOfferProviderScreen extends StatelessWidget {
           ],
         );
       }),
-
-      // زر إضافة عرض جديد
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: ManagerColors.primaryColor,
         onPressed: () {

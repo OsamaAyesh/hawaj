@@ -532,6 +532,17 @@ class ManagerStrings {
 
   static String get serviceBtnSubmit => tr('service_btn_submit');
 
+  static String get confirmSendRequestTitle =>
+      tr('confirm_send_request_title'); // تأكيد إرسال الطلب
+
+  static String get confirmSendRequestSubtitle =>
+      tr('confirm_send_request_subtitle'); // هل أنت متأكد...
+
+  static String get confirmSendRequestConfirm =>
+      tr('confirm_send_request_confirm'); // متابعة
+
+  static String get confirmSendRequestCancel =>
+      tr('confirm_send_request_cancel'); // إلغاء
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

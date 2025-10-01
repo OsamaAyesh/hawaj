@@ -8,6 +8,7 @@ import '../../../../../../core/resources/manager_strings.dart';
 import '../../../../../../core/widgets/button_app.dart';
 import '../../../../../../core/widgets/labeled_text_field.dart';
 import '../../../../../../core/widgets/lable_drop_down_button.dart';
+import '../../../../../../core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
 import '../../../../../../core/widgets/title_text_screen_widget.dart';
 
 class RequestNewServiceContractUserScreen extends StatefulWidget {
@@ -78,16 +79,28 @@ class _RequestNewServiceContractUserScreenState
               ),
               SizedBox(height: ManagerHeight.h32),
 
-              // زر الإرسال
               ButtonApp(
                 title: ManagerStrings.serviceBtnSubmit,
                 onPressed: () {
-                  // هنا تحط اللوجيك تبع الإرسال
-                  debugPrint("الخدمة المختارة: $selectedService");
-                  debugPrint("الوصف: ${descriptionController.text}");
+                  showDialogConfirmRegisterCompanyOffer(
+                    title: ManagerStrings.confirmSendRequestTitle,
+                    subTitle: ManagerStrings.confirmSendRequestSubtitle,
+                    actionConfirmText: ManagerStrings.confirmSendRequestConfirm,
+                    actionCancel: ManagerStrings.confirmSendRequestCancel,
+                    context,
+                    onConfirm: () {
+                      debugPrint("الخدمة المختارة: $selectedService");
+                      debugPrint("الوصف: ${descriptionController.text}");
+                      Navigator.pop(context); // إغلاق الـ Dialog بعد التأكيد
+                    },
+                    onCancel: () {
+                      Navigator.pop(context); // إغلاق الـ Dialog عند الإلغاء
+                    },
+                  );
                 },
                 paddingWidth: 0,
               ),
+
               SizedBox(height: ManagerHeight.h24),
             ],
           ),
