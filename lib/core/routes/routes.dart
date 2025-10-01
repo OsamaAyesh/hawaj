@@ -12,6 +12,7 @@ import 'package:app_mobile/features/providers/offers_provider/register_company_o
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/presentation/pages/success_subscription_offer_provider_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/on_boarding_screen.dart';
 import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splash_screen.dart';
+import 'package:app_mobile/features/users/commercial_contract_user/request_new_service_contract_user/presentation/pages/request_new_service_contract_user_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
@@ -21,6 +22,7 @@ import '../../features/providers/offers_provider/manage_list_offer/presentation/
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
+import '../../features/users/commercial_contract_user/show_details_contract_provider/presentation/pages/show_details_contract_provider_screen.dart';
 import '../../features/users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
 import '../resources/manager_strings.dart';
 
@@ -61,6 +63,12 @@ class Routes {
   ///Commercial Contract Provider Screen
   static const String registerServiceProviderContractScreen =
       '/register_service_provider_contract_screen';
+
+  ///Commercial Contract User Screens
+  static const String showDetailsContractProviderScreen =
+      "show_details_contract_provider_screen";
+  static const String requestNewServiceContractUserScreen =
+      "request_new_service_contract_user_screen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -134,7 +142,12 @@ class RouteGenerator {
       case Routes.registerServiceProviderContractScreen:
         return MaterialPageRoute(
             builder: (_) => RegisterServiceProviderContractScreen());
-
+      case Routes.showDetailsContractProviderScreen:
+        return MaterialPageRoute(
+            builder: (_) => ShowDetailsContractProviderScreen());
+      case Routes.requestNewServiceContractUserScreen:
+        return MaterialPageRoute(
+            builder: (_) => RequestNewServiceContractUserScreen());
       default:
         return unDefinedRoute();
     }
