@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../constants/constants/constants.dart';
 import '../../constants/di/dependency_injection.dart';
 import '../storage/local/app_settings_prefs.dart';
@@ -17,5 +18,6 @@ class LocaleSettings {
 
   List<Locale> get locales => languages.keys.map((e) => Locale(e)).toList();
 
-  Locale get defaultLocale => Locale(settingsPrefs.getLocale());
+  // Locale get defaultLocale => Locale(settingsPrefs.getLocale());
+  Locale get defaultLocale => Locale("ar");
 }

@@ -723,6 +723,42 @@ class ManagerStrings {
   static String get contractsSubmittedOffersSubTitle =>
       tr("contractsSubmittedOffersSubTitle");
 
+  // ================= Request For A New Service Commercial Contracts =================
+  static String get requestForServiceTitle => tr("requestForServiceTitle");
+
+  static String get requestForServicePrice => tr("requestForServicePrice");
+
+  static String get requestForServicePriceHint =>
+      tr("requestForServicePriceHint");
+
+  static String get requestForServiceTechnicalOffer =>
+      tr("requestForServiceTechnicalOffer");
+
+  static String get requestForServiceTechnicalOfferHint =>
+      tr("requestForServiceTechnicalOfferHint");
+
+  static String get requestForServiceTechnicalOfferNote =>
+      tr("requestForServiceTechnicalOfferNote");
+
+  static String get requestForServiceContactNumber =>
+      tr("requestForServiceContactNumber");
+
+  static String get requestForServiceContactNumberHint =>
+      tr("requestForServiceContactNumberHint");
+
+  static String get requestForServiceSubmit => tr("requestForServiceSubmit");
+
+// ===== Dialog Confirm =====
+  static String get requestForServiceConfirmTitle =>
+      tr("requestForServiceConfirmTitle");
+
+  static String get requestForServiceConfirmSubtitle =>
+      tr("requestForServiceConfirmSubtitle");
+
+  static String get requestForServiceConfirm => tr("requestForServiceConfirm");
+
+  static String get requestForServiceCancel => tr("requestForServiceCancel");
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 

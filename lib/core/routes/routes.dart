@@ -19,6 +19,7 @@ import '../../features/common/auth/presentation/pages/complete_information_scree
 import '../../features/common/test/test_hawaj_screen.dart';
 import '../../features/providers/commercial_contracts/manager_commercial_contracts_services_provider/presentation/pages/manager_commercial_contracts_services_provider_screen.dart';
 import '../../features/providers/commercial_contracts/register_service_provider_contract/pages/register_service_provider_contract_screen.dart';
+import '../../features/providers/commercial_contracts/request_for_a_new_service_commercial_contracts/presentation/pages/request_for_a_new_service_commercial_contracts_screen.dart';
 import '../../features/providers/commercial_contracts/subscription_commercial_contracts_provider/presentation/pages/subscription_commercial_contracts_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
@@ -71,6 +72,8 @@ class Routes {
       '/subscriptionCommercialContractsProviderScreen';
   static const String managerCommercialContractsServicesProviderScreen =
       '/managerCommercialContractsServicesProviderScreen';
+  static const String requestForANewServiceCommercialContractsScreen =
+      '/requestForANewServiceCommercialContractsScreen';
 
   ///Commercial Contract User Screens
   static const String showDetailsContractProviderScreen =
@@ -170,6 +173,9 @@ class RouteGenerator {
       case Routes.managerCommercialContractsServicesProviderScreen:
         return MaterialPageRoute(
             builder: (_) => ManagerCommercialContractsServicesProviderScreen());
+      case Routes.requestForANewServiceCommercialContractsScreen:
+        return MaterialPageRoute(
+            builder: (_) => RequestForANewServiceCommercialContractsScreen());
       default:
         return unDefinedRoute();
     }

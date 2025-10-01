@@ -23,6 +23,9 @@ class ManagerColors {
   static const Color colorCompanyDetails = Color(0XFFA8A8A8);
   static const Color colorCompanyDetails2 = Color(0XFFF5F5F8);
   static const Color backGroundColorTab = Color(0XFFF4F4F4);
+  static const Color blackWithOpcity = Color(0XFF231F20);
+  static const Color colorDate = Color(0XFF8C898D);
+  static const Color colorDescription = Color(0XFF929292);
 
   ///Choose Language Screen
   static const Color chooseLanguageSubtitleColor = Color(0XFF8E8C8E);
