@@ -759,6 +759,37 @@ class ManagerStrings {
 
   static String get requestForServiceCancel => tr("requestForServiceCancel");
 
+  static String get addNewServiceTitle => tr("addNewServiceTitle");
+
+  static String get addNewServiceSubTitle => tr("addNewServiceSubTitle");
+
+  static String get serviceNameLabel => tr("serviceNameLabel");
+
+  static String get serviceNameHint => tr("serviceNameHint");
+
+  static String get serviceDescriptionLabel => tr("serviceDescriptionLabel");
+
+  static String get serviceDescriptionHint => tr("serviceDescriptionHint");
+
+  static String get serviceInitialPriceLabel => tr("serviceInitialPriceLabel");
+
+  static String get serviceInitialPriceHint => tr("serviceInitialPriceHint");
+
+  static String get serviceUploadImageLabel => tr("serviceUploadImageLabel");
+
+  static String get serviceUploadImageHint => tr("serviceUploadImageHint");
+
+  static String get serviceUploadImageNote => tr("serviceUploadImageNote");
+
+  static String get addServiceButton => tr("addServiceButton");
+
+  static String get confirmAddServiceTitle => tr("confirmAddServiceTitle");
+
+  static String get confirmAddServiceSubTitle =>
+      tr("confirmAddServiceSubTitle");
+
+  static String get confirm => tr("confirm");
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 
