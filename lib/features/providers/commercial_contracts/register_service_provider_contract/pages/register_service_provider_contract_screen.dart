@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
@@ -15,13 +16,15 @@ import 'package:app_mobile/core/widgets/upload_media_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
+
 class RegisterServiceProviderContractScreen extends StatelessWidget {
   const RegisterServiceProviderContractScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldWithBackButton(
-      title: "الاشتراك كمقدم خدمة",
+      title: ManagerStrings.serviceProviderSubscription,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
         child: SingleChildScrollView(
@@ -35,30 +38,35 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
             children: [
               SizedBox(height: ManagerHeight.h24),
 
-              TitleTextScreenWidget(title: "الاشتراك كمقدم خدمة"),
+              TitleTextScreenWidget(
+                title: ManagerStrings.serviceProviderSubscription,
+              ),
               SubTitleTextScreenWidget(
-                subTitle:
-                    "انضم إلى المنصة كمقدم خدمة وابدا بتقديم خدماتك للعملاء بكل احترافية وسهولة.",
+                subTitle: ManagerStrings.serviceProviderSubscriptionSubtitle,
               ),
 
               SizedBox(height: ManagerHeight.h20),
 
               // الاسم التجاري
               LabeledTextField(
-                label: "الاسم التجاري",
-                hintText: "ادخل الاسم التجاري لمقدم الخدمة",
+                label: ManagerStrings.serviceProviderTradeName,
+                hintText: ManagerStrings.serviceProviderTradeNameHint,
                 widthButton: ManagerWidth.w130,
               ),
               const SizedBoxBetweenFieldWidgets(),
 
               // نوع النشاط
               LabeledDropdownField<String>(
-                label: "نوع النشاط",
-                hint: "اختر نوع النشاط الخاص بمقدم الخدمة",
+                label: ManagerStrings.serviceProviderActivityType,
+                hint: ManagerStrings.serviceProviderActivityTypeHint,
                 value: null,
-                items: const [
-                  DropdownMenuItem(value: "تجاري", child: Text("تجاري")),
-                  DropdownMenuItem(value: "خدمي", child: Text("خدمي")),
+                items: [
+                  DropdownMenuItem(
+                      value: "تجاري",
+                      child: Text(ManagerStrings.serviceProviderActivityType)),
+                  DropdownMenuItem(
+                      value: "خدمي",
+                      child: Text(ManagerStrings.serviceProviderActivityType)),
                 ],
                 onChanged: (_) {},
               ),
@@ -66,16 +74,18 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
 
               // رقم الترخيص أو السجل التجاري
               LabeledTextField(
-                label: "رقم الترخيص أو السجل التجاري",
-                hintText: "ادخل رقم الترخيص أو السجل التجاري",
+                label:
+                    ManagerStrings.serviceProviderCommercialRegistrationNumber,
+                hintText: ManagerStrings
+                    .serviceProviderCommercialRegistrationNumberHint,
                 widthButton: ManagerWidth.w130,
               ),
               const SizedBoxBetweenFieldWidgets(),
 
               // وصف قصير
               LabeledTextField(
-                label: "وصف قصير",
-                hintText: "ادخل وصف قصير لخدماتك",
+                label: ManagerStrings.serviceProviderShortDescription,
+                hintText: ManagerStrings.serviceProviderShortDescriptionHint,
                 minLines: 3,
                 maxLines: 4,
                 widthButton: ManagerWidth.w130,
@@ -84,8 +94,8 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
 
               // نبذة عن مقدم الخدمة
               LabeledTextField(
-                label: "نبذة عن مقدم الخدمة",
-                hintText: "اكتب نبذة عن مقدم الخدمة",
+                label: ManagerStrings.serviceProviderAboutProvider,
+                hintText: ManagerStrings.serviceProviderAboutProviderHint,
                 minLines: 4,
                 maxLines: 6,
                 widthButton: ManagerWidth.w130,
@@ -94,16 +104,16 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
 
               // تاريخ التأسيس
               LabeledTextField(
-                label: "تاريخ التأسيس",
-                hintText: "ادخل تاريخ تأسيس الشركة",
+                label: ManagerStrings.serviceProviderFoundationDate,
+                hintText: ManagerStrings.serviceProviderFoundationDateHint,
                 widthButton: ManagerWidth.w130,
               ),
               const SizedBoxBetweenFieldWidgets(),
 
               // رقم الجوال
               LabeledTextField(
-                label: "رقم الجوال",
-                hintText: "ادخل رقم الجوال",
+                label: ManagerStrings.serviceProviderPhoneNumber,
+                hintText: ManagerStrings.serviceProviderPhoneNumberHint,
                 keyboardType: TextInputType.phone,
                 widthButton: ManagerWidth.w130,
               ),
@@ -111,8 +121,8 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
 
               // تحديد الموقع الجغرافي
               LabeledTextField(
-                label: "تحديد الموقع الجغرافي",
-                hintText: "اضغط لتحديد الموقع",
+                label: ManagerStrings.serviceProviderSetLocation,
+                hintText: ManagerStrings.serviceProviderSetLocationHint,
                 onButtonTap: () {
                   // TODO: فتح شاشة الخريطة لاحقاً
                 },
@@ -123,7 +133,7 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
                         color: Colors.white, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      "حدد الموقع",
+                      ManagerStrings.serviceProviderChooseLocation,
                       style: getBoldTextStyle(
                         fontSize: ManagerFontSize.s12,
                         color: Colors.white,
@@ -137,26 +147,26 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
 
               // العنوان التفصيلي
               LabeledTextField(
-                label: "العنوان التفصيلي",
-                hintText: "ادخل العنوان التفصيلي",
+                label: ManagerStrings.serviceProviderDetailedAddress,
+                hintText: ManagerStrings.serviceProviderDetailedAddressHint,
                 widthButton: ManagerWidth.w130,
               ),
               const SizedBoxBetweenFieldWidgets(),
 
               // رفع الرخصة
               UploadMediaField(
-                label: "رخصة المكتب أو الشركة",
-                hint: "قم برفع نسخة من الرخصة",
-                note: "بصيغة PDF أو صورة واضحة",
+                label: ManagerStrings.serviceProviderLicenseFile,
+                hint: ManagerStrings.serviceProviderLicenseFileHint,
+                note: ManagerStrings.serviceProviderLicenseFileNote,
                 file: Rx<File?>(null), // مبدئياً فارغ
               ),
               const SizedBoxBetweenFieldWidgets(),
 
               // رفع الشعار
               UploadMediaField(
-                label: "شعار المكتب أو الشركة",
-                hint: "قم برفع شعار المكتب أو الشركة",
-                note: "يفضل PNG بخلفية شفافة",
+                label: ManagerStrings.serviceProviderLogoFile,
+                hint: ManagerStrings.serviceProviderLogoFileHint,
+                note: ManagerStrings.serviceProviderLogoFileNote,
                 file: Rx<File?>(null), // مبدئياً فارغ
               ),
 
@@ -164,9 +174,21 @@ class RegisterServiceProviderContractScreen extends StatelessWidget {
 
               // زر الإرسال
               ButtonApp(
-                title: "الاشتراك كمقدم خدمة",
+                title: ManagerStrings.serviceProviderSubscription,
                 onPressed: () {
-                  // TODO: تنفيذ الإرسال لاحقاً
+                  showDialogConfirmRegisterCompanyOffer(
+                    title:
+                        ManagerStrings.serviceProviderConfirmSubscriptionTitle,
+                    subTitle: ManagerStrings
+                        .serviceProviderConfirmSubscriptionSubtitle,
+                    actionConfirmText: ManagerStrings.serviceProviderConfirm,
+                    actionCancel: ManagerStrings.serviceProviderCancel,
+                    context,
+                    onConfirm: () {
+                      // منطق التأكيد لاحقاً
+                    },
+                    onCancel: () {},
+                  );
                 },
                 paddingWidth: 0,
               ),

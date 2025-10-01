@@ -561,6 +561,92 @@ class ManagerStrings {
 
   static String get activeRequestsTab => tr('active_requests_tab');
 
+  static String get serviceProviderSubscriptionSubtitle =>
+      tr("serviceProviderSubscriptionSubtitle");
+
+  static String get serviceProviderTradeName => tr("serviceProviderTradeName");
+
+  static String get serviceProviderTradeNameHint =>
+      tr("serviceProviderTradeNameHint");
+
+  static String get serviceProviderActivityType =>
+      tr("serviceProviderActivityType");
+
+  static String get serviceProviderActivityTypeHint =>
+      tr("serviceProviderActivityTypeHint");
+
+  static String get serviceProviderCommercialRegistrationNumber =>
+      tr("serviceProviderCommercialRegistrationNumber");
+
+  static String get serviceProviderCommercialRegistrationNumberHint =>
+      tr("serviceProviderCommercialRegistrationNumberHint");
+
+  static String get serviceProviderShortDescription =>
+      tr("serviceProviderShortDescription");
+
+  static String get serviceProviderShortDescriptionHint =>
+      tr("serviceProviderShortDescriptionHint");
+
+  static String get serviceProviderAboutProvider =>
+      tr("serviceProviderAboutProvider");
+
+  static String get serviceProviderAboutProviderHint =>
+      tr("serviceProviderAboutProviderHint");
+
+  static String get serviceProviderFoundationDate =>
+      tr("serviceProviderFoundationDate");
+
+  static String get serviceProviderFoundationDateHint =>
+      tr("serviceProviderFoundationDateHint");
+
+  static String get serviceProviderPhoneNumber =>
+      tr("serviceProviderPhoneNumber");
+
+  static String get serviceProviderPhoneNumberHint =>
+      tr("serviceProviderPhoneNumberHint");
+
+  static String get serviceProviderSetLocation =>
+      tr("serviceProviderSetLocation");
+
+  static String get serviceProviderSetLocationHint =>
+      tr("serviceProviderSetLocationHint");
+
+  static String get serviceProviderChooseLocation =>
+      tr("serviceProviderChooseLocation");
+
+  static String get serviceProviderDetailedAddress =>
+      tr("serviceProviderDetailedAddress");
+
+  static String get serviceProviderDetailedAddressHint =>
+      tr("serviceProviderDetailedAddressHint");
+
+  static String get serviceProviderLicenseFile =>
+      tr("serviceProviderLicenseFile");
+
+  static String get serviceProviderLicenseFileHint =>
+      tr("serviceProviderLicenseFileHint");
+
+  static String get serviceProviderLicenseFileNote =>
+      tr("serviceProviderLicenseFileNote");
+
+  static String get serviceProviderLogoFile => tr("serviceProviderLogoFile");
+
+  static String get serviceProviderLogoFileHint =>
+      tr("serviceProviderLogoFileHint");
+
+  static String get serviceProviderLogoFileNote =>
+      tr("serviceProviderLogoFileNote");
+
+  static String get serviceProviderConfirmSubscriptionTitle =>
+      tr("serviceProviderConfirmSubscriptionTitle");
+
+  static String get serviceProviderConfirmSubscriptionSubtitle =>
+      tr("serviceProviderConfirmSubscriptionSubtitle");
+
+  static String get serviceProviderConfirm => tr("serviceProviderConfirm");
+
+  static String get serviceProviderCancel => tr("serviceProviderCancel");
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 
