@@ -26,33 +26,33 @@ class HawajWidget extends StatefulWidget {
 
 class _HawajWidgetState extends State<HawajWidget>
     with TickerProviderStateMixin {
-  // Animation Controllers
+  // ============ Animations ============
+  late AnimationController _orbitController;
   late AnimationController _pulseController;
   late AnimationController _glowController;
   late AnimationController _waveController;
-  late AnimationController _rotateController;
-  late AnimationController _scaleController;
-  late AnimationController _rippleController;
+  late AnimationController _shimmerController;
+  late AnimationController _audioBarController;
+  late AnimationController _recordingRippleController; // ✅ جديد: لتأثير التسجيل
+  late AnimationController
+      _recordingIndicatorController; // ✅ جديد: مؤشر التسجيل
 
-  // Speech to Text
+  // ============ Speech Recognition ============
   final SpeechToText _speechToText = SpeechToText();
   bool _speechEnabled = false;
   bool _permissionGranted = false;
 
-  // State
+  // ============ State ============
   HawajController? _controller;
   bool _isInitialized = false;
-  bool _isPressing = false;
-  String _currentText = '';
-  String _partialText = ''; // ✅ جديد: للنصوص الجزئية
+  bool _hasSentRequest = false;
+  String _finalText = '';
+  String _partialText = '';
   double _confidence = 0;
-  double _audioLevel = 0;
-  List<double> _audioLevels = List.generate(8, (index) => 0.0);
+  bool _isRecording = false; // ✅ جديد: حالة التسجيل النشط
 
-  // ✅ جديد: لتتبع حالة الالتقاط
-  bool _isCapturingFinalResult = false;
-  DateTime? _lastWordTime;
-  bool _isProcessing = false; // ✅ لمنع الإرسال المكرر
+  // ✅ للتفاعل الصوتي
+  List<double> _audioBars = List.generate(12, (i) => 0.3 + (i % 3) * 0.2);
 
   @override
   void initState() {
@@ -63,37 +63,58 @@ class _HawajWidgetState extends State<HawajWidget>
   }
 
   void _initAnimations() {
+    _orbitController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 10),
+    )..repeat();
+
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
 
     _glowController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 3000),
+      duration: const Duration(milliseconds: 2500),
     )..repeat(reverse: true);
 
     _waveController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 1000),
     )..repeat();
 
-    _rotateController = AnimationController(
+    _shimmerController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 4),
+      duration: const Duration(milliseconds: 1800),
     )..repeat();
 
-    _scaleController = AnimationController(
+    // ✅ للموجات الصوتية
+    _audioBarController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 200),
-      lowerBound: 0.9,
-      upperBound: 1.0,
-    )..value = 1.0;
+      duration: const Duration(milliseconds: 150),
+    )
+      ..addListener(() {
+        if (mounted && _controller?.isListening == true) {
+          setState(() {
+            for (int i = 0; i < _audioBars.length; i++) {
+              _audioBars[i] = 0.2 + math.Random().nextDouble() * 0.8;
+            }
+          });
+        }
+      })
+      ..repeat();
 
-    _rippleController = AnimationController(
+    // ✅ جديد: تأثير Ripple عند بدء التسجيل
+    _recordingRippleController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    )..repeat();
+      duration: const Duration(milliseconds: 800),
+    );
+
+    // ✅ جديد: مؤشر دائري للتسجيل
+    _recordingIndicatorController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
   }
 
   Future<void> _initSpeech() async {
@@ -101,15 +122,11 @@ class _HawajWidgetState extends State<HawajWidget>
       final status = await Permission.microphone.request();
       if (status.isGranted) {
         _permissionGranted = true;
-        _speechEnabled = await _speechToText.initialize(
-          onStatus: (status) => _handleSpeechStatus(status),
-          onError: (error) => _handleSpeechError(error),
-          debugLogging: true, // ✅ للمساعدة في التشخيص
-        );
+        _speechEnabled = await _speechToText.initialize(debugLogging: true);
         if (mounted) setState(() {});
       }
     } catch (e) {
-      debugPrint('خطأ في تهيئة الكلام: $e');
+      debugPrint('❌ Speech init error: $e');
     }
   }
 
@@ -117,107 +134,19 @@ class _HawajWidgetState extends State<HawajWidget>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         _controller = Get.find<HawajController>();
-        if (widget.section != null && widget.screen != null) {
-          _controller?.updateContext(
-            widget.section!,
-            widget.screen!,
-            message: widget.welcomeMessage,
-          );
-        }
-        if (mounted) {
-          setState(() => _isInitialized = true);
-        }
+        _controller?.updateContext(
+          widget.section,
+          widget.screen,
+          message: widget.welcomeMessage,
+        );
+        if (mounted) setState(() => _isInitialized = true);
       } catch (e) {
-        debugPrint('Error finding HawajController: $e');
+        debugPrint('❌ Controller not found');
       }
     });
   }
 
-  // ✅ معالج حالة الكلام المحسّن
-  void _handleSpeechStatus(String status) {
-    debugPrint('🎤 Widget - حالة الكلام: $status');
-
-    if (status == 'done') {
-      // ✅ اكتمل التعرف - انتظار قصير ثم المعالجة
-      debugPrint('✅ Widget - اكتمل التعرف على الكلام');
-
-      if (_isCapturingFinalResult) {
-        // المستخدم رفع إصبعه والنظام جاهز للمعالجة
-        Future.delayed(const Duration(milliseconds: 200), () {
-          if (mounted) _finalizeSpeech();
-        });
-      }
-    } else if (status == 'notListening') {
-      if (_isCapturingFinalResult) {
-        // ✅ توقف الاستماع - انتظار النتيجة النهائية
-        Future.delayed(const Duration(milliseconds: 300), () {
-          if (mounted && _isCapturingFinalResult) {
-            _finalizeSpeech();
-          }
-        });
-      }
-    } else if (status == 'listening') {
-      setState(() => _isPressing = true);
-    }
-  }
-
-  // ✅ معالج أخطاء الكلام المحسّن
-  void _handleSpeechError(dynamic error) {
-    debugPrint('❌ Widget - خطأ في التعرف على الكلام: $error');
-
-    if (mounted) {
-      setState(() {
-        _isPressing = false;
-        _isCapturingFinalResult = false;
-      });
-
-      // ✅ إذا كان هناك نص جزئي ولم يكن قيد المعالجة، استخدمه
-      if (_partialText.isNotEmpty && !_isProcessing) {
-        _currentText = _partialText;
-        _processSpeech();
-      } else {
-        _showErrorSnackbar('حدث خطأ. حاول مرة أخرى');
-      }
-    }
-  }
-
-  // ✅ إنهاء التسجيل ومعالجة النتيجة
-  void _finalizeSpeech() {
-    debugPrint('✅ Widget - إنهاء التسجيل');
-
-    if (!mounted || _isProcessing) {
-      debugPrint('⚠️ Widget - إلغاء: غير mounted أو قيد المعالجة');
-      return;
-    }
-
-    setState(() {
-      _isPressing = false;
-      _isCapturingFinalResult = false;
-    });
-
-    // ✅ استخدام النص النهائي فقط، وإذا كان فارغاً استخدم الجزئي كخيار أخير
-    final finalText = _currentText.trim();
-    final fallbackText = _partialText.trim();
-
-    debugPrint('📋 النص النهائي: "$finalText"');
-    debugPrint('📋 النص الجزئي: "$fallbackText"');
-
-    final textToSend = finalText.isNotEmpty ? finalText : fallbackText;
-
-    if (textToSend.isNotEmpty) {
-      debugPrint('📤 Widget - إرسال النص النهائي: "$textToSend"');
-      HapticFeedback.mediumImpact(); // ✅ اهتزازة تأكيد
-
-      // ✅ تحديث النص قبل الإرسال
-      _currentText = textToSend;
-
-      _processSpeech();
-    } else {
-      debugPrint('⚠️ Widget - لا يوجد نص للإرسال');
-      _showErrorSnackbar('لم يتم التقاط أي صوت');
-    }
-  }
-
+  // ============ UI BUILD ============
   @override
   Widget build(BuildContext context) {
     if (!_isInitialized || _controller == null) {
@@ -226,168 +155,97 @@ class _HawajWidgetState extends State<HawajWidget>
 
     return GetX<HawajController>(
       builder: (controller) {
-        final isActive = controller.isListening ||
-            controller.isProcessing ||
-            controller.isSpeaking;
+        // ✅ دمج Loading مع Processing
+        final isProcessing =
+            controller.isProcessing || controller.isLoadingAudio;
+        final isActive =
+            controller.isListening || isProcessing || controller.isSpeaking;
 
         return GestureDetector(
-          onTapDown: (_) => _onPressStart(controller),
-          onTapUp: (_) => _onPressEnd(controller),
-          onTapCancel: () => _onPressEnd(controller),
-          child: AnimatedBuilder(
-            animation: _scaleController,
-            builder: (context, child) {
-              return Transform.scale(
-                scale: _scaleController.value,
-                child: SizedBox(
-                  width: 200,
-                  height: 240,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // الموجات الخارجية - تظهر فقط عند النشاط
-                      if (isActive) ...[
-                        _buildAnimatedWave(180, 0.0, controller.stateColor),
-                        _buildAnimatedWave(160, 0.3, controller.stateColor),
-                        _buildAnimatedWave(140, 0.6, controller.stateColor),
-                      ],
+          onLongPressStart: (_) => _onPressStart(),
+          onLongPressEnd: (_) => _onPressEnd(),
+          child: SizedBox(
+            width: 250, // ✅ مصغر من 300
+            height: 270, // ✅ مصغر من 320
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // ✅ خلفية ديناميكية
+                _buildDynamicBackground(controller, isActive, isProcessing),
 
-                      // الهالة المتوهجة
-                      AnimatedBuilder(
-                        animation: _glowController,
-                        builder: (context, child) {
-                          final glowSize = 120 + (_glowController.value * 20);
-                          return Container(
-                            width: glowSize,
-                            height: glowSize,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: RadialGradient(
-                                colors: [
-                                  controller.stateColor
-                                      .withOpacity(isActive ? 0.4 : 0.15),
-                                  controller.stateColor
-                                      .withOpacity(isActive ? 0.2 : 0.05),
-                                  Colors.transparent,
-                                ],
-                                stops: [0.0, 0.5, 1.0],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
+                // ✅ موجات Siri
+                if (isActive) _buildSiriWaves(controller, isProcessing),
 
-                      // ✅ حلقة المعالجة - تظهر فقط أثناء المعالجة
-                      if (controller.isProcessing)
-                        AnimatedBuilder(
-                          animation: _rotateController,
-                          builder: (context, child) {
-                            return Transform.rotate(
-                              angle: _rotateController.value * 2 * math.pi,
-                              child: Container(
-                                width: 100,
-                                height: 100,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color:
-                                        controller.stateColor.withOpacity(0.4),
-                                    width: 2.0,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                // ✅ حلقات دوارة (Processing)
+                if (isProcessing)
+                  _buildOrbitingParticles(controller.stateColor),
 
-                      // ✅ موجات الصوت - تظهر فقط أثناء الاستماع
-                      if (controller.isListening && _audioLevel > 0)
-                        CustomPaint(
-                          painter: VoiceWavePainter(
-                            _waveController,
-                            _audioLevels,
-                            controller.stateColor,
-                          ),
-                          size: const Size(180, 180),
-                        ),
+                // ✅ موجات النطق (Speaking) - لون مختلف
+                if (controller.isSpeaking) _buildSpeakingWaves(),
 
-                      // الزر الرئيسي
-                      _buildMainButton(controller, isActive),
+                // ✅ الموجات الصوتية (Listening) - تفاعلية
+                if (controller.isListening) _buildAudioBars(),
 
-                      // ✅ مؤشر الحالة المحسّن
-                      Positioned(
-                        bottom: 8,
-                        child: _buildStatusIndicator(controller),
-                      ),
+                // ✅ تأثير Ripple عند بدء التسجيل
+                if (_isRecording) _buildRecordingRipple(),
 
-                      // ✅ مؤشر النص الجزئي أثناء الاستماع
-                      if (controller.isListening && _partialText.isNotEmpty)
-                        Positioned(
-                          bottom: 50,
-                          child: _buildPartialTextIndicator(),
-                        ),
-                    ],
+                // ✅ مؤشر دائري للتسجيل
+                if (_isRecording) _buildRecordingIndicator(),
+
+                // ✅ الهالة الرئيسية
+                _buildMainGlow(controller.stateColor, isActive),
+
+                // ✅ الزر المركزي
+                _buildCenterButton(controller, isProcessing),
+
+                // ✅ النص الجزئي
+                if (_partialText.isNotEmpty && !_hasSentRequest)
+                  Positioned(
+                    top: 20,
+                    child: _buildPartialTextDisplay(),
                   ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
 
-  // ✅ بناء الزر الرئيسي
-  Widget _buildMainButton(HawajController controller, bool isActive) {
-    return AnimatedBuilder(
-      animation: _pulseController,
-      builder: (context, child) {
-        final scale = isActive ? 1.0 + (_pulseController.value * 0.05) : 1.0;
-        final opacity = isActive ? 1.0 : 0.8;
-
-        return Transform.scale(
-          scale: scale,
-          child: Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  controller.stateColor.withOpacity(opacity),
-                  controller.stateColor.withOpacity(opacity * 0.7),
-                ],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: controller.stateColor.withOpacity(0.5),
-                  blurRadius: isActive ? 20 : 15,
-                  spreadRadius: isActive ? 4 : 2,
+                // ✅ مؤشر الحالة
+                Positioned(
+                  bottom: 20,
+                  child: _buildStatusChip(controller, isProcessing),
                 ),
               ],
             ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(40),
-                onTap: () {},
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // أيقونة الحالة
-                    Icon(
-                      _getIcon(controller),
-                      color: Colors.white,
-                      size: 32,
-                    ),
+          ),
+        );
+      },
+    );
+  }
 
-                    // ✅ مؤشر الاستماع - يظهر فقط أثناء الاستماع
-                    if (controller.isListening) _buildSimpleSoundIndicator(),
-                  ],
-                ),
+  // ============ خلفية ديناميكية ============
+  Widget _buildDynamicBackground(
+      HawajController controller, bool isActive, bool isProcessing) {
+    return AnimatedBuilder(
+      animation: _shimmerController,
+      builder: (context, child) {
+        return Container(
+          width: 250,
+          height: 250,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              center: Alignment(
+                math.sin(_shimmerController.value * 2 * math.pi) * 0.2,
+                math.cos(_shimmerController.value * 2 * math.pi) * 0.2,
               ),
+              colors: isActive
+                  ? [
+                      _getStateColor(controller, isProcessing)
+                          .withOpacity(0.15),
+                      _getStateColor(controller, isProcessing)
+                          .withOpacity(0.05),
+                      Colors.transparent,
+                    ]
+                  : [
+                      Colors.grey.withOpacity(0.05),
+                      Colors.transparent,
+                    ],
             ),
           ),
         );
@@ -395,24 +253,72 @@ class _HawajWidgetState extends State<HawajWidget>
     );
   }
 
-  // ✅ مؤشر الصوت المبسط
-  Widget _buildSimpleSoundIndicator() {
+  // ============ موجات Siri ============
+  Widget _buildSiriWaves(HawajController controller, bool isProcessing) {
     return AnimatedBuilder(
       animation: _waveController,
       builder: (context, child) {
-        return Row(
-          mainAxisSize: MainAxisSize.min,
+        return CustomPaint(
+          size: const Size(230, 230),
+          painter: SiriWavePainter(
+            animation: _waveController,
+            color: _getStateColor(controller, isProcessing),
+            isActive: controller.isListening || controller.isSpeaking,
+          ),
+        );
+      },
+    );
+  }
+
+  // ============ الموجات الصوتية (Listening) - تفاعلية ============
+  Widget _buildAudioBars() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: List.generate(12, (index) {
+        final height = 5 + (_audioBars[index] * 40);
+        return Container(
+          width: 3,
+          height: height,
+          margin: const EdgeInsets.symmetric(horizontal: 2),
+          decoration: BoxDecoration(
+            color: Colors.green,
+            borderRadius: BorderRadius.circular(2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.green.withOpacity(0.5),
+                blurRadius: 4,
+              ),
+            ],
+          ),
+        );
+      }),
+    );
+  }
+
+  // ============ تأثير Ripple عند بدء التسجيل ============
+  Widget _buildRecordingRipple() {
+    return AnimatedBuilder(
+      animation: _recordingRippleController,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
           children: List.generate(3, (index) {
-            final delay = index * 0.3;
-            final value =
-                math.sin((_waveController.value + delay) * 2 * math.pi).abs();
+            final delay = index * 0.2;
+            final adjustedValue =
+                (_recordingRippleController.value - delay).clamp(0.0, 1.0);
+            final size = 90 + (adjustedValue * 120);
+            final opacity = (1.0 - adjustedValue) * 0.5;
+
             return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 2),
-              width: 3,
-              height: 8 + (value * 12),
+              width: size,
+              height: size,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.9),
-                borderRadius: BorderRadius.circular(1.5),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.green.withOpacity(opacity),
+                  width: 3,
+                ),
               ),
             );
           }),
@@ -421,23 +327,116 @@ class _HawajWidgetState extends State<HawajWidget>
     );
   }
 
-  // ✅ الموجات الخارجية
-  Widget _buildAnimatedWave(double size, double delay, Color color) {
+  // ============ مؤشر دائري للتسجيل ============
+  Widget _buildRecordingIndicator() {
     return AnimatedBuilder(
-      animation: _rippleController,
+      animation: _recordingIndicatorController,
       builder: (context, child) {
-        final progress = (_rippleController.value + delay) % 1.0;
-        final opacity = (1.0 - progress) * 0.4;
-        final waveSize = size * (0.7 + (progress * 0.3));
+        return CustomPaint(
+          size: const Size(110, 110),
+          painter: RecordingIndicatorPainter(
+            progress: _recordingIndicatorController.value,
+            color: Colors.green,
+          ),
+        );
+      },
+    );
+  }
+
+  // ============ حلقات دوارة (Processing) ============
+  Widget _buildOrbitingParticles(Color color) {
+    return AnimatedBuilder(
+      animation: _orbitController,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: List.generate(3, (index) {
+            final angle = (_orbitController.value * 2 * math.pi) +
+                (index * math.pi * 2 / 3);
+            final radius = 70.0 + (index * 10);
+
+            return Transform.translate(
+              offset: Offset(
+                math.cos(angle) * radius,
+                math.sin(angle) * radius,
+              ),
+              child: Container(
+                width: 8 - (index * 1.5),
+                height: 8 - (index * 1.5),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      color.withOpacity(0.9),
+                      color.withOpacity(0.4),
+                    ],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: color.withOpacity(0.6),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+
+  // ============ موجات النطق (Speaking) - لون أصفر ============
+  Widget _buildSpeakingWaves() {
+    final speakingColor = Colors.amber; // ✅ أصفر ذهبي
+
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, child) {
+        return Stack(
+          alignment: Alignment.center,
+          children: List.generate(4, (index) {
+            final size = 110 + (index * 18) + (_pulseController.value * 12);
+            final opacity = 0.5 - (index * 0.1);
+
+            return Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: speakingColor.withOpacity(opacity),
+                  width: 2,
+                ),
+              ),
+            );
+          }),
+        );
+      },
+    );
+  }
+
+  // ============ الهالة الرئيسية ============
+  Widget _buildMainGlow(Color color, bool isActive) {
+    return AnimatedBuilder(
+      animation: _glowController,
+      builder: (context, child) {
+        final double size =
+            isActive ? (160 + (_glowController.value * 40)).toDouble() : 120.0;
 
         return Container(
-          width: waveSize,
-          height: waveSize,
+          width: size,
+          height: size,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-              color: color.withOpacity(opacity),
-              width: 1.5,
+            gradient: RadialGradient(
+              colors: [
+                color.withOpacity(isActive ? 0.5 : 0.25),
+                color.withOpacity(isActive ? 0.25 : 0.1),
+                Colors.transparent,
+              ],
+              stops: const [0.0, 0.6, 1.0],
             ),
           ),
         );
@@ -445,49 +444,141 @@ class _HawajWidgetState extends State<HawajWidget>
     );
   }
 
-  // ✅ مؤشر الحالة المحسّن
-  Widget _buildStatusIndicator(HawajController controller) {
-    final isActive = controller.isListening ||
-        controller.isProcessing ||
-        controller.isSpeaking;
+  // ============ الزر المركزي ============
+  Widget _buildCenterButton(HawajController controller, bool isProcessing) {
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, child) {
+        // ✅ تكبير أكبر عند بدء التسجيل
+        final scale = _isRecording
+            ? 1.15 + (_pulseController.value * 0.08) // أكبر عند التسجيل
+            : controller.isListening
+                ? 1.0 + (_pulseController.value * 0.12)
+                : 1.0;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
+        return Transform.scale(
+          scale: scale,
+          child: Container(
+            width: 90,
+            height: 90,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: SweepGradient(
+                colors: [
+                  _getStateColor(controller, isProcessing),
+                  _getStateColor(controller, isProcessing).withOpacity(0.7),
+                  _getStateColor(controller, isProcessing),
+                ],
+                stops: const [0.0, 0.5, 1.0],
+                transform:
+                    GradientRotation(_shimmerController.value * 2 * math.pi),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _getStateColor(controller, isProcessing)
+                      .withOpacity(_isRecording ? 0.9 : 0.7),
+                  blurRadius: _isRecording ? 40 : 30, // ✅ توهج أقوى عند التسجيل
+                  spreadRadius: _isRecording ? 8 : 5,
+                ),
+              ],
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // ✅ أيقونة ديناميكية
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: FadeTransition(
+                        opacity: animation,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Icon(
+                    _getStateIcon(controller, isProcessing),
+                    key: ValueKey(controller.currentState),
+                    color: Colors.white,
+                    size: 38,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // ============ عرض النص الجزئي ============
+  Widget _buildPartialTextDisplay() {
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 210),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
-        color: isActive
-            ? controller.stateColor.withOpacity(0.9)
-            : Colors.grey.withOpacity(0.7),
+        color: Colors.black.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: Colors.white.withOpacity(0.2),
+          width: 1,
+        ),
+      ),
+      child: Text(
+        _partialText,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 13,
+          fontWeight: FontWeight.w400,
+          height: 1.3,
+        ),
+        textAlign: TextAlign.center,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  // ============ شريحة الحالة ============
+  Widget _buildStatusChip(HawajController controller, bool isProcessing) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 400),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+      decoration: BoxDecoration(
+        color: _getStateColor(controller, isProcessing).withOpacity(0.95),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          if (isActive)
-            BoxShadow(
-              color: controller.stateColor.withOpacity(0.4),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
+          BoxShadow(
+            color: _getStateColor(controller, isProcessing).withOpacity(0.5),
+            blurRadius: 10,
+            spreadRadius: 2,
+          ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // ✅ مؤشر التحميل أثناء المعالجة
-          if (controller.isProcessing)
+          // ✅ مؤشر متحرك
+          if (isProcessing)
             Container(
-              width: 10,
-              height: 10,
+              width: 12,
+              height: 12,
               margin: const EdgeInsets.only(left: 6),
               child: CircularProgressIndicator(
-                strokeWidth: 1.5,
+                strokeWidth: 2,
                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
               ),
             ),
+
+          // ✅ نص الحالة
           Text(
-            _getStateText(controller),
+            _getStateText(controller, isProcessing),
             style: const TextStyle(
               color: Colors.white,
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.3,
             ),
           ),
         ],
@@ -495,85 +586,50 @@ class _HawajWidgetState extends State<HawajWidget>
     );
   }
 
-  // ✅ جديد: مؤشر النص الجزئي
-  Widget _buildPartialTextIndicator() {
-    return Container(
-      constraints: const BoxConstraints(maxWidth: 180),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        _partialText,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w400,
-        ),
-        textAlign: TextAlign.center,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-
-  // ✅ عند بداية الضغط
-  void _onPressStart(HawajController controller) async {
-    if (!mounted || !_permissionGranted) {
+  // ============ PRESS START ============
+  void _onPressStart() async {
+    if (!_permissionGranted) {
       _showPermissionDialog();
       return;
     }
 
-    debugPrint('👆 بدء الضغط');
-    HapticFeedback.lightImpact(); // ✅ اهتزازة خفيفة
+    debugPrint('🎤 ═══════════════════════════════');
+    debugPrint('🎤 START: بدء الضغط المطول');
+
+    HapticFeedback.mediumImpact();
 
     setState(() {
-      _isPressing = true;
-      _currentText = '';
+      _hasSentRequest = false;
+      _finalText = '';
       _partialText = '';
       _confidence = 0;
-      _isCapturingFinalResult = false;
-      _lastWordTime = DateTime.now();
+      _isRecording = true; // ✅ تفعيل حالة التسجيل
     });
 
-    _scaleController.reverse();
+    // ✅ تشغيل تأثيرات التسجيل
+    _recordingRippleController.forward(from: 0.0);
+    _recordingIndicatorController.repeat();
 
-    // ✅ إيقاف أي نطق جاري
-    if (controller.isSpeaking) {
-      await controller.stopSpeaking();
+    if (_controller?.isSpeaking ?? false) {
+      await _controller?.stopSpeaking();
     }
 
-    // ✅ بدء الاستماع
     if (_speechEnabled) {
       await _speechToText.listen(
-        onResult: (result) => _handleSpeechResult(result),
+        onResult: _onSpeechResult,
         localeId: "ar-SA",
         listenMode: ListenMode.confirmation,
         partialResults: true,
-        // ✅ تفعيل النتائج الجزئية
         cancelOnError: false,
         listenFor: const Duration(seconds: 30),
-        // ✅ مدة استماع أطول
         pauseFor: const Duration(seconds: 5),
-        // ✅ وقت توقف أطول
-        onSoundLevelChange: (level) {
-          if (mounted) {
-            setState(() {
-              _audioLevel = level;
-              _audioLevels.removeAt(0);
-              _audioLevels.add(level);
-            });
-          }
-        },
       );
 
-      debugPrint('🎤 بدأ الاستماع');
+      debugPrint('✅ بدأ الاستماع');
     }
   }
 
-  // ✅ معالج نتائج الكلام المحسّن
-  void _handleSpeechResult(result) {
+  void _onSpeechResult(result) {
     if (!mounted) return;
 
     final recognizedWords = result.recognizedWords as String;
@@ -581,128 +637,112 @@ class _HawajWidgetState extends State<HawajWidget>
     final confidence = result.confidence as double;
 
     setState(() {
-      _lastWordTime = DateTime.now();
       _confidence = confidence;
 
       if (isFinal) {
-        // ✅ نتيجة نهائية - الأولوية القصوى
-        _currentText = recognizedWords;
-        debugPrint(
-            '✅ Widget - نهائي: "$recognizedWords" (ثقة: ${(confidence * 100).toStringAsFixed(1)}%)');
+        _finalText = recognizedWords;
+        debugPrint('📝 نص نهائي: "$recognizedWords"');
       } else {
-        // ✅ نتيجة جزئية - للعرض فقط
         _partialText = recognizedWords;
-        debugPrint(
-            '📝 Widget - جزئي: "$recognizedWords" (ثقة: ${(confidence * 100).toStringAsFixed(1)}%)');
       }
     });
   }
 
-  // ✅ عند رفع الإصبع
-  void _onPressEnd(HawajController controller) async {
+  // ============ PRESS END ============
+  void _onPressEnd() async {
     if (!mounted) return;
 
-    debugPrint('🖐️ رفع الإصبع');
-    HapticFeedback.selectionClick(); // ✅ اهتزازة تأكيد
+    debugPrint('🖐️ END: رفع الإصبع');
 
-    _scaleController.forward();
+    HapticFeedback.lightImpact();
+
+    // ✅ إيقاف تأثيرات التسجيل
+    setState(() {
+      _isRecording = false;
+    });
+    _recordingIndicatorController.stop();
 
     if (_speechToText.isListening) {
-      setState(() => _isCapturingFinalResult = true);
-
-      // ✅ إيقاف الاستماع
       await _speechToText.stop();
-
-      // ✅ انتظار أطول للحصول على النتيجة النهائية
-      // النظام يستغرق وقتاً لمعالجة آخر الكلمات
-      await Future.delayed(const Duration(milliseconds: 800));
-
-      _finalizeSpeech();
-    }
-  }
-
-  // ✅ معالجة الكلام وإرساله للـ Controller
-  void _processSpeech() {
-    // ✅ فحص إذا كان قيد المعالجة بالفعل
-    if (_isProcessing) {
-      debugPrint('⚠️ _processSpeech - إلغاء: قيد المعالجة بالفعل');
-      return;
+      debugPrint('🛑 أوقفت الاستماع');
     }
 
-    // ✅ استخدام النص النهائي المحفوظ فقط
-    final textToSend = _currentText.trim();
+    await Future.delayed(const Duration(milliseconds: 500));
 
-    debugPrint('📤 _processSpeech - النص المُرسل: "$textToSend"');
+    final textToSend =
+        _finalText.trim().isNotEmpty ? _finalText.trim() : _partialText.trim();
 
-    if (_controller != null && textToSend.isNotEmpty) {
-      // ✅ تعيين علامة المعالجة لمنع التكرار
-      setState(() => _isProcessing = true);
+    debugPrint('📤 النص المحدد: "$textToSend"');
 
-      _controller!
-          .processVoiceInputFromWidget(
+    if (textToSend.isNotEmpty && !_hasSentRequest) {
+      _hasSentRequest = true;
+
+      debugPrint('✅ ═══════════════════════════════');
+      debugPrint('✅ إرسال: "$textToSend"');
+      debugPrint('✅ ═══════════════════════════════');
+
+      _controller?.processVoiceInputFromWidget(
         textToSend,
         _confidence,
         screen: widget.screen,
         section: widget.section,
-      )
-          .then((_) {
-        // ✅ إعادة تعيين بعد اكتمال الإرسال
-        if (mounted) {
-          setState(() {
-            _isProcessing = false;
-            _currentText = '';
-            _partialText = '';
-          });
-        }
-      }).catchError((error) {
-        debugPrint('❌ خطأ في الإرسال: $error');
-        if (mounted) {
-          setState(() => _isProcessing = false);
-        }
+      );
+
+      setState(() {
+        _partialText = '';
+        _finalText = '';
       });
-    } else {
-      debugPrint('⚠️ لا يوجد نص للإرسال (فارغ أو controller null)');
-      _showErrorSnackbar('لم يتم التقاط أي صوت');
+    } else if (textToSend.isEmpty) {
+      _showMessage('لم يتم التقاط أي صوت');
     }
+
+    debugPrint('🎤 ═══════════════════════════════\n');
   }
 
-  // ✅ عرض رسالة خطأ
-  void _showErrorSnackbar(String message) {
-    if (!mounted) return;
+  // ============ Helpers ============
+  Color _getStateColor(HawajController controller, bool isProcessing) {
+    if (controller.isSpeaking) return Colors.amber; // ✅ أصفر عند النطق
+    if (isProcessing) return Colors.blue; // أزرق للتفكير/التحميل
+    if (controller.isListening) return Colors.green;
+    if (controller.hasError) return Colors.red;
+    return Colors.grey;
+  }
 
+  IconData _getStateIcon(HawajController controller, bool isProcessing) {
+    if (controller.isSpeaking) return Icons.volume_up; // ✅ سماعة عند النطق
+    if (isProcessing) return Icons.psychology;
+    if (controller.isListening) return Icons.mic;
+    if (controller.hasError) return Icons.error;
+    return Icons.assistant;
+  }
+
+  String _getStateText(HawajController controller, bool isProcessing) {
+    if (controller.isSpeaking) return 'أتحدث...';
+    if (isProcessing) return 'أفكر...'; // ✅ دمج التفكير والتحضير
+    if (controller.isListening) return 'أستمع إليك...';
+    if (controller.hasError) return 'خطأ';
+    return 'اضغط مطولاً للتحدث';
+  }
+
+  void _showMessage(String msg) {
     Get.snackbar(
-      'تنبيه',
-      message,
+      '',
+      msg,
       snackPosition: SnackPosition.BOTTOM,
       duration: const Duration(seconds: 2),
-      backgroundColor: Colors.orange.withOpacity(0.9),
+      backgroundColor: Colors.orange.withOpacity(0.95),
       colorText: Colors.white,
       margin: const EdgeInsets.all(16),
-      borderRadius: 12,
-      icon: const Icon(Icons.info_outline, color: Colors.white),
+      borderRadius: 16,
     );
   }
 
   void _showPermissionDialog() {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: const [
-            Icon(Icons.mic_off, color: Colors.orange, size: 28),
-            SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'إذن الميكروفون مطلوب',
-                style: TextStyle(fontSize: 18),
-              ),
-            ),
-          ],
-        ),
-        content: const Text(
-          'للتمكن من استخدام المساعد الصوتي، يجب منح التطبيق إذن الوصول للميكروفون',
-          style: TextStyle(height: 1.5),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+        title: const Text('إذن الميكروفون مطلوب'),
+        content: const Text('يجب منح إذن الميكروفون لاستخدام المساعد الصوتي'),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
@@ -713,11 +753,6 @@ class _HawajWidgetState extends State<HawajWidget>
               Get.back();
               openAppSettings();
             },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
             child: const Text('فتح الإعدادات'),
           ),
         ],
@@ -725,71 +760,113 @@ class _HawajWidgetState extends State<HawajWidget>
     );
   }
 
-  IconData _getIcon(HawajController controller) {
-    if (controller.isListening) return Icons.mic;
-    if (controller.isProcessing) return Icons.psychology_alt;
-    if (controller.isSpeaking) return Icons.volume_up_rounded;
-    if (controller.hasError) return Icons.error_outline_rounded;
-    return Icons.assistant_rounded;
-  }
-
-  String _getStateText(HawajController controller) {
-    if (controller.isListening) return 'أستمع إليك';
-    if (controller.isProcessing) return 'أفكر';
-    if (controller.isSpeaking) return 'أجيب';
-    if (controller.hasError) return 'حاول مرة أخرى';
-    return 'انقر للتحدث';
-  }
-
   @override
   void dispose() {
+    _orbitController.dispose();
     _pulseController.dispose();
     _glowController.dispose();
     _waveController.dispose();
-    _rotateController.dispose();
-    _scaleController.dispose();
-    _rippleController.dispose();
+    _shimmerController.dispose();
+    _audioBarController.dispose();
+    _recordingRippleController.dispose(); // ✅ جديد
+    _recordingIndicatorController.dispose(); // ✅ جديد
     _speechToText.stop();
     super.dispose();
   }
 }
 
-// ✅ Voice Wave Painter - تصميم محسّن
-class VoiceWavePainter extends CustomPainter {
+// ============ Siri Wave Painter ============
+class SiriWavePainter extends CustomPainter {
   final Animation<double> animation;
-  final List<double> audioLevels;
   final Color color;
+  final bool isActive;
 
-  VoiceWavePainter(this.animation, this.audioLevels, this.color)
-      : super(repaint: animation);
+  SiriWavePainter({
+    required this.animation,
+    required this.color,
+    required this.isActive,
+  }) : super(repaint: animation);
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final baseRadius = size.width / 4;
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.0;
 
-    for (int i = 0; i < audioLevels.length; i++) {
-      final level = audioLevels[i];
-      if (level > 0) {
-        final progress = ((animation.value + (i * 0.1)) % 1.0);
-        final waveRadius = baseRadius + (progress * 25) + (level * 2);
+    for (int i = 0; i < 3; i++) {
+      final progress = ((animation.value + (i * 0.33)) % 1.0);
+      final radius = 50 + (progress * 70);
+      final opacity = isActive ? (1.0 - progress) * 0.6 : 0.2;
 
-        final paint = Paint()
-          ..color =
-              color.withOpacity((1 - progress).clamp(0.1, 0.4) * (level / 100))
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5 + (level / 50);
+      paint.color = color.withOpacity(opacity);
 
-        canvas.drawCircle(center, waveRadius, paint);
+      final path = Path();
+      for (double angle = 0; angle < 2 * math.pi; angle += 0.1) {
+        final wave = math.sin(angle * 4 + animation.value * 2 * math.pi) * 6;
+        final x = center.dx + (radius + wave) * math.cos(angle);
+        final y = center.dy + (radius + wave) * math.sin(angle);
+
+        if (angle == 0) {
+          path.moveTo(x, y);
+        } else {
+          path.lineTo(x, y);
+        }
       }
+      path.close();
+      canvas.drawPath(path, paint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant VoiceWavePainter oldDelegate) => true;
+  bool shouldRepaint(covariant SiriWavePainter oldDelegate) => true;
 }
 
-// Extension للإضافة السهلة
+// ============ Recording Indicator Painter ============
+class RecordingIndicatorPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+
+  RecordingIndicatorPainter({
+    required this.progress,
+    required this.color,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = size.width / 2;
+
+    // ✅ قوس دائري متحرك يشير للتسجيل
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 3.5
+      ..strokeCap = StrokeCap.round;
+
+    // رسم 3 أقواس صغيرة تدور
+    for (int i = 0; i < 3; i++) {
+      final startAngle =
+          (progress * 2 * math.pi) + (i * 2 * math.pi / 3) - math.pi / 2;
+      final sweepAngle = math.pi / 4; // طول القوس
+
+      canvas.drawArc(
+        Rect.fromCircle(center: center, radius: radius),
+        startAngle,
+        sweepAngle,
+        false,
+        paint..color = color.withOpacity(0.8 - (i * 0.2)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant RecordingIndicatorPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
+// ============ Extension ============
 extension HawajExtension on Widget {
   Widget withHawaj({
     String section = "1",
@@ -818,623 +895,3 @@ extension HawajExtension on Widget {
     );
   }
 }
-// import 'dart:math' as math;
-//
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:get/get.dart';
-// import 'package:permission_handler/permission_handler.dart';
-// import 'package:speech_to_text/speech_to_text.dart';
-//
-// import '../controller/hawaj_ai_controller.dart';
-//
-// class HawajWidget extends StatefulWidget {
-//   final String? welcomeMessage;
-//   final String section;
-//   final String screen;
-//
-//   const HawajWidget({
-//     Key? key,
-//     this.welcomeMessage,
-//     required this.section,
-//     required this.screen,
-//   }) : super(key: key);
-//
-//   @override
-//   State<HawajWidget> createState() => _HawajWidgetState();
-// }
-//
-// class _HawajWidgetState extends State<HawajWidget>
-//     with TickerProviderStateMixin {
-//   // Animation Controllers
-//   late AnimationController _pulseController;
-//   late AnimationController _glowController;
-//   late AnimationController _waveController;
-//   late AnimationController _rotateController;
-//   late AnimationController _scaleController;
-//   late AnimationController _rippleController;
-//
-//   // Speech to Text
-//   final SpeechToText _speechToText = SpeechToText();
-//   bool _speechEnabled = false;
-//   bool _permissionGranted = false;
-//
-//   // State
-//   HawajController? _controller;
-//   bool _isInitialized = false;
-//   bool _isPressing = false;
-//   String _currentText = '';
-//   double _confidence = 0;
-//   double _audioLevel = 0;
-//   List<double> _audioLevels = List.generate(8, (index) => 0.0);
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     _initAnimations();
-//     _initSpeech();
-//     _initController();
-//   }
-//
-//   void _initAnimations() {
-//     _pulseController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 2000),
-//     )..repeat(reverse: true);
-//
-//     _glowController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 3000),
-//     )..repeat(reverse: true);
-//
-//     _waveController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 1200),
-//     )..repeat();
-//
-//     _rotateController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(seconds: 4),
-//     )..repeat();
-//
-//     _scaleController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 200),
-//       lowerBound: 0.9,
-//       upperBound: 1.0,
-//     )..value = 1.0;
-//
-//     _rippleController = AnimationController(
-//       vsync: this,
-//       duration: const Duration(milliseconds: 2000),
-//     )..repeat();
-//   }
-//
-//   Future<void> _initSpeech() async {
-//     try {
-//       final status = await Permission.microphone.request();
-//       if (status.isGranted) {
-//         _permissionGranted = true;
-//         _speechEnabled = await _speechToText.initialize(
-//           onStatus: (status) {
-//             if (status == 'notListening' && _currentText.isNotEmpty) {
-//               _processSpeech();
-//             }
-//           },
-//           onError: (error) {
-//             debugPrint('خطأ في التعرف على الكلام: $error');
-//             if (mounted) {
-//               setState(() {
-//                 _isPressing = false;
-//               });
-//             }
-//           },
-//         );
-//         if (mounted) setState(() {});
-//       }
-//     } catch (e) {
-//       debugPrint('خطأ في تهيئة الكلام: $e');
-//     }
-//   }
-//
-//   void _initController() {
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       try {
-//         _controller = Get.find<HawajController>();
-//         if (widget.section != null && widget.screen != null) {
-//           _controller?.updateContext(
-//             widget.section!,
-//             widget.screen!,
-//             message: widget.welcomeMessage,
-//           );
-//         }
-//         if (mounted) {
-//           setState(() => _isInitialized = true);
-//         }
-//       } catch (e) {
-//         debugPrint('Error finding HawajController: $e');
-//       }
-//     });
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     if (!_isInitialized || _controller == null) {
-//       return const SizedBox.shrink();
-//     }
-//
-//     return GetX<HawajController>(
-//       builder: (controller) {
-//         final isActive = controller.isListening ||
-//             controller.isProcessing ||
-//             controller.isSpeaking;
-//
-//         return GestureDetector(
-//           onTapDown: (_) => _onPressStart(controller),
-//           onTapUp: (_) => _onPressEnd(controller),
-//           onTapCancel: () => _onPressEnd(controller),
-//           child: AnimatedBuilder(
-//             animation: _scaleController,
-//             builder: (context, child) {
-//               return Transform.scale(
-//                 scale: _scaleController.value,
-//                 child: SizedBox(
-//                   width: 200,
-//                   height: 240,
-//                   child: Stack(
-//                     alignment: Alignment.center,
-//                     children: [
-//                       // الموجات الخارجية المتحركة - تصميم أنيق
-//                       if (isActive) ...[
-//                         _buildAnimatedWave(180, 0.0, controller.stateColor),
-//                         _buildAnimatedWave(160, 0.3, controller.stateColor),
-//                         _buildAnimatedWave(140, 0.6, controller.stateColor),
-//                       ],
-//
-//                       // الهالة المتوهجة المركزية
-//                       AnimatedBuilder(
-//                         animation: _glowController,
-//                         builder: (context, child) {
-//                           final glowSize = 120 + (_glowController.value * 20);
-//                           return Container(
-//                             width: glowSize,
-//                             height: glowSize,
-//                             decoration: BoxDecoration(
-//                               shape: BoxShape.circle,
-//                               gradient: RadialGradient(
-//                                 colors: [
-//                                   controller.stateColor
-//                                       .withOpacity(isActive ? 0.4 : 0.15),
-//                                   controller.stateColor
-//                                       .withOpacity(isActive ? 0.2 : 0.05),
-//                                   Colors.transparent,
-//                                 ],
-//                                 stops: [0.0, 0.5, 1.0],
-//                               ),
-//                             ),
-//                           );
-//                         },
-//                       ),
-//
-//                       // الحلقة الدوّارة عند المعالجة - تصميم بسيط وأنيق
-//                       if (controller.isProcessing)
-//                         AnimatedBuilder(
-//                           animation: _rotateController,
-//                           builder: (context, child) {
-//                             return Transform.rotate(
-//                               angle: _rotateController.value * 2 * math.pi,
-//                               child: Container(
-//                                 width: 100,
-//                                 height: 100,
-//                                 decoration: BoxDecoration(
-//                                   shape: BoxShape.circle,
-//                                   border: Border.all(
-//                                     color:
-//                                         controller.stateColor.withOpacity(0.4),
-//                                     width: 2.0,
-//                                   ),
-//                                 ),
-//                               ),
-//                             );
-//                           },
-//                         ),
-//
-//                       // موجات الصوت التفاعلية - تصميم أكثر أناقة
-//                       if (controller.isListening && _audioLevel > 0)
-//                         CustomPaint(
-//                           painter: VoiceWavePainter(
-//                             _waveController,
-//                             _audioLevels,
-//                             controller.stateColor,
-//                           ),
-//                           size: const Size(180, 180),
-//                         ),
-//
-//                       // الزر الرئيسي - تصميم عصري
-//                       _buildMainButton(controller, isActive),
-//
-//                       // مؤشر الحالة البسيط
-//                       Positioned(
-//                         bottom: 8,
-//                         child: _buildStatusIndicator(controller),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//               );
-//             },
-//           ),
-//         );
-//       },
-//     );
-//   }
-//
-//   // بناء الزر الرئيسي بتصميم عصري
-//   Widget _buildMainButton(HawajController controller, bool isActive) {
-//     return AnimatedBuilder(
-//       animation: _pulseController,
-//       builder: (context, child) {
-//         final scale = isActive ? 1.0 + (_pulseController.value * 0.05) : 1.0;
-//         final opacity = isActive ? 1.0 : 0.8;
-//
-//         return Transform.scale(
-//           scale: scale,
-//           child: Container(
-//             width: 80,
-//             height: 80,
-//             decoration: BoxDecoration(
-//               shape: BoxShape.circle,
-//               gradient: LinearGradient(
-//                 begin: Alignment.topLeft,
-//                 end: Alignment.bottomRight,
-//                 colors: [
-//                   controller.stateColor.withOpacity(opacity),
-//                   controller.stateColor.withOpacity(opacity * 0.7),
-//                 ],
-//               ),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: controller.stateColor.withOpacity(0.5),
-//                   blurRadius: isActive ? 20 : 15,
-//                   spreadRadius: isActive ? 4 : 2,
-//                 ),
-//               ],
-//             ),
-//             child: Material(
-//               color: Colors.transparent,
-//               child: InkWell(
-//                 borderRadius: BorderRadius.circular(40),
-//                 onTap: () {},
-//                 child: Stack(
-//                   alignment: Alignment.center,
-//                   children: [
-//                     // أيقونة الحالة
-//                     Icon(
-//                       _getIcon(controller),
-//                       color: Colors.white,
-//                       size: 32,
-//                     ),
-//
-//                     // مؤشر الاستماع البسيط
-//                     if (controller.isListening) _buildSimpleSoundIndicator(),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-//
-//   // مؤشر الصوت المبسط
-//   Widget _buildSimpleSoundIndicator() {
-//     return AnimatedBuilder(
-//       animation: _waveController,
-//       builder: (context, child) {
-//         return Row(
-//           mainAxisSize: MainAxisSize.min,
-//           children: List.generate(3, (index) {
-//             final delay = index * 0.3;
-//             final value =
-//                 math.sin((_waveController.value + delay) * 2 * math.pi).abs();
-//             return Container(
-//               margin: const EdgeInsets.symmetric(horizontal: 2),
-//               width: 3,
-//               height: 8 + (value * 12),
-//               decoration: BoxDecoration(
-//                 color: Colors.white.withOpacity(0.9),
-//                 borderRadius: BorderRadius.circular(1.5),
-//               ),
-//             );
-//           }),
-//         );
-//       },
-//     );
-//   }
-//
-//   // الموجات الخارجية المتحركة - تصميم أنيق
-//   Widget _buildAnimatedWave(double size, double delay, Color color) {
-//     return AnimatedBuilder(
-//       animation: _rippleController,
-//       builder: (context, child) {
-//         final progress = (_rippleController.value + delay) % 1.0;
-//         final opacity = (1.0 - progress) * 0.4;
-//         final waveSize = size * (0.7 + (progress * 0.3));
-//
-//         return Container(
-//           width: waveSize,
-//           height: waveSize,
-//           decoration: BoxDecoration(
-//             shape: BoxShape.circle,
-//             border: Border.all(
-//               color: color.withOpacity(opacity),
-//               width: 1.5,
-//             ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-//
-//   // مؤشر الحالة البسيط
-//   Widget _buildStatusIndicator(HawajController controller) {
-//     final isActive = controller.isListening ||
-//         controller.isProcessing ||
-//         controller.isSpeaking;
-//
-//     return AnimatedContainer(
-//       duration: const Duration(milliseconds: 300),
-//       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-//       decoration: BoxDecoration(
-//         color: isActive
-//             ? controller.stateColor.withOpacity(0.9)
-//             : Colors.grey.withOpacity(0.7),
-//         borderRadius: BorderRadius.circular(20),
-//         boxShadow: [
-//           if (isActive)
-//             BoxShadow(
-//               color: controller.stateColor.withOpacity(0.4),
-//               blurRadius: 8,
-//               offset: const Offset(0, 2),
-//             ),
-//         ],
-//       ),
-//       child: Row(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           if (controller.isProcessing)
-//             Container(
-//               width: 10,
-//               height: 10,
-//               margin: const EdgeInsets.only(left: 6),
-//               child: CircularProgressIndicator(
-//                 strokeWidth: 1.5,
-//                 valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-//               ),
-//             ),
-//           Text(
-//             _getStateText(controller),
-//             style: const TextStyle(
-//               color: Colors.white,
-//               fontSize: 12,
-//               fontWeight: FontWeight.w500,
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   // عند بداية الضغط
-//   void _onPressStart(HawajController controller) async {
-//     if (!mounted || !_permissionGranted) {
-//       _showPermissionDialog();
-//       return;
-//     }
-//
-//     HapticFeedback.lightImpact();
-//
-//     setState(() {
-//       _isPressing = true;
-//       _currentText = '';
-//       _confidence = 0;
-//     });
-//
-//     _scaleController.reverse();
-//
-//     if (controller.isSpeaking) {
-//       await controller.stopSpeaking();
-//     }
-//
-//     if (_speechEnabled) {
-//       await _speechToText.listen(
-//         onResult: (result) {
-//           if (mounted) {
-//             setState(() {
-//               _currentText = result.recognizedWords;
-//               _confidence = result.confidence;
-//             });
-//           }
-//         },
-//         localeId: "ar-SA",
-//         listenMode: ListenMode.confirmation,
-//         partialResults: true,
-//         onSoundLevelChange: (level) {
-//           if (mounted) {
-//             setState(() {
-//               _audioLevel = level;
-//               _audioLevels.removeAt(0);
-//               _audioLevels.add(level);
-//             });
-//           }
-//         },
-//       );
-//     }
-//   }
-//
-//   // عند رفع الإصبع
-//   void _onPressEnd(HawajController controller) async {
-//     if (!mounted) return;
-//
-//     HapticFeedback.selectionClick();
-//
-//     setState(() => _isPressing = false);
-//     _scaleController.forward();
-//
-//     if (_speechToText.isListening) {
-//       await _speechToText.stop();
-//     }
-//
-//     if (_currentText.isNotEmpty) {
-//       _processSpeech();
-//     }
-//   }
-//
-//   // معالجة الكلام وإرساله للـ Controller
-//   void _processSpeech() {
-//     if (_controller != null && _currentText.isNotEmpty) {
-//       _controller!.processVoiceInputFromWidget(
-//         _currentText,
-//         _confidence,
-//         screen: widget.screen,
-//         section: widget.section,
-//       );
-//     }
-//   }
-//
-//   void _showPermissionDialog() {
-//     Get.dialog(
-//       AlertDialog(
-//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-//         title: Row(
-//           children: const [
-//             Icon(Icons.mic_off, color: Colors.orange, size: 28),
-//             SizedBox(width: 12),
-//             Expanded(
-//               child: Text(
-//                 'إذن الميكروفون مطلوب',
-//                 style: TextStyle(fontSize: 18),
-//               ),
-//             ),
-//           ],
-//         ),
-//         content: const Text(
-//           'للتمكن من استخدام المساعد الصوتي، يجب منح التطبيق إذن الوصول للميكروفون',
-//           style: TextStyle(height: 1.5),
-//         ),
-//         actions: [
-//           TextButton(
-//             onPressed: () => Get.back(),
-//             child: const Text('لاحقاً'),
-//           ),
-//           ElevatedButton(
-//             onPressed: () {
-//               Get.back();
-//               openAppSettings();
-//             },
-//             style: ElevatedButton.styleFrom(
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(12),
-//               ),
-//             ),
-//             child: const Text('فتح الإعدادات'),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-//
-//   IconData _getIcon(HawajController controller) {
-//     if (controller.isListening) return Icons.mic;
-//     if (controller.isProcessing) return Icons.psychology_alt;
-//     if (controller.isSpeaking) return Icons.volume_up_rounded;
-//     if (controller.hasError) return Icons.error_outline_rounded;
-//     return Icons.assistant_rounded;
-//   }
-//
-//   String _getStateText(HawajController controller) {
-//     if (controller.isListening) return 'أستمع إليك';
-//     if (controller.isProcessing) return 'أفكر';
-//     if (controller.isSpeaking) return 'أجيب';
-//     if (controller.hasError) return 'حاول مرة أخرى';
-//     return 'انقر للتحدث';
-//   }
-//
-//   @override
-//   void dispose() {
-//     _pulseController.dispose();
-//     _glowController.dispose();
-//     _waveController.dispose();
-//     _rotateController.dispose();
-//     _scaleController.dispose();
-//     _rippleController.dispose();
-//     _speechToText.stop();
-//     super.dispose();
-//   }
-// }
-//
-// // Voice Wave Painter - تصميم مبسط
-// class VoiceWavePainter extends CustomPainter {
-//   final Animation<double> animation;
-//   final List<double> audioLevels;
-//   final Color color;
-//
-//   VoiceWavePainter(this.animation, this.audioLevels, this.color)
-//       : super(repaint: animation);
-//
-//   @override
-//   void paint(Canvas canvas, Size size) {
-//     final center = Offset(size.width / 2, size.height / 2);
-//     final baseRadius = size.width / 4;
-//
-//     for (int i = 0; i < audioLevels.length; i++) {
-//       final level = audioLevels[i];
-//       if (level > 0) {
-//         final progress = ((animation.value + (i * 0.1)) % 1.0);
-//         final waveRadius = baseRadius + (progress * 25) + (level * 2);
-//
-//         final paint = Paint()
-//           ..color =
-//               color.withOpacity((1 - progress).clamp(0.1, 0.4) * (level / 100))
-//           ..style = PaintingStyle.stroke
-//           ..strokeWidth = 1.5 + (level / 50);
-//
-//         canvas.drawCircle(center, waveRadius, paint);
-//       }
-//     }
-//   }
-//
-//   @override
-//   bool shouldRepaint(covariant VoiceWavePainter oldDelegate) => true;
-// }
-//
-// // Extension للإضافة السهلة
-// extension HawajExtension on Widget {
-//   Widget withHawaj({
-//     String section = "1",
-//     String screen = "1",
-//     String? message,
-//     AlignmentGeometry alignment = Alignment.bottomCenter,
-//     EdgeInsets padding = const EdgeInsets.only(bottom: 50),
-//   }) {
-//     return Stack(
-//       children: [
-//         this,
-//         Positioned.fill(
-//           child: Align(
-//             alignment: alignment,
-//             child: Padding(
-//               padding: padding,
-//               child: HawajWidget(
-//                 section: section,
-//                 screen: screen,
-//                 welcomeMessage: message,
-//               ),
-//             ),
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }
