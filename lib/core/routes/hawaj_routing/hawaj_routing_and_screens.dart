@@ -1,26 +1,42 @@
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
+import 'package:app_mobile/features/providers/commercial_contracts/manager_my_services_commercial_contracts/presentation/pages/manager_my_services_commercial_contracts_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 /// ═══════════════════════════════════════════════════════════
-/// 🎯 Main Sections In Hawaj
+/// Main Sections In Hawaj
 /// ═══════════════════════════════════════════════════════════
 class HawajSections {
   static const String dailyOffers = "1";
-  static const String offers = "2";
+  static const String commercialContracts = "2";
   static const String restaurants = "3";
   static const String orders = "4";
   static const String profile = "5";
 }
 
 /// ═══════════════════════════════════════════════════════════
-/// 📱 Screens In Main Sections In Hawaj
+/// Screens In Main Sections In Hawaj
 /// ═══════════════════════════════════════════════════════════
 class HawajScreens {
   // Daily Offers Section (1)
+  ///======>User
   static const String map = "1";
-  static const String dailyOffersList = "2";
-  static const String dailyOfferDetails = "3";
+  static const String detailsCompanyUser = "2";
+  static const String chatScreen = "3";
+  static const String profileScreen = "4";
+  static const String editProfile = "5";
+  static const String sendReport = "6";
+  static const String mangerFavorite = "7";
+  static const String favoriteScreenProducts = "8";
+
+  ///=======>Provider
+  static const String subscriptionOfferProvider = "9";
+  static const String successSubscriptionOfferProviderScreen = "10";
+  static const String registerCompanyOfferProviderScreen = "11";
+  static const String addOfferProviderScreen = "12";
+  static const String managerProductsOfferProviderScreen = "13";
+  static const String manageListOfferProviderScreen = "14";
+  static const String detailsMyCompanyDailyOfferScreen = "15";
 
   // Offers Section (2)
   static const String offersDaily = "1";
@@ -67,6 +83,7 @@ class HawajRouteConfig {
   final String name;
   final HawajTransition transition;
   final Duration duration;
+  final void Function(Map<String, dynamic>? params)? init; // 👈 init اختياري
 
   const HawajRouteConfig({
     required this.section,
@@ -75,86 +92,38 @@ class HawajRouteConfig {
     required this.name,
     this.transition = HawajTransition.fadeSlide,
     this.duration = const Duration(milliseconds: 400),
+    this.init,
   });
 
   String get key => '$section-$screen';
 }
 
 /// ═══════════════════════════════════════════════════════════
-/// 🗺️ Routes Registry - تسجيل كل الشاشات
+///  Routes Registry
 /// ═══════════════════════════════════════════════════════════
 class HawajRoutes {
   static final List<HawajRouteConfig> _routes = [
     // ═══════════════════════════════════════════════════════
-    // 📍 DAILY OFFERS SECTION (1)
+    //  DAILY OFFERS SECTION (1)
     // ═══════════════════════════════════════════════════════
     HawajRouteConfig(
       section: HawajSections.dailyOffers,
       screen: HawajScreens.map,
-      name: 'Map Screen',
+      name: 'Map Screen With Offer',
       builder: (params) => const MapScreen(),
       transition: HawajTransition.fade,
+      init: (params) {
+        // مثال: تحميل بيانات الموقع أو العروض
+      },
     ),
 
-    // HawajRouteConfig(
-    //   section: HawajSections.dailyOffers,
-    //   screen: HawajScreens.dailyOffersList,
-    //   name: 'Daily Offers List',
-    //   builder: (params) => DailyOffersListScreen(params: params),
-    //   transition: HawajTransition.slideUp,
-    // ),
-    //
-    // HawajRouteConfig(
-    //   section: HawajSections.dailyOffers,
-    //   screen: HawajScreens.dailyOfferDetails,
-    //   name: 'Daily Offer Details',
-    //   builder: (params) => DailyOfferDetailsScreen(params: params),
-    //   transition: HawajTransition.scale,
-    // ),
-
-    // ═══════════════════════════════════════════════════════
-    // 🎁 OFFERS SECTION (2)
-    // ═══════════════════════════════════════════════════════
-    // HawajRouteConfig(
-    //   section: HawajSections.offers,
-    //   screen: HawajScreens.offersDaily,
-    //   name: 'Daily Offers',
-    //   builder: (params) => DailyOffersScreen(params: params),
-    //   transition: HawajTransition.fadeSlide,
-    // ),
-
-    // ═══════════════════════════════════════════════════════
-    // 🍽️ RESTAURANTS SECTION (3)
-    // ═══════════════════════════════════════════════════════
-    // HawajRouteConfig(
-    //   section: HawajSections.restaurants,
-    //   screen: HawajScreens.restaurantsList,
-    //   name: 'Restaurants List',
-    //   builder: (params) => RestaurantsListScreen(params: params),
-    //   transition: HawajTransition.slideUp,
-    // ),
-
-    // ═══════════════════════════════════════════════════════
-    // 📦 ORDERS SECTION (4)
-    // ═══════════════════════════════════════════════════════
-    // HawajRouteConfig(
-    //   section: HawajSections.orders,
-    //   screen: HawajScreens.ordersActive,
-    //   name: 'Active Orders',
-    //   builder: (params) => const ActiveOrdersScreen(),
-    //   transition: HawajTransition.fade,
-    // ),
-
-    // ═══════════════════════════════════════════════════════
-    // 👤 PROFILE SECTION (5)
-    // ═══════════════════════════════════════════════════════
-    // HawajRouteConfig(
-    //   section: HawajSections.profile,
-    //   screen: HawajScreens.profileMain,
-    //   name: 'Profile',
-    //   builder: (params) => const ProfileMainScreen(),
-    //   transition: HawajTransition.fadeSlide,
-    // ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.detailsCompanyUser,
+      name: 'Details Company With Offer Screen',
+      builder: (params) => ManagerMyServicesCommercialContractsScreen(),
+      transition: HawajTransition.slideUp,
+    ),
   ];
 
   /// ═══════════════════════════════════════════════════════
@@ -194,24 +163,15 @@ class HawajRoutes {
       return;
     }
 
-    debugPrint('🚀 Navigating to: ${route.name} ($section-$screen)');
-    debugPrint('📦 Parameters: $parameters');
+    route.init?.call(parameters);
 
     final page = route.builder(parameters);
     final transition = _getTransition(route.transition);
 
     if (replace) {
-      Get.off(
-        () => page,
-        transition: transition,
-        duration: route.duration,
-      );
+      Get.off(() => page, transition: transition, duration: route.duration);
     } else {
-      Get.to(
-        () => page,
-        transition: transition,
-        duration: route.duration,
-      );
+      Get.to(() => page, transition: transition, duration: route.duration);
     }
   }
 

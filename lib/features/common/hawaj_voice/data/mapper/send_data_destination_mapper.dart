@@ -8,7 +8,7 @@ extension SendDataDestinationMapper on SendDataDestinationResponse {
     return SendDataDestinationModel(
       section: section.onNull(),
       screen: screen.onNull(),
-      parameters: parameters ?? {},
+      // parameters: parameters ?? {},
       message: message.onNull(),
       mp3: mp3.onNull(),
     );

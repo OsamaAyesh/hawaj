@@ -350,31 +350,31 @@ class HawajController extends GetxController {
     if (needsNavigation) {
       debugPrint(
           '✅ Navigation required - Moving to ${destination.section}-${destination.screen}');
+      //
+      // // تحويل parameters من List إلى Map
+      // Map<String, dynamic>? params;
+      // if (destination.parameters.isNotEmpty) {
+      //   params = {};
+      //   if (destination.parameters is Map) {
+      //     params = Map<String, dynamic>.from(destination.parameters as Map);
+      //   } else if (destination.parameters is List) {
+      //     final paramList = destination.parameters as List;
+      //     for (int i = 0; i < paramList.length; i += 2) {
+      //       if (i + 1 < paramList.length) {
+      //         params[paramList[i].toString()] = paramList[i + 1];
+      //       }
+      //     }
+      //   }
+      // }
 
-      // تحويل parameters من List إلى Map
-      Map<String, dynamic>? params;
-      if (destination.parameters.isNotEmpty) {
-        params = {};
-        if (destination.parameters is Map) {
-          params = Map<String, dynamic>.from(destination.parameters as Map);
-        } else if (destination.parameters is List) {
-          final paramList = destination.parameters as List;
-          for (int i = 0; i < paramList.length; i += 2) {
-            if (i + 1 < paramList.length) {
-              params[paramList[i].toString()] = paramList[i + 1];
-            }
-          }
-        }
-      }
-
-      debugPrint('📦 Navigation Parameters: $params');
+      // debugPrint('📦 Navigation Parameters: $params');
 
       // الانتقال بعد انتهاء الصوت (بعد ثانية)
       Future.delayed(const Duration(seconds: 1), () {
         HawajRoutes.navigateTo(
           section: destination.section,
           screen: destination.screen,
-          parameters: params,
+          parameters: {},
           replace: false,
         );
       });

@@ -12,8 +12,8 @@ class SendDataDestinationResponse {
   @JsonKey(name: ResponseConstants.screen)
   String? screen;
 
-  @JsonKey(name: ResponseConstants.parameters)
-  Map<String, dynamic>? parameters;
+  // @JsonKey(name: ResponseConstants.parameters)
+  // Map<String, dynamic>? parameters;
 
   @JsonKey(name: ResponseConstants.message)
   String? message;
@@ -24,7 +24,7 @@ class SendDataDestinationResponse {
   SendDataDestinationResponse({
     this.section,
     this.screen,
-    this.parameters,
+    // this.parameters,
     this.message,
     this.mp3,
   });
