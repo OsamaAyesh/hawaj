@@ -1,7 +1,10 @@
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-/// This Main Sections In Hawaj
+/// ═══════════════════════════════════════════════════════════
+/// 🎯 Main Sections In Hawaj
+/// ═══════════════════════════════════════════════════════════
 class HawajSections {
   static const String dailyOffers = "1";
   static const String offers = "2";
@@ -10,12 +13,14 @@ class HawajSections {
   static const String profile = "5";
 }
 
-/// Screens In Main Sections In Hawaj
+/// ═══════════════════════════════════════════════════════════
+/// 📱 Screens In Main Sections In Hawaj
+/// ═══════════════════════════════════════════════════════════
 class HawajScreens {
-  // Home Section (1)
+  // Daily Offers Section (1)
   static const String map = "1";
-  static const String homeSearch = "2";
-  static const String homeCategories = "3";
+  static const String dailyOffersList = "2";
+  static const String dailyOfferDetails = "3";
 
   // Offers Section (2)
   static const String offersDaily = "1";
@@ -39,156 +44,214 @@ class HawajScreens {
   static const String profileSettings = "3";
 }
 
-// Route Configuration
+/// ═══════════════════════════════════════════════════════════
+/// 🎨 Transition Types
+/// ═══════════════════════════════════════════════════════════
+enum HawajTransition {
+  fade,
+  slide,
+  scale,
+  fadeSlide,
+  slideUp,
+  zoom,
+  rotation,
+}
+
+/// ═══════════════════════════════════════════════════════════
+/// 📦 Route Configuration
+/// ═══════════════════════════════════════════════════════════
 class HawajRouteConfig {
   final String section;
   final String screen;
   final Widget Function(Map<String, dynamic>? params) builder;
   final String name;
+  final HawajTransition transition;
+  final Duration duration;
 
   const HawajRouteConfig({
     required this.section,
     required this.screen,
     required this.builder,
     required this.name,
+    this.transition = HawajTransition.fadeSlide,
+    this.duration = const Duration(milliseconds: 400),
   });
 
   String get key => '$section-$screen';
 }
 
-// تسجيل كل الـ Routes
+/// ═══════════════════════════════════════════════════════════
+/// 🗺️ Routes Registry - تسجيل كل الشاشات
+/// ═══════════════════════════════════════════════════════════
 class HawajRoutes {
   static final List<HawajRouteConfig> _routes = [
-    // HOME SECTION (1)
+    // ═══════════════════════════════════════════════════════
+    // 📍 DAILY OFFERS SECTION (1)
+    // ═══════════════════════════════════════════════════════
     HawajRouteConfig(
       section: HawajSections.dailyOffers,
       screen: HawajScreens.map,
-      name: 'Home Main',
+      name: 'Map Screen',
       builder: (params) => const MapScreen(),
+      transition: HawajTransition.fade,
     ),
+
     // HawajRouteConfig(
-    //   section: HawajSections.home,
-    //   screen: HawajScreens.homeSearch,
-    //   name: 'Home Search',
-    //   builder: (params) => HomeSearchScreen(params: params),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.home,
-    //   screen: HawajScreens.homeCategories,
-    //   name: 'Home Categories',
-    //   builder: (params) => const HomeCategoriesScreen(),
+    //   section: HawajSections.dailyOffers,
+    //   screen: HawajScreens.dailyOffersList,
+    //   name: 'Daily Offers List',
+    //   builder: (params) => DailyOffersListScreen(params: params),
+    //   transition: HawajTransition.slideUp,
     // ),
     //
-    // // OFFERS SECTION (2)
+    // HawajRouteConfig(
+    //   section: HawajSections.dailyOffers,
+    //   screen: HawajScreens.dailyOfferDetails,
+    //   name: 'Daily Offer Details',
+    //   builder: (params) => DailyOfferDetailsScreen(params: params),
+    //   transition: HawajTransition.scale,
+    // ),
+
+    // ═══════════════════════════════════════════════════════
+    // 🎁 OFFERS SECTION (2)
+    // ═══════════════════════════════════════════════════════
     // HawajRouteConfig(
     //   section: HawajSections.offers,
     //   screen: HawajScreens.offersDaily,
     //   name: 'Daily Offers',
     //   builder: (params) => DailyOffersScreen(params: params),
+    //   transition: HawajTransition.fadeSlide,
     // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.offers,
-    //   screen: HawajScreens.offersWeekly,
-    //   name: 'Weekly Offers',
-    //   builder: (params) => WeeklyOffersScreen(params: params),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.offers,
-    //   screen: HawajScreens.offersNearby,
-    //   name: 'Nearby Offers',
-    //   builder: (params) => NearbyOffersScreen(params: params),
-    // ),
-    //
-    // // RESTAURANTS SECTION (3)
+
+    // ═══════════════════════════════════════════════════════
+    // 🍽️ RESTAURANTS SECTION (3)
+    // ═══════════════════════════════════════════════════════
     // HawajRouteConfig(
     //   section: HawajSections.restaurants,
     //   screen: HawajScreens.restaurantsList,
     //   name: 'Restaurants List',
     //   builder: (params) => RestaurantsListScreen(params: params),
+    //   transition: HawajTransition.slideUp,
     // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.restaurants,
-    //   screen: HawajScreens.restaurantDetails,
-    //   name: 'Restaurant Details',
-    //   builder: (params) => RestaurantDetailsScreen(params: params),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.restaurants,
-    //   screen: HawajScreens.restaurantMenu,
-    //   name: 'Restaurant Menu',
-    //   builder: (params) => RestaurantMenuScreen(params: params),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.restaurants,
-    //   screen: HawajScreens.restaurantReviews,
-    //   name: 'Restaurant Reviews',
-    //   builder: (params) => RestaurantReviewsScreen(params: params),
-    // ),
-    //
-    // // ORDERS SECTION (4)
+
+    // ═══════════════════════════════════════════════════════
+    // 📦 ORDERS SECTION (4)
+    // ═══════════════════════════════════════════════════════
     // HawajRouteConfig(
     //   section: HawajSections.orders,
     //   screen: HawajScreens.ordersActive,
     //   name: 'Active Orders',
     //   builder: (params) => const ActiveOrdersScreen(),
+    //   transition: HawajTransition.fade,
     // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.orders,
-    //   screen: HawajScreens.ordersHistory,
-    //   name: 'Orders History',
-    //   builder: (params) => const OrdersHistoryScreen(),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.orders,
-    //   screen: HawajScreens.orderDetails,
-    //   name: 'Order Details',
-    //   builder: (params) => OrderDetailsScreen(params: params),
-    // ),
-    //
-    // // PROFILE SECTION (5)
+
+    // ═══════════════════════════════════════════════════════
+    // 👤 PROFILE SECTION (5)
+    // ═══════════════════════════════════════════════════════
     // HawajRouteConfig(
     //   section: HawajSections.profile,
     //   screen: HawajScreens.profileMain,
     //   name: 'Profile',
     //   builder: (params) => const ProfileMainScreen(),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.profile,
-    //   screen: HawajScreens.profileEdit,
-    //   name: 'Edit Profile',
-    //   builder: (params) => const ProfileEditScreen(),
-    // ),
-    // HawajRouteConfig(
-    //   section: HawajSections.profile,
-    //   screen: HawajScreens.profileSettings,
-    //   name: 'Settings',
-    //   builder: (params) => const ProfileSettingsScreen(),
+    //   transition: HawajTransition.fadeSlide,
     // ),
   ];
 
+  /// ═══════════════════════════════════════════════════════
+  /// 🔍 Find Route by Section & Screen
+  /// ═══════════════════════════════════════════════════════
   static HawajRouteConfig? findRoute(String section, String screen) {
     try {
       return _routes.firstWhere(
         (route) => route.section == section && route.screen == screen,
       );
     } catch (e) {
-      debugPrint('Route not found: $section-$screen');
+      debugPrint('❌ Route not found: Section=$section, Screen=$screen');
       return null;
     }
   }
 
+  /// ═══════════════════════════════════════════════════════
+  /// ✅ Check if Route Exists
+  /// ═══════════════════════════════════════════════════════
   static bool routeExists(String section, String screen) {
     return findRoute(section, screen) != null;
   }
 
+  /// ═══════════════════════════════════════════════════════
+  /// 🚀 Navigate with Animation
+  /// ═══════════════════════════════════════════════════════
+  static Future<void> navigateTo({
+    required String section,
+    required String screen,
+    Map<String, dynamic>? parameters,
+    bool replace = false,
+  }) async {
+    final route = findRoute(section, screen);
+
+    if (route == null) {
+      debugPrint('❌ Cannot navigate: Route not found ($section-$screen)');
+      return;
+    }
+
+    debugPrint('🚀 Navigating to: ${route.name} ($section-$screen)');
+    debugPrint('📦 Parameters: $parameters');
+
+    final page = route.builder(parameters);
+    final transition = _getTransition(route.transition);
+
+    if (replace) {
+      Get.off(
+        () => page,
+        transition: transition,
+        duration: route.duration,
+      );
+    } else {
+      Get.to(
+        () => page,
+        transition: transition,
+        duration: route.duration,
+      );
+    }
+  }
+
+  /// ═══════════════════════════════════════════════════════
+  /// 🎨 Get GetX Transition from HawajTransition
+  /// ═══════════════════════════════════════════════════════
+  static Transition _getTransition(HawajTransition type) {
+    switch (type) {
+      case HawajTransition.fade:
+        return Transition.fade;
+      case HawajTransition.slide:
+        return Transition.rightToLeft;
+      case HawajTransition.scale:
+        return Transition.zoom;
+      case HawajTransition.fadeSlide:
+        return Transition.fadeIn;
+      case HawajTransition.slideUp:
+        return Transition.downToUp;
+      case HawajTransition.zoom:
+        return Transition.zoom;
+      case HawajTransition.rotation:
+        return Transition.size;
+    }
+  }
+
+  /// ═══════════════════════════════════════════════════════
+  /// 📋 Get All Routes
+  /// ═══════════════════════════════════════════════════════
   static List<HawajRouteConfig> getAllRoutes() => _routes;
 
+  /// ═══════════════════════════════════════════════════════
+  /// 🖨️ Print All Routes (Debug)
+  /// ═══════════════════════════════════════════════════════
   static void printAllRoutes() {
-    debugPrint('════════════════════════════════════');
-    debugPrint('All Hawaj Routes:');
+    debugPrint('═══════════════════════════════════════════════');
+    debugPrint('📍 All Hawaj Routes (${_routes.length} total):');
+    debugPrint('═══════════════════════════════════════════════');
     for (var route in _routes) {
-      debugPrint('${route.key} -> ${route.name}');
+      debugPrint('${route.key} → ${route.name}');
     }
-    debugPrint('════════════════════════════════════');
+    debugPrint('═══════════════════════════════════════════════');
   }
 }

@@ -13,7 +13,7 @@ class SendDataDestinationResponse {
   String? screen;
 
   @JsonKey(name: ResponseConstants.parameters)
-  List<dynamic>? parameters;
+  Map<String, dynamic>? parameters;
 
   @JsonKey(name: ResponseConstants.message)
   String? message;

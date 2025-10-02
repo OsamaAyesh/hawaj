@@ -15,7 +15,7 @@ class RequestConstants {
   static const String language = 'language';
   static const String lat = 'lat';
   static const String lng = 'lng';
-  static const String stringUser = 'strl';
+  static const String stringUser = 'stri';
   static const String q = 'q';
   static const String s = 's';
 }
