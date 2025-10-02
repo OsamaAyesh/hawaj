@@ -126,6 +126,8 @@ class HawajRoutes {
       builder: (params) => const MapScreen(),
       transition: HawajTransition.fade,
       init: (params) {
+        // initOffersController(); // ✅ هذا السطر فقط
+
         // مثال: تحميل بيانات الموقع أو العروض
       },
     ),

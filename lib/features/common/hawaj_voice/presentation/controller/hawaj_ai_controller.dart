@@ -336,56 +336,7 @@ class HawajController extends GetxController {
     debugPrint('💬 رسالة الرد: ${destination.message}');
 
     // ═══════════════════════════════════════════════════════════
-    // 🧭 ROUTING COMPARISON & NAVIGATION
-    // ═══════════════════════════════════════════════════════════
-    debugPrint('🧭 ════════════════════════════════════');
-    debugPrint('🧭 ROUTING COMPARISON:');
-    debugPrint('📍 Current: q=${data.q}, s=${data.s}');
-    debugPrint(
-        '🎯 Target:  section=${destination.section}, screen=${destination.screen}');
-
-    final needsNavigation =
-        data.q != destination.section || data.s != destination.screen;
-
-    if (needsNavigation) {
-      debugPrint(
-          '✅ Navigation required - Moving to ${destination.section}-${destination.screen}');
-      //
-      // // تحويل parameters من List إلى Map
-      // Map<String, dynamic>? params;
-      // if (destination.parameters.isNotEmpty) {
-      //   params = {};
-      //   if (destination.parameters is Map) {
-      //     params = Map<String, dynamic>.from(destination.parameters as Map);
-      //   } else if (destination.parameters is List) {
-      //     final paramList = destination.parameters as List;
-      //     for (int i = 0; i < paramList.length; i += 2) {
-      //       if (i + 1 < paramList.length) {
-      //         params[paramList[i].toString()] = paramList[i + 1];
-      //       }
-      //     }
-      //   }
-      // }
-
-      // debugPrint('📦 Navigation Parameters: $params');
-
-      // الانتقال بعد انتهاء الصوت (بعد ثانية)
-      Future.delayed(const Duration(seconds: 1), () {
-        HawajRoutes.navigateTo(
-          section: destination.section,
-          screen: destination.screen,
-          parameters: {},
-          replace: false,
-        );
-      });
-    } else {
-      debugPrint('ℹ️ Already on target screen - No navigation needed');
-    }
-
-    debugPrint('🧭 ════════════════════════════════════');
-
-    // ═══════════════════════════════════════════════════════════
-    // 🔊 AUDIO PLAYBACK
+    // 🔊 تشغيل الصوت أولاً
     // ═══════════════════════════════════════════════════════════
     if (destination.mp3.isNotEmpty) {
       _isLoadingAudio.value = true;
@@ -397,11 +348,45 @@ class HawajController extends GetxController {
       _currentMessage.value = 'جاري تحضير الرد...';
       debugPrint('🔊 تحضير النطق');
       speak(destination.message);
-    } else {
-      _resetToIdle();
     }
 
     _isExpanded.value = true;
+
+    // ═══════════════════════════════════════════════════════════
+    // 🧭 ROUTING COMPARISON & NAVIGATION
+    // ═══════════════════════════════════════════════════════════
+    debugPrint('🧭 ════════════════════════════════════');
+    debugPrint('🧭 ROUTING COMPARISON:');
+    debugPrint('📍 Current: q=${data.q}, s=${data.s}');
+    debugPrint(
+        '🎯 Target:  section=${destination.section}, screen=${destination.screen}');
+
+    // ✅ فحص إذا كانت section و screen null - لا تنقل
+    if (destination.section == "" || destination.screen == "") {
+      debugPrint(
+          'ℹ️ No navigation target (section/screen is null) - Staying on current screen');
+      return;
+    }
+
+    final needsNavigation =
+        data.q != destination.section || data.s != destination.screen;
+
+    if (needsNavigation) {
+      debugPrint(
+          '✅ Navigation required - Moving to ${destination.section}-${destination.screen}');
+
+      // الانتقال بعد انتهاء الصوت (بعد ثانية)
+      Future.delayed(const Duration(seconds: 3), () {
+        HawajRoutes.navigateTo(
+          section: destination.section!,
+          screen: destination.screen!,
+          parameters: {},
+          replace: false,
+        );
+      });
+    } else {
+      debugPrint('ℹ️ Already on target screen - No navigation needed');
+    }
   }
 
   /// ═══════════════════════════════════════════════════════════
