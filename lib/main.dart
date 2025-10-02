@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner:
               dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.managerMyServicesCommercialContractsScreen,
+          initialRoute: Routes.splash,
           navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,
