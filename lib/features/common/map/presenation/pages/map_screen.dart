@@ -454,7 +454,7 @@ class _MapScreenState extends State<MapScreen> {
 // // import '../../../../../core/resources/manager_styles.dart';
 // // import '../../../../../core/widgets/loading_widget.dart';
 // // import '../../../../users/offer_user/company_with_offer/domain/di/di.dart';
-// // import '../../../../users/offer_user/list_offers/presentation/controller/get_offers_controller.dart';
+// // import '../../../../users/offer_user/list_offers/presentation/controller/get_organizations_controller.dart';
 // // import '../controller/map_ticker_controller.dart';
 // // import '../widgets/drawer_widget.dart';
 // // import '../widgets/handel_permission_function.dart';
