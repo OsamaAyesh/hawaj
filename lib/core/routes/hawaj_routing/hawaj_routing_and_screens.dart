@@ -10,6 +10,7 @@ import 'package:app_mobile/features/providers/offers_provider/subscription_offer
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../features/common/profile/domain/di/di.dart';
 import '../../../features/common/profile/presentation/pages/contact_us_screen.dart';
 import '../../../features/common/profile/presentation/pages/manager_services_screen.dart';
 import '../../../features/common/under_development/presentation/pages/under_development_screen.dart';
@@ -138,12 +139,14 @@ class HawajRoutes {
     ),
 
     HawajRouteConfig(
-      section: HawajSections.dailyOffers,
-      screen: HawajScreens.profileScreen,
-      name: 'Profile User Screen',
-      builder: (params) => ProfileScreen(),
-      transition: HawajTransition.slideUp,
-    ),
+        section: HawajSections.dailyOffers,
+        screen: HawajScreens.profileScreen,
+        name: 'Profile User Screen',
+        builder: (params) => ProfileScreen(),
+        transition: HawajTransition.slideUp,
+        init: (params) {
+          initGetProfile();
+        }),
 
     HawajRouteConfig(
       section: HawajSections.dailyOffers,

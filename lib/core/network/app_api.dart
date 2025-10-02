@@ -4,7 +4,6 @@ import 'package:app_mobile/features/common/profile/data/response/get_profile_res
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
 import 'package:app_mobile/features/users/offer_user/company_with_offer/data/response/get_company_response.dart';
-import 'package:app_mobile/features/users/offer_user/list_offers/data/response/offer_user_response.dart';
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
@@ -16,6 +15,7 @@ import '../../features/common/hawaj_voice/data/response/send_data_response.dart'
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
+import '../../features/users/offer_user/list_offers/data/response/get_organizations_response.dart';
 import '../service/env_service.dart';
 
 part 'app_api.g.dart';
@@ -151,5 +151,14 @@ abstract class AppService {
     @Field(RequestConstants.language) String language,
     @Field(RequestConstants.q) String q,
     @Field(RequestConstants.s) String s,
+  );
+
+  ///====>Get Organizations
+  ///
+  @GET(RequestConstantsEndpoints.getCompany)
+  Future<GetOrganizationsResponse> getOrganizations(
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.lng) String? lng,
+    @Query(RequestConstants.language) String? language,
   );
 }
