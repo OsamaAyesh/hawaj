@@ -295,9 +295,8 @@ class HawajController extends GetxController {
     try {
       final request = SendDataRequest(
         strl: textToProcess,
-        // strl: "حواج بدي اتعشى رتب الموضوع شو في عندكم اكل",
-        lat: (_latitude ?? 0).toString(),
-        lng: (_longitude ?? 0).toString(),
+        lat: "24.7321",
+        lng: "46.74321",
         language: "ar",
         q: _currentSection,
         s: _currentScreen,
