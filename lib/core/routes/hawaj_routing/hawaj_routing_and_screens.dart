@@ -1,7 +1,18 @@
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
+import 'package:app_mobile/features/common/profile/presentation/pages/edit_profile_screen.dart';
+import 'package:app_mobile/features/common/profile/presentation/pages/profile_screen.dart';
 import 'package:app_mobile/features/providers/commercial_contracts/manager_my_services_commercial_contracts/presentation/pages/manager_my_services_commercial_contracts_screen.dart';
+import 'package:app_mobile/features/providers/offers_provider/add_offer/presentation/pages/add_offer_provider_screen.dart';
+import 'package:app_mobile/features/providers/offers_provider/details_my_company/presentation/pages/details_my_company_screen.dart';
+import 'package:app_mobile/features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
+import 'package:app_mobile/features/providers/offers_provider/register_company_offer_provider/presentation/pages/register_company_offer_provider_screen.dart';
+import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/presentation/pages/success_subscription_offer_provider_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../features/common/profile/presentation/pages/contact_us_screen.dart';
+import '../../../features/common/profile/presentation/pages/manager_services_screen.dart';
+import '../../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 
 /// ═══════════════════════════════════════════════════════════
 /// Main Sections In Hawaj
@@ -122,6 +133,105 @@ class HawajRoutes {
       screen: HawajScreens.detailsCompanyUser,
       name: 'Details Company With Offer Screen',
       builder: (params) => ManagerMyServicesCommercialContractsScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+
+    ///===>Chat Screen
+    // HawajRouteConfig(
+    //   section: HawajSections.dailyOffers,
+    //   screen: HawajScreens.chatScreen,
+    //   name: 'Chat Screen',
+    //   builder: (params) => ManagerMyServicesCommercialContractsScreen(),
+    //   transition: HawajTransition.slideUp,
+    // ),
+
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.profileScreen,
+      name: 'Profile User Screen',
+      builder: (params) => ProfileScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.editProfile,
+      name: 'Profile User Screen',
+      builder: (params) => EditProfileScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.sendReport,
+      name: 'Contact Us Send Report',
+      builder: (params) => ContactUsScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.mangerFavorite,
+      name: 'ManagerFavorite',
+      builder: (params) => ManagerServicesScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+
+    // HawajRouteConfig(
+    //   section: HawajSections.dailyOffers,
+    //   screen: HawajScreens.favoriteScreenProducts,
+    //   name: 'ManagerFavorite',
+    //   builder: (params) => FavoriteScreenProducts(),
+    //   transition: HawajTransition.slideUp,
+    // ),
+
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.subscriptionOfferProvider,
+      name: 'Subscription Offer Provider',
+      builder: (params) => ContactUsScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.successSubscriptionOfferProviderScreen,
+      name: 'Success Subscription Offer Provider Screen',
+      builder: (params) => SuccessSubscriptionOfferProviderScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.registerCompanyOfferProviderScreen,
+      name: 'Register Company Offer Provider Screen',
+      builder: (params) => RegisterCompanyOfferProviderScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.addOfferProviderScreen,
+      name: 'Add Offer Provider Screen',
+      builder: (params) => AddOfferProviderScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.managerProductsOfferProviderScreen,
+      name: 'Manager Products Offer Provider Screen',
+      builder: (params) => ManagerProductsOfferProviderScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.manageListOfferProviderScreen,
+      name: 'Manage List Offer Provider Screen',
+      builder: (params) => ManageListOfferProviderScreen(),
+      transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.detailsMyCompanyDailyOfferScreen,
+      name: 'Details My Company Screen',
+      builder: (params) => DetailsMyCompanyScreen(),
       transition: HawajTransition.slideUp,
     ),
   ];

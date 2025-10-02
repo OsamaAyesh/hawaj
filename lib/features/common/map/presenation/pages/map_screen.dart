@@ -9,6 +9,7 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../controller/drawer_controller.dart';
 import '../controller/map_controller.dart';
 import '../controller/map_sections_controller.dart';
@@ -75,73 +76,76 @@ class _MapScreenState extends State<MapScreen> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: SafeArea(
-          top: false,
-          bottom: true,
-          child: Scaffold(
-            extendBodyBehindAppBar: true,
-            backgroundColor: Colors.transparent,
-            body: SliderDrawer(
-              key: _sliderKey,
-              appBar: AppBar(),
-              sliderOpenSize: 280,
-              slideDirection: SlideDirection.rightToLeft,
-              isDraggable: false,
-              slider: Obx(() {
-                final userData = drawerC.userData.value;
-                return AppDrawer(
-                  sliderKey: _sliderKey,
-                  userName: userData?.name ?? 'مستخدم',
-                  role: userData?.role ?? 'جديد',
-                  phone: userData?.phone ?? '',
-                  avatar: userData?.avatar ?? "",
-                );
-              }),
-              child: Obx(() {
-                if (mapC.isLoading.value &&
-                    mapC.currentLocation.value == null) {
-                  return const Center(child: LoadingWidget());
-                }
+        top: false,
+        bottom: true,
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.transparent,
+          body: SliderDrawer(
+            key: _sliderKey,
+            appBar: AppBar(),
+            sliderOpenSize: 280,
+            slideDirection: SlideDirection.rightToLeft,
+            isDraggable: false,
+            slider: Obx(() {
+              final userData = drawerC.userData.value;
+              return AppDrawer(
+                sliderKey: _sliderKey,
+                userName: userData?.name ?? 'مستخدم',
+                role: userData?.role ?? 'جديد',
+                phone: userData?.phone ?? '',
+                avatar: userData?.avatar ?? "",
+              );
+            }),
+            child: Obx(() {
+              if (mapC.isLoading.value && mapC.currentLocation.value == null) {
+                return const Center(child: LoadingWidget());
+              }
 
-                final location = mapC.currentLocation.value;
-                if (location == null) return _buildLocationError();
+              final location = mapC.currentLocation.value;
+              if (location == null) return _buildLocationError();
 
-                return Stack(
-                  children: [
-                    // ===== Google Map =====
-                    MapViewWidget(
-                      location: location,
-                      onMapCreated: (controller) async {
-                        _mapController = controller;
-                        final style = await rootBundle
-                            .loadString('assets/json/style_map.json');
-                        controller.setMapStyle(style);
-                      },
-                      markers: _buildMarkers(location),
+              return Stack(
+                children: [
+                  // ===== Google Map =====
+                  MapViewWidget(
+                    location: location,
+                    onMapCreated: (controller) async {
+                      _mapController = controller;
+                      final style = await rootBundle
+                          .loadString('assets/json/style_map.json');
+                      controller.setMapStyle(style);
+                    },
+                    markers: _buildMarkers(location),
+                  ),
+
+                  // ===== Custom Top Bar =====
+                  Positioned(
+                    top: ManagerHeight.h48,
+                    left: ManagerWidth.w16,
+                    right: ManagerWidth.w16,
+                    child: MapTopBar(
+                      onMenuPressed: () => _sliderKey.currentState?.toggle(),
+                      onNotificationPressed: () {},
+                      hasNotifications: true,
                     ),
+                  ),
 
-                    // ===== Custom Top Bar =====
-                    Positioned(
-                      top: ManagerHeight.h48,
-                      left: ManagerWidth.w16,
-                      right: ManagerWidth.w16,
-                      child: MapTopBar(
-                        onMenuPressed: () => _sliderKey.currentState?.toggle(),
-                        onNotificationPressed: () {},
-                        hasNotifications: true,
-                      ),
+                  // ===== Loading Overlay for sections =====
+                  if (sectionsC.isCurrentSectionLoading)
+                    Container(
+                      color: Colors.black.withOpacity(0.1),
+                      child: const Center(child: CircularProgressIndicator()),
                     ),
-
-                    // ===== Loading Overlay for sections =====
-                    if (sectionsC.isCurrentSectionLoading)
-                      Container(
-                        color: Colors.black.withOpacity(0.1),
-                        child: const Center(child: CircularProgressIndicator()),
-                      ),
-                  ],
-                );
-              }),
-            ),
-          ).withHawaj(screen: "1", section: "1")),
+                ],
+              );
+            }),
+          ),
+        ).withHawaj(
+          screen: HawajScreens.map,
+          section: HawajSections.dailyOffers,
+        ),
+      ),
     );
   }
 
