@@ -1,3 +1,4 @@
+import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
@@ -26,12 +27,11 @@ class ManagerMyServicesCommercialContractsScreen extends StatelessWidget {
               vertical: 12,
             ),
             itemCount: 6,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.78,
-            ),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200, // العرض الأقصى لكل كارد
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: ManagerHeight.h205),
             itemBuilder: (context, index) {
               return MyServiceGridCardWidget(
                 imageUrl:
@@ -55,12 +55,11 @@ class ManagerMyServicesCommercialContractsScreen extends StatelessWidget {
               vertical: 12,
             ),
             itemCount: 6,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.78,
-            ),
+            gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                maxCrossAxisExtent: 200, // العرض الأقصى لكل كارد
+                crossAxisSpacing: 12,
+                mainAxisSpacing: 12,
+                mainAxisExtent: ManagerHeight.h205),
             itemBuilder: (context, index) {
               return MyServiceGridCardWidget(
                 imageUrl:

@@ -5,6 +5,7 @@ import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
+
 import '../../../../../../core/resources/manager_strings.dart';
 
 class MyServiceGridCardWidget extends StatelessWidget {
@@ -30,7 +31,7 @@ class MyServiceGridCardWidget extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(ManagerRadius.r4),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.06),
@@ -93,71 +94,49 @@ class MyServiceGridCardWidget extends StatelessWidget {
           // ======= المحتوى =======
           Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: ManagerWidth.w12,
-              vertical: ManagerHeight.h10,
+              horizontal: ManagerWidth.w4,
+              vertical: ManagerHeight.h4,
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // السعر — صغير وخافت ومحاذاة البداية
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(
-                    "\$$price   ${ManagerStrings.servicePrice}",
-                    // "السعر يبدأ من"
-                    style: getRegularTextStyle(
-                      fontSize: ManagerFontSize.s10,
-                      color: ManagerColors.blackWithOpcity,
-                    ),
-                  ),
-                ),
-                SizedBox(height: ManagerHeight.h6),
-
-                // العنوان — Bold ومركزي
                 Text(
                   title,
                   textAlign: TextAlign.center,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: getBoldTextStyle(
-                    fontSize: ManagerFontSize.s14,
+                    fontSize: ManagerFontSize.s10,
                     color: ManagerColors.black,
                   ),
                 ),
-                SizedBox(height: ManagerHeight.h6),
-
-                // الوصف — مركزي وخافت
+                SizedBox(height: ManagerHeight.h3),
                 Text(
                   description,
-                  textAlign: TextAlign.center,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: getRegularTextStyle(
-                    fontSize: ManagerFontSize.s12,
-                    color: ManagerColors.blackWithOpcity,
+                    fontSize: ManagerFontSize.s8,
+                    color: ManagerColors.colorGreyWithOpcityCard,
                   ),
                 ),
               ],
             ),
           ),
-
-          // ======= زر أسفل الكارد =======
+          SizedBox(
+            height: ManagerHeight.h8,
+          ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
-              ManagerWidth.w12,
-              0,
-              ManagerWidth.w12,
-              ManagerHeight.h12,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w4),
             child: SizedBox(
-              height: ManagerHeight.h34,
+              height: ManagerHeight.h16,
               width: double.infinity,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: isActive
                       ? const Color(0xFFFFECEC) // وردي فاتح
                       : const Color(0xFFEFF9EF),
-                  // أخضر فاتح عند المعطّل (لـ "تفعيل")
-                  borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                  borderRadius: BorderRadius.circular(ManagerRadius.r2),
                 ),
                 child: TextButton(
                   onPressed: onToggle,
@@ -175,7 +154,7 @@ class MyServiceGridCardWidget extends StatelessWidget {
                         ? ManagerStrings.disableService
                         : ManagerStrings.enableService,
                     style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s12,
+                      fontSize: ManagerFontSize.s7,
                       color: isActive
                           ? const Color(0xFFD23B3B)
                           : const Color(0xFF2E7D32),
