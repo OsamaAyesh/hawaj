@@ -75,6 +75,9 @@ class HawajController extends GetxController {
   String get currentSection => _section;
 
   String get currentScreen => _screen;
+  bool _isProcessingRequest = false;
+  String? _lastProcessedText;
+  DateTime? _lastProcessTime;
 
   HawajState get currentState {
     if (_hasError.value) return HawajState.error;
@@ -230,14 +233,56 @@ class HawajController extends GetxController {
       return;
     }
 
+    // منع الطلبات المكررة خلال 3 ثواني
+    final now = DateTime.now();
+    if (_isProcessingRequest &&
+        _lastProcessedText == trimmedText &&
+        _lastProcessTime != null &&
+        now.difference(_lastProcessTime!).inSeconds < 3) {
+      debugPrint('⚠️ Controller - طلب مكرر تم منعه!');
+      debugPrint('⚠️ النص: "$trimmedText"');
+      return;
+    }
+
     debugPrint('📥 استقبال نص من Widget: "$trimmedText"');
+
+    _isProcessingRequest = true;
+    _lastProcessedText = trimmedText;
+    _lastProcessTime = now;
 
     _voiceText.value = trimmedText;
     _confidenceLevel.value = confidence;
     updateContext(section, screen);
 
     await _processVoiceInput();
+
+    // إعادة تعيين بعد 3 ثواني
+    Future.delayed(const Duration(seconds: 3), () {
+      _isProcessingRequest = false;
+    });
   }
+
+  // Future<void> processVoiceInputFromWidget(
+  //   String voiceText,
+  //   double confidence, {
+  //   required String section,
+  //   required String screen,
+  // }) async {
+  //   final trimmedText = voiceText.trim();
+  //
+  //   if (trimmedText.isEmpty) {
+  //     debugPrint('⚠️ نص فارغ، لن تتم المعالجة');
+  //     return;
+  //   }
+  //
+  //   debugPrint('📥 استقبال نص من Widget: "$trimmedText"');
+  //
+  //   _voiceText.value = trimmedText;
+  //   _confidenceLevel.value = confidence;
+  //   updateContext(section, screen);
+  //
+  //   await _processVoiceInput();
+  // }
 
   Future<void> _processVoiceInput() async {
     final textToProcess = _voiceText.value.trim().isEmpty
@@ -257,7 +302,8 @@ class HawajController extends GetxController {
 
     try {
       final request = SendDataRequest(
-        strl: textToProcess,
+        strl: "حواج بدي اتعشى رتب الموضوع شو في عندكم اكل",
+        // strl: textToProcess,
         lat: (_latitude ?? 0).toString(),
         lng: (_longitude ?? 0).toString(),
         language: "ar",

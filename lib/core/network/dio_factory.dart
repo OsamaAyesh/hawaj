@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
+
 import '../../constants/constants/constants.dart';
 import '../../constants/di/dependency_injection.dart';
 import '../../constants/env/env_constants.dart';
@@ -13,7 +14,9 @@ class DioFactory {
   Future<Dio> getDio() async {
     Dio dio = Dio();
     Map<String, String> headers = {
-      Constants.authorization: getAuthorization(_appPreferences.getToken()),
+      Constants.authorization:
+          "46|fTJIvyChgP3ZlEv2wZOP20Yjh7mw6ZfPwxWYlGA468c31140",
+      // Constants.authorization: getAuthorization(_appPreferences.getToken()),
       Constants.acceptLanguage: _appPreferences.getLocale(),
       Constants.accept: Constants.applicationJson,
       Constants.contentType: Constants.applicationJson,
