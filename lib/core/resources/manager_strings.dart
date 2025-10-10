@@ -790,6 +790,20 @@ class ManagerStrings {
 
   static String get confirm => tr("confirm");
 
+  static String get followUpOrdersTitle => tr('follow_up_orders_title');
+
+  static String get ordersListTitle => tr('orders_list_title');
+
+  static String get offerDateLabel => tr('offer_date_label');
+
+  static String get offerTitle => tr('offer_title');
+
+  static String get offerPriceLabel => tr('offer_price_label');
+
+  static String get offerDescription => tr('offer_description');
+
+  static String get downloadOfferButton => tr('download_offer_button');
+
   static String get manageServicesTitle => tr("manageServicesTitle");
 
   static String get activeServices => tr("activeServices");

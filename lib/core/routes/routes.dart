@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import '../../features/common/auth/presentation/pages/complete_information_screen.dart';
 import '../../features/common/test/test_hawaj_screen.dart';
 import '../../features/providers/commercial_contracts/add_new_service_commercial_contracts/presentation/pages/add_new_service_commercial_contracts_screen.dart';
+import '../../features/providers/commercial_contracts/follow_up_order_in_commercial_contracts/presentation/pages/follow_up_order_in_commercial_contracts_screen.dart';
 import '../../features/providers/commercial_contracts/manager_commercial_contracts_services_provider/presentation/pages/manager_commercial_contracts_services_provider_screen.dart';
 import '../../features/providers/commercial_contracts/manager_my_services_commercial_contracts/presentation/pages/manager_my_services_commercial_contracts_screen.dart';
 import '../../features/providers/commercial_contracts/register_service_provider_contract/pages/register_service_provider_contract_screen.dart';
@@ -92,6 +93,8 @@ class Routes {
   static const String manageContractUserScreen = "manageContractUserScreen";
   static const String managerMyRequestsContractUserScreen =
       "managerMyRequestsContractUserScreen";
+  static const String followUpOrderInCommercialContractsScreen =
+      "followUpOrderInCommercialContractsScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -194,6 +197,10 @@ class RouteGenerator {
       case Routes.subscriptionInformationScreen:
         return MaterialPageRoute(
           builder: (_) => SubscriptionInformationScreen(),
+        );
+      case Routes.followUpOrderInCommercialContractsScreen:
+        return MaterialPageRoute(
+          builder: (_) => FollowUpOrderInCommercialContractsScreen(),
         );
       default:
         return unDefinedRoute();
