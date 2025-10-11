@@ -9,7 +9,6 @@ import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../domain/di/di.dart';
 import '../controller/get_company_with_offer_controller.dart';
 import '../widgets/circle_icon_widget.dart';
 import '../widgets/user_offer_card_widget.dart';
@@ -31,26 +30,18 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
     super.initState();
     controller = Get.find<GetCompanyController>();
 
-    // ✅ تحميل البيانات مرة واحدة فقط عند فتح الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchCompany(widget.idOrganization);
     });
   }
 
   @override
-  void dispose() {
-    // TODO: implement dispose
-    disposeGetCompany();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SafeArea(
-      top: false,
       bottom: true,
+      top: false,
       child: Scaffold(
-        backgroundColor: ManagerColors.white,
+        backgroundColor: Colors.white,
         body: Obx(() {
           if (controller.isLoading.value) {
             return const LoadingWidget();
@@ -99,241 +90,43 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
 
           return RefreshIndicator(
             color: ManagerColors.primaryColor,
-            // ✅ استدعاء refreshCompany بدلاً من fetchCompany
             onRefresh: () => controller.refreshCompany(widget.idOrganization),
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(
                 parent: BouncingScrollPhysics(),
               ),
               slivers: [
-                /// Header Section
+                // Header Image
                 SliverToBoxAdapter(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Banner Background
-                      Stack(
-                        children: [
-                          Image.asset(
-                            ManagerImages.imageRemoveIt,
-                            height: ManagerHeight.h239,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: ManagerHeight.h51),
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: ManagerWidth.w16,
-                                ),
-                                child: Row(
-                                  children: [
-                                    CircleIconWidget(
-                                      icon: Icons.arrow_back,
-                                      onPressed: () => Get.back(),
-                                    ),
-                                    const Spacer(),
-                                    CircleIconWidget(
-                                      icon: Icons.share_outlined,
-                                      onPressed: () {},
-                                    ),
-                                    SizedBox(width: ManagerWidth.w12),
-                                    CircleIconWidget(
-                                      icon: Icons.favorite_border,
-                                      onPressed: () {},
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(height: ManagerHeight.h80),
-
-                              /// Card with company details
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: ManagerWidth.w16,
-                                ),
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    color: ManagerColors.white,
-                                    borderRadius: BorderRadius.circular(
-                                      ManagerRadius.r6,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: ManagerColors.black
-                                            .withOpacity(0.05),
-                                        blurRadius: 10,
-                                        offset: const Offset(0, 2),
-                                      )
-                                    ],
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      SizedBox(height: ManagerHeight.h8),
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: ManagerWidth.w12),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            /// Company Logo
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                      ManagerRadius.r4),
-                                              child: Image.network(
-                                                company.organizationLogo,
-                                                height: ManagerHeight.h64,
-                                                width: ManagerWidth.w64,
-                                                fit: BoxFit.cover,
-                                                errorBuilder: (_, __, ___) =>
-                                                    Image.asset(
-                                                  ManagerImages.image3remove,
-                                                  height: ManagerHeight.h64,
-                                                  width: ManagerWidth.w64,
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: ManagerWidth.w8),
-
-                                            /// Company Details
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    company.organization,
-                                                    style: getBoldTextStyle(
-                                                      fontSize:
-                                                          ManagerFontSize.s12,
-                                                      color:
-                                                          ManagerColors.black,
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                      height: ManagerHeight.h4),
-                                                  Text(
-                                                    company
-                                                        .organizationServices,
-                                                    style: getRegularTextStyle(
-                                                      fontSize:
-                                                          ManagerFontSize.s8,
-                                                      color: ManagerColors
-                                                          .colorCompanyDetails,
-                                                    ),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  SizedBox(
-                                                      height: ManagerHeight.h4),
-                                                  Row(
-                                                    children: [
-                                                      const Icon(
-                                                        Icons.phone,
-                                                        size: 14,
-                                                        color: ManagerColors
-                                                            .primaryColor,
-                                                      ),
-                                                      SizedBox(
-                                                          width:
-                                                              ManagerWidth.w4),
-                                                      Text(
-                                                        company.phoneNumber,
-                                                        style:
-                                                            getRegularTextStyle(
-                                                          fontSize:
-                                                              ManagerFontSize
-                                                                  .s8,
-                                                          color: ManagerColors
-                                                              .primaryColor,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: ManagerHeight.h8),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )
-                        ],
-                      ),
-
-                      SizedBox(height: ManagerHeight.h16),
-
-                      /// Products Title
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
-                        child: Row(
-                          children: [
-                            Text(
-                              "قائمة المنتجات",
-                              style: getBoldTextStyle(
-                                fontSize: ManagerFontSize.s13,
-                                color: ManagerColors.primaryColor,
-                              ),
-                            ),
-                            SizedBox(width: ManagerWidth.w6),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: ManagerWidth.w8,
-                                vertical: ManagerHeight.h2,
-                              ),
-                              decoration: BoxDecoration(
-                                color:
-                                    ManagerColors.primaryColor.withOpacity(0.1),
-                                borderRadius:
-                                    BorderRadius.circular(ManagerRadius.r12),
-                              ),
-                              child: Text(
-                                "${company.offers.length}",
-                                style: getBoldTextStyle(
-                                  fontSize: ManagerFontSize.s10,
-                                  color: ManagerColors.primaryColor,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: ManagerHeight.h12),
-                    ],
-                  ),
+                  child: _buildHeader(company),
                 ),
 
-                /// ✅ GridView للعروض (مع تعديل المسافات)
+                // Discount Banner
+                SliverToBoxAdapter(
+                  child: _buildDiscountBanner(),
+                ),
+
+                // Products Title
+                SliverToBoxAdapter(
+                  child: _buildProductsTitle(company.offers.length),
+                ),
+
+                // Products Grid
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
                   sliver: SliverGrid(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
-                      mainAxisExtent: ManagerHeight.h230, // ✅ ارتفاع ثابت
-                      crossAxisSpacing: ManagerWidth.w10, // ✅ مسافة أفقية
-                      mainAxisSpacing: ManagerHeight.h10, // ✅ مسافة عمودية
+                      mainAxisExtent: ManagerHeight.h230,
+                      crossAxisSpacing: ManagerWidth.w10,
+                      mainAxisSpacing: ManagerHeight.h10,
                     ),
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
                         final offer = company.offers[index];
                         return UserOfferCardWidget(
                           offer: offer,
-                          onTap: () {
-                            // الانتقال لتفاصيل العرض
-                          },
+                          onTap: () {},
                         );
                       },
                       childCount: company.offers.length,
@@ -341,7 +134,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
                   ),
                 ),
 
-                /// Bottom Spacing
+                // Bottom Spacing
                 SliverToBoxAdapter(
                   child: SizedBox(height: ManagerHeight.h24),
                 ),
@@ -349,6 +142,314 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
             ),
           );
         }),
+      ),
+    );
+  }
+
+  /// Header مع الصورة والأيقونات
+  Widget _buildHeader(company) {
+    return Stack(
+      children: [
+        // Background Image
+        Image.asset(
+          ManagerImages.imageRemoveIt,
+          height: ManagerHeight.h200,
+          width: double.infinity,
+          fit: BoxFit.cover,
+        ),
+        Padding(
+            padding: EdgeInsets.only(top: ManagerHeight.h160),
+            child: _buildCompanyCard(company)),
+        // Top Icons
+        Positioned(
+          top: MediaQuery.of(context).padding.top + 8,
+          left: ManagerWidth.w16,
+          right: ManagerWidth.w16,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CircleIconWidget(
+                icon: Icons.arrow_back,
+                onPressed: () => Get.back(),
+              ),
+              Row(
+                children: [
+                  CircleIconWidget(
+                    icon: Icons.share_outlined,
+                    onPressed: () {},
+                  ),
+                  SizedBox(width: ManagerWidth.w8),
+                  CircleIconWidget(
+                    icon: Icons.favorite_border,
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Company Card
+  Widget _buildCompanyCard(company) {
+    return Transform.translate(
+      offset: Offset(0, -ManagerHeight.h16),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+        child: Container(
+          padding: EdgeInsets.all(ManagerWidth.w16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(ManagerRadius.r8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 15,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Logo + Discount Badge
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // Company Logo
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                        child: Image.network(
+                          company.organizationLogo,
+                          height: ManagerHeight.h60,
+                          width: ManagerWidth.w60,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Image.asset(
+                            ManagerImages.image3remove,
+                            height: ManagerHeight.h60,
+                            width: ManagerWidth.w60,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(width: ManagerWidth.w8),
+
+                  // Company Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          company.organization,
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s14,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: ManagerHeight.h2),
+                        Text(
+                          company.organizationServices,
+                          style: getRegularTextStyle(
+                            fontSize: ManagerFontSize.s9,
+                            color: Colors.grey[600]!,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(width: ManagerWidth.w12),
+                  // Phone Button
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ManagerWidth.w10,
+                      vertical: ManagerHeight.h6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF3D3B6B),
+                      borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.phone,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        SizedBox(width: ManagerWidth.w4),
+                        Text(
+                          company.phoneNumber,
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s9,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: ManagerHeight.h12),
+
+              // Info Icons Row
+              Row(
+                children: [
+                  Icon(
+                    Icons.location_pin,
+                    size: 14,
+                    color: Colors.grey[700],
+                  ),
+                  SizedBox(width: ManagerWidth.w4),
+                  Expanded(
+                    child: Text(
+                      company.address,
+                      style: getRegularTextStyle(
+                        fontSize: ManagerFontSize.s9,
+                        color: Colors.grey[700]!,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+
+              SizedBox(height: ManagerHeight.h10),
+
+              // Working Hours
+              Container(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ManagerWidth.w12,
+                  vertical: ManagerHeight.h8,
+                ),
+                decoration: BoxDecoration(
+                  color: ManagerColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(ManagerRadius.r4),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.access_time,
+                      size: 14,
+                      color: ManagerColors.primaryColor,
+                    ),
+                    SizedBox(width: ManagerWidth.w6),
+                    Flexible(
+                      child: Text(
+                        company.workingHours,
+                        style: getRegularTextStyle(
+                          fontSize: ManagerFontSize.s8,
+                          color: ManagerColors.primaryColor,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Discount Banner
+  Widget _buildDiscountBanner() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+      child: Container(
+        // margin: EdgeInsets.only(bottom: ManagerHeight.h8),
+        padding: EdgeInsets.all(ManagerWidth.w16),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              const Color(0xFF3D3B6B),
+              const Color(0xFF5A4BA3),
+            ],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+          borderRadius: BorderRadius.circular(ManagerRadius.r8),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF3D3B6B).withOpacity(0.3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'لا تفوت فرصة خصم 30% على',
+                    style: getBoldTextStyle(
+                      fontSize: ManagerFontSize.s12,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Text(
+                    'منتجات مختارة ومميزة!',
+                    style: getMediumTextStyle(
+                      fontSize: ManagerFontSize.s11,
+                      color: Colors.white70,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: ManagerWidth.w12,
+                vertical: ManagerHeight.h8,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(ManagerRadius.r8),
+              ),
+              child: Text(
+                'عرض المنتجات',
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s10,
+                  color: const Color(0xFF3D3B6B),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Products Title
+  Widget _buildProductsTitle(int count) {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: ManagerWidth.w16,
+        vertical: ManagerHeight.h12,
+      ),
+      child: Text(
+        'قائمة المنتجات',
+        style: getBoldTextStyle(
+          fontSize: ManagerFontSize.s14,
+          color: Colors.black87,
+        ),
       ),
     );
   }
