@@ -5,6 +5,7 @@ import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/util/snack_bar.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
+import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../map/domain/di/di.dart';
 
 class HawajWelcomeStartScreen extends StatefulWidget {
@@ -351,75 +353,78 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                 ),
 
                 const Spacer(),
+                SizedBox(
+                  height: ManagerHeight.h180,
+                )
 
                 /// Mic button with glow + waves
-                Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // Glowing background
-                    ScaleTransition(
-                      scale: Tween(begin: 0.9, end: 1.1).animate(
-                        CurvedAnimation(
-                          parent: _glowController,
-                          curve: Curves.easeInOut,
-                        ),
-                      ),
-                      child: Container(
-                        width: 120,
-                        height: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: ManagerColors.primaryColor.withOpacity(0.1),
-                        ),
-                      ),
-                    ),
+                // Stack(
+                //   alignment: Alignment.center,
+                //   children: [
+                //     // Glowing background
+                //     ScaleTransition(
+                //       scale: Tween(begin: 0.9, end: 1.1).animate(
+                //         CurvedAnimation(
+                //           parent: _glowController,
+                //           curve: Curves.easeInOut,
+                //         ),
+                //       ),
+                //       child: Container(
+                //         width: 120,
+                //         height: 120,
+                //         decoration: BoxDecoration(
+                //           shape: BoxShape.circle,
+                //           color: ManagerColors.primaryColor.withOpacity(0.1),
+                //         ),
+                //       ),
+                //     ),
+                //
+                //     // // Waves around mic based on audio level
+                //     // CustomPaint(
+                //     //   painter: VoiceWavePainter(_waveController, _audioLevels),
+                //     //   size: const Size(180, 180),
+                //     // ),
+                //
+                //     // Main Mic button
+                //     // ElevatedButton(
+                //     //   onPressed: _speechToText.isListening
+                //     //       ? _stopListening
+                //     //       : _startListening,
+                //     //   style: ElevatedButton.styleFrom(
+                //     //     shape: const CircleBorder(),
+                //     //     padding: const EdgeInsets.all(28),
+                //     //     backgroundColor: _permissionGranted
+                //     //         ? ManagerColors.primaryColor
+                //     //         : Colors.grey,
+                //     //     shadowColor: _permissionGranted
+                //     //         ? ManagerColors.primaryColor.withOpacity(0.5)
+                //     //         : Colors.grey.withOpacity(0.5),
+                //     //     elevation: 12,
+                //     //   ),
+                //     //   child: Icon(
+                //     //     _speechToText.isListening ? Icons.mic : Icons.mic_none,
+                //     //     size: 40,
+                //     //     color: Colors.white,
+                //     //   ),
+                //     // ),
+                //   ],
+                // ),
 
-                    // Waves around mic based on audio level
-                    CustomPaint(
-                      painter: VoiceWavePainter(_waveController, _audioLevels),
-                      size: const Size(180, 180),
-                    ),
+                // ///======== Display a message if permission is not granted
+                // if (!_permissionGranted)
+                //   Padding(
+                //     padding: const EdgeInsets.all(16.0),
+                //     child: Text(
+                //       'يجب منح إذن استخدام الميكروفون للتمكن من التحدث',
+                //       style: TextStyle(
+                //         color: Colors.red,
+                //         fontSize: ManagerFontSize.s14,
+                //       ),
+                //       textAlign: TextAlign.center,
+                //     ),
+                //   ),
 
-                    // Main Mic button
-                    ElevatedButton(
-                      onPressed: _speechToText.isListening
-                          ? _stopListening
-                          : _startListening,
-                      style: ElevatedButton.styleFrom(
-                        shape: const CircleBorder(),
-                        padding: const EdgeInsets.all(28),
-                        backgroundColor: _permissionGranted
-                            ? ManagerColors.primaryColor
-                            : Colors.grey,
-                        shadowColor: _permissionGranted
-                            ? ManagerColors.primaryColor.withOpacity(0.5)
-                            : Colors.grey.withOpacity(0.5),
-                        elevation: 12,
-                      ),
-                      child: Icon(
-                        _speechToText.isListening ? Icons.mic : Icons.mic_none,
-                        size: 40,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-
-                ///======== Display a message if permission is not granted
-                if (!_permissionGranted)
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      'يجب منح إذن استخدام الميكروفون للتمكن من التحدث',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: ManagerFontSize.s14,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                const Spacer(),
+                // const Spacer(),
 
                 ///====== Animated action button that appears after speech
                 // if (_showActionButton)
@@ -429,35 +434,35 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
                 //     curve: Curves.elasticOut,
                 //   ),
                 //   child:
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: ElevatedButton.icon(
-                    onPressed: _navigateToResults,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ManagerColors.primaryColor,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 8,
-                    ),
-                    icon: const Icon(Icons.search, size: 24),
-                    label: Text(
-                      "استمر للنتائج",
-                      style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s12,
-                        color: ManagerColors.white,
-                      ),
-                    ),
-                  ),
-                ),
+                // Padding(
+                //   padding: const EdgeInsets.only(bottom: 20.0),
+                //   child: ElevatedButton.icon(
+                //     onPressed: _navigateToResults,
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: ManagerColors.primaryColor,
+                //       foregroundColor: Colors.white,
+                //       padding: const EdgeInsets.symmetric(
+                //         horizontal: 24,
+                //         vertical: 12,
+                //       ),
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(30),
+                //       ),
+                //       elevation: 8,
+                //     ),
+                //     icon: const Icon(Icons.search, size: 24),
+                //     label: Text(
+                //       "استمر للنتائج",
+                //       style: getBoldTextStyle(
+                //         fontSize: ManagerFontSize.s12,
+                //         color: ManagerColors.white,
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 // ),
 
-                if (!_showActionButton) SizedBox(height: ManagerHeight.h20),
+                // if (!_showActionButton) SizedBox(height: ManagerHeight.h20),
               ],
             ),
           )
@@ -470,6 +475,36 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
           // ),
         ],
       ),
+    ).withHawaj(
+      screen: "4",
+      section: HawajSections.dailyOffers,
+      // 🔊 Callback عند طلب حواج "offers"
+      onHawajCommand: (command) async {
+        debugPrint(
+            '[MapScreen] 🎯 Hawaj command detected -> refresh & animate');
+        // final lower = command.toLowerCase();
+        // if (lower.contains('عرض') ||
+        //     lower.contains('offers') ||
+        //     lower.contains('خريطة')) {
+        //   debugPrint(
+        //       '[MapScreen] 🎯 Hawaj command detected -> refresh & animate');
+        //
+        //   // 1️⃣ تحميل الموقع الحالي مجددًا
+        //   if (mapC.currentLocation.value != null) {
+        //     await offersC.fetchOffers(mapC.currentLocation.value!);
+        //   } else {
+        //     await mapC.loadCurrentLocation();
+        //     if (mapC.currentLocation.value != null) {
+        //       await offersC.fetchOffers(mapC.currentLocation.value!);
+        //     }
+        //   }
+        //
+        //   // 2️⃣ انتظار بسيط لحين اكتمال التحميل
+        //   Future.delayed(const Duration(milliseconds: 1500), () {
+        //     _animateToBounds();
+        //   });
+        // }
+      },
     );
     // .withHawajVoiceSmart();
   }

@@ -10,6 +10,8 @@ import 'package:app_mobile/features/providers/offers_provider/subscription_offer
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../features/common/map/domain/di/di.dart';
+import '../../../features/common/map/presenation/controller/map_controller.dart';
 import '../../../features/common/profile/domain/di/di.dart';
 import '../../../features/common/profile/presentation/pages/contact_us_screen.dart';
 import '../../../features/common/profile/presentation/pages/manager_services_screen.dart';
@@ -129,9 +131,16 @@ class HawajRoutes {
       builder: (params) => const MapScreen(),
       transition: HawajTransition.fade,
       init: (params) {
-        // initOffersController(); // ✅ هذا السطر فقط
+        // ✅ تنفيذ الـ Binding الخاص بالخريطة مرة واحدة داخل init
+        if (!Get.isRegistered<MapController>()) {
+          MapBindings().dependencies();
+          debugPrint('[HawajRouting] ✅ MapBindings initialized inside init()');
+        }
 
-        // مثال: تحميل بيانات الموقع أو العروض
+        // يمكنك هنا استدعاء تحميل الموقع أو أي بيانات أخرى
+        // مثل:
+        // final mapC = Get.find<MapController>();
+        // mapC.loadCurrentLocation();
       },
     ),
 
