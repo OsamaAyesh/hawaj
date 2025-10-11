@@ -25,42 +25,46 @@ class OrganizationDetailsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(ManagerRadius.r20),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+    return SafeArea(
+      bottom: true,
+      top: false,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(ManagerRadius.r20),
           ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle Bar
-          _buildHandle(),
-
-          // محتوى الـ Sheet
-          Padding(
-            padding: EdgeInsets.all(ManagerWidth.w16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                SizedBox(height: ManagerHeight.h16),
-                _buildInfo(),
-                SizedBox(height: ManagerHeight.h16),
-                _buildActionButton(),
-                SizedBox(height: ManagerHeight.h8),
-              ],
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 20,
+              offset: const Offset(0, -5),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle Bar
+            _buildHandle(),
+
+            // محتوى الـ Sheet
+            Padding(
+              padding: EdgeInsets.all(ManagerWidth.w16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  SizedBox(height: ManagerHeight.h16),
+                  _buildInfo(),
+                  SizedBox(height: ManagerHeight.h16),
+                  _buildActionButton(),
+                  SizedBox(height: ManagerHeight.h8),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

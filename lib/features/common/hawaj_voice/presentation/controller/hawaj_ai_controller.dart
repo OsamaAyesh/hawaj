@@ -7,6 +7,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
+import '../../../../users/offer_user/list_offers/presentation/controller/get_organizations_controller.dart';
+import '../../../map/presenation/controller/map_controller.dart';
 import '../../data/request/send_data_request.dart';
 import '../../domain/models/send_data_model.dart';
 import '../../domain/use_cases/send_data_to_hawaj_use_case.dart';
@@ -295,8 +297,8 @@ class HawajController extends GetxController {
     try {
       final request = SendDataRequest(
         strl: textToProcess,
-        lat: "24.7321",
-        lng: "46.74321",
+        lat: (_latitude ?? 0).toString(),
+        lng: (_longitude ?? 0).toString(),
         language: "ar",
         q: _currentSection,
         s: _currentScreen,
@@ -327,64 +329,135 @@ class HawajController extends GetxController {
   /// ═══════════════════════════════════════════════════════════
   /// 🎯 Handle Success Response + ROUTING LOGIC
   /// ═══════════════════════════════════════════════════════════
+  // void _handleSuccessResponse(SendDataModel response) {
+  //   final data = response.data;
+  //   final destination = data.d;
+  //
+  //   _currentMessage.value = destination.message;
+  //   debugPrint('💬 رسالة الرد: ${destination.message}');
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 🔊 تشغيل الصوت أولاً
+  //   // ═══════════════════════════════════════════════════════════
+  //   if (destination.mp3.isNotEmpty) {
+  //     _isLoadingAudio.value = true;
+  //     _currentMessage.value = 'جاري تحميل الرد الصوتي...';
+  //     debugPrint('🎵 تحميل MP3: ${destination.mp3}');
+  //     _playAudioFromUrl(destination.mp3);
+  //   } else if (destination.message.isNotEmpty) {
+  //     _isLoadingAudio.value = true;
+  //     _currentMessage.value = 'جاري تحضير الرد...';
+  //     debugPrint('🔊 تحضير النطق');
+  //     speak(destination.message);
+  //   }
+  //
+  //   _isExpanded.value = true;
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 🧭 ROUTING COMPARISON & NAVIGATION
+  //   // ═══════════════════════════════════════════════════════════
+  //   debugPrint('🧭 ════════════════════════════════════');
+  //   debugPrint('🧭 ROUTING COMPARISON:');
+  //   debugPrint('📍 Current: q=${data.q}, s=${data.s}');
+  //   debugPrint(
+  //       '🎯 Target:  section=${destination.section}, screen=${destination.screen}');
+  //
+  //   // ✅ فحص إذا كانت section و screen null - لا تنقل
+  //   if (destination.section == "" || destination.screen == "") {
+  //     debugPrint(
+  //         'ℹ️ No navigation target (section/screen is null) - Staying on current screen');
+  //     return;
+  //   }
+  //
+  //   final needsNavigation =
+  //       data.q != destination.section || data.s != destination.screen;
+  //
+  //   if (needsNavigation) {
+  //     debugPrint(
+  //         '✅ Navigation required - Moving to ${destination.section}-${destination.screen}');
+  //
+  //     // الانتقال بعد انتهاء الصوت (بعد ثانية)
+  //     Future.delayed(const Duration(seconds: 3), () {
+  //       HawajRoutes.navigateTo(
+  //         section: destination.section!,
+  //         screen: destination.screen!,
+  //         parameters: {},
+  //         replace: false,
+  //       );
+  //     });
+  //   } else {
+  //     debugPrint('ℹ️ Already on target screen - No navigation needed');
+  //   }
+  // }
   void _handleSuccessResponse(SendDataModel response) {
     final data = response.data;
     final destination = data.d;
 
     _currentMessage.value = destination.message;
-    debugPrint('💬 رسالة الرد: ${destination.message}');
-
-    // ═══════════════════════════════════════════════════════════
-    // 🔊 تشغيل الصوت أولاً
-    // ═══════════════════════════════════════════════════════════
     if (destination.mp3.isNotEmpty) {
       _isLoadingAudio.value = true;
       _currentMessage.value = 'جاري تحميل الرد الصوتي...';
-      debugPrint('🎵 تحميل MP3: ${destination.mp3}');
       _playAudioFromUrl(destination.mp3);
     } else if (destination.message.isNotEmpty) {
       _isLoadingAudio.value = true;
       _currentMessage.value = 'جاري تحضير الرد...';
-      debugPrint('🔊 تحضير النطق');
       speak(destination.message);
     }
-
     _isExpanded.value = true;
 
-    // ═══════════════════════════════════════════════════════════
-    // 🧭 ROUTING COMPARISON & NAVIGATION
-    // ═══════════════════════════════════════════════════════════
-    debugPrint('🧭 ════════════════════════════════════');
-    debugPrint('🧭 ROUTING COMPARISON:');
-    debugPrint('📍 Current: q=${data.q}, s=${data.s}');
-    debugPrint(
-        '🎯 Target:  section=${destination.section}, screen=${destination.screen}');
-
-    // ✅ فحص إذا كانت section و screen null - لا تنقل
-    if (destination.section == "" || destination.screen == "") {
-      debugPrint(
-          'ℹ️ No navigation target (section/screen is null) - Staying on current screen');
+    // 🔎 لا تنقل إذا ما فيه وجهة
+    if ((destination.section ?? '').isEmpty ||
+        (destination.screen ?? '').isEmpty) {
       return;
     }
 
     final needsNavigation =
         data.q != destination.section || data.s != destination.screen;
+    final isMapTarget = destination.section == "1" && destination.screen == "1";
 
     if (needsNavigation) {
-      debugPrint(
-          '✅ Navigation required - Moving to ${destination.section}-${destination.screen}');
-
-      // الانتقال بعد انتهاء الصوت (بعد ثانية)
+      // 👇 انتقل ومرّر autoRefresh=true عشان MapScreen تطلب النتائج بنفسها
       Future.delayed(const Duration(seconds: 3), () {
         HawajRoutes.navigateTo(
           section: destination.section!,
           screen: destination.screen!,
-          parameters: {},
+          parameters: {'autoRefresh': isMapTarget}, // 👈 مهم
           replace: false,
         );
       });
     } else {
-      debugPrint('ℹ️ Already on target screen - No navigation needed');
+      // إحنا فعلاً على الشاشة المطلوبة
+      if (isMapTarget) {
+        if (Get.isRegistered<MapController>() &&
+            Get.isRegistered<OffersController>()) {
+          final mapC = Get.find<MapController>();
+          final offersC = Get.find<OffersController>();
+
+          Future(() async {
+            if (mapC.currentLocation.value == null) {
+              await mapC.loadCurrentLocation();
+            }
+            final loc = mapC.currentLocation.value;
+            if (loc != null) {
+              offersC.isFirstLoad.value =
+                  true; // يخلي MapScreen يحرّك الكاميرا عبر ever(...)
+              await offersC.fetchOffers(loc); // طلب جديد
+            } else {
+              debugPrint('⚠️ لم يتمكن من تحديد الموقع لتحديث العروض');
+            }
+          });
+        } else {
+          // احتياط: لو الكنترولرات مش جاهزة، انتقل وخلّ MapScreen تعمل autoRefresh
+          Future.delayed(const Duration(seconds: 1), () {
+            HawajRoutes.navigateTo(
+              section: "1",
+              screen: "1",
+              parameters: {'autoRefresh': true},
+              replace: false,
+            );
+          });
+        }
+      }
     }
   }
 

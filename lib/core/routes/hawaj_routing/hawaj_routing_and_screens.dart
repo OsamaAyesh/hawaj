@@ -31,6 +31,9 @@ class HawajSections {
 /// Screens In Main Sections In Hawaj
 /// ═══════════════════════════════════════════════════════════
 class HawajScreens {
+  ///===> For All Users
+  static const String hawajStartScreen = "1001";
+
   // Daily Offers Section (1)
   ///======>User
   static const String map = "1";

@@ -88,11 +88,13 @@ class _OrderCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               // العنوان
-              Text(
-                ManagerStrings.offerTitle,
-                style: getBoldTextStyle(
-                  color: ManagerColors.black,
-                  fontSize: ManagerFontSize.s14,
+              Expanded(
+                child: Text(
+                  ManagerStrings.offerTitle,
+                  style: getBoldTextStyle(
+                    color: ManagerColors.black,
+                    fontSize: ManagerFontSize.s14,
+                  ),
                 ),
               ),
 
@@ -106,7 +108,7 @@ class _OrderCard extends StatelessWidget {
                       fontSize: ManagerFontSize.s20,
                     ),
                   ),
-                  const SizedBox(width: 4),
+                  SizedBox(width: ManagerWidth.w2),
                   Text(
                     ManagerStrings.offerPriceLabel,
                     style: getRegularTextStyle(

@@ -161,4 +161,13 @@ abstract class AppService {
     @Query(RequestConstants.lng) String? lng,
     @Query(RequestConstants.language) String? language,
   );
+
+  ///====> Get Organization With Id Org.
+  @GET(RequestConstantsEndpoints.getCompany)
+  Future<GetCompanyResponse> getOrganization(
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.id) double? id,
+    @Query(RequestConstants.lng) String? lng,
+    @Query(RequestConstants.language) String? language,
+  );
 }

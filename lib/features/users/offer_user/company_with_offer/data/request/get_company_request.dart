@@ -1,7 +1,13 @@
 class GetCompanyRequest {
-  int idOrg;
+  double id;
+  String lat;
+  String lng;
+  String language;
 
   GetCompanyRequest({
-    required this.idOrg,
+    required this.id,
+    required this.lat,
+    required this.lng,
+    required this.language,
   });
 }

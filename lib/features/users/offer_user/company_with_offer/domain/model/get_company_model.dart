@@ -1,9 +1,9 @@
-import 'package:app_mobile/features/users/offer_user/company_with_offer/domain/model/get_company_data_model.dart';
+import 'package:app_mobile/core/model/orgnization_company_daily_offer_item_model.dart';
 
 class GetCompanyModel {
   bool error;
   String message;
-  GetCompanyDataModel data;
+  OrganizationCompanyDailyOfferItemModel data;
 
   GetCompanyModel({
     required this.error,

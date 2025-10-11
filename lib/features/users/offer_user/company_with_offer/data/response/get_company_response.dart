@@ -1,10 +1,7 @@
-
-import 'package:app_mobile/features/users/offer_user/company_with_offer/data/response/get_offer_item_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../../../constants/response_constants/response_constants.dart';
-import 'get_company_data_response.dart';
-import 'get_organization_item_response.dart';
+import '../../../../../../core/response/organization_company_daily_offer_item_response.dart';
 
 part 'get_company_response.g.dart';
 
@@ -15,9 +12,7 @@ class GetCompanyResponse {
   @JsonKey(name: ResponseConstants.message)
   String? message;
   @JsonKey(name: ResponseConstants.data)
-  GetCompanyDataResponse? data;
-
-
+  OrganizationCompanyDailyOfferItemResponse? data;
 
   GetCompanyResponse({
     this.error,
@@ -25,10 +20,8 @@ class GetCompanyResponse {
     this.data,
   });
 
-  factory GetCompanyResponse.fromJson(
-      Map<String, dynamic> json) =>
+  factory GetCompanyResponse.fromJson(Map<String, dynamic> json) =>
       _$GetCompanyResponseFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$GetCompanyResponseToJson(this);
+  Map<String, dynamic> toJson() => _$GetCompanyResponseToJson(this);
 }
