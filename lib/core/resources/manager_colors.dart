@@ -27,6 +27,7 @@ class ManagerColors {
   static const Color colorDate = Color(0XFF8C898D);
   static const Color colorDescription = Color(0XFF929292);
   static const Color colorGreyWithOpcityCard = Color(0XFFA1A1A1);
+  static const Color locationColorText = Color(0XFFB1AEAE);
 
   ///Choose Language Screen
   static const Color chooseLanguageSubtitleColor = Color(0XFF8E8C8E);

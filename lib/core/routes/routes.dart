@@ -33,6 +33,7 @@ import '../../features/users/commercial_contract_user/manage_contracrs_user/pres
 import '../../features/users/commercial_contract_user/manager_my_requests_contract_user/presentation/pages/manager_my_requests_contract_user_screen.dart';
 import '../../features/users/commercial_contract_user/show_details_contract_provider/presentation/pages/show_details_contract_provider_screen.dart';
 import '../../features/users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
+import '../../features/users/real_estate_user/show_real_state_details_user/presentation/pages/show_real_state_details_user_screen.dart';
 import '../resources/manager_strings.dart';
 
 /// A class defined for all routes constants
@@ -95,6 +96,10 @@ class Routes {
       "managerMyRequestsContractUserScreen";
   static const String followUpOrderInCommercialContractsScreen =
       "followUpOrderInCommercialContractsScreen";
+
+  /// Real State User
+  static const String showRealStateDetailsUserScreen =
+      "showRealStateDetailsUserScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -201,6 +206,10 @@ class RouteGenerator {
       case Routes.followUpOrderInCommercialContractsScreen:
         return MaterialPageRoute(
           builder: (_) => FollowUpOrderInCommercialContractsScreen(),
+        );
+      case Routes.showRealStateDetailsUserScreen:
+        return MaterialPageRoute(
+          builder: (_) => ShowRealStateDetailsUserScreen(),
         );
       default:
         return unDefinedRoute();

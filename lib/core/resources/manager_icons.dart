@@ -71,4 +71,25 @@ class ManagerIcons {
   static const String userRealEstateIcon = "$iconsPath/userRealEstateIcon.png";
   static const String userDeliveryIcon = "$iconsPath/userDeliveryIcon.png";
   static const String userJobsIcon = "$iconsPath/userJobsIcon.png";
+
+  ///=====> Icon Currency
+  static const String riyalIcon = "$iconsPath/riyal_icon.svg";
+
+  ///=====> Real Estate Icon
+  static const String informationRealEstateIcon1 =
+      "$iconsPath/infomation_realstate_icon1.png";
+  static const String informationRealEstateIcon2 =
+      "$iconsPath/infomation_realstate_icon2.png";
+  static const String informationRealEstateIcon3 =
+      "$iconsPath/infomation_realstate_icon3.png";
+  static const String informationRealEstateIcon4 =
+      "$iconsPath/infomation_realstate_icon4.png";
+  static const String informationRealEstateIcon5 =
+      "$iconsPath/infomation_realstate_icon5.png";
+  static const String informationRealEstateIcon6 =
+      "$iconsPath/infomation_realstate_icon6.png";
+  static const String informationRealEstateIcon7 =
+      "$iconsPath/infomation_realstate_icon7.png";
+  static const String informationRealEstateIcon8 =
+      "$iconsPath/infomation_realstate_icon8.png";
 }
