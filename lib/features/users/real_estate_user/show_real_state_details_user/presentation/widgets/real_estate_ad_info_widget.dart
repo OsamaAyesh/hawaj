@@ -17,11 +17,11 @@ class RealEstateAdInfoWidget extends StatelessWidget {
       radius: const Radius.circular(12),
       dashPattern: const [6, 3],
       strokeWidth: 1.2,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
+      child: const Padding(
+        padding: EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             _AdInfoItem(
               title: "تاريخ الإضافة",
               value: "14-07-2027",

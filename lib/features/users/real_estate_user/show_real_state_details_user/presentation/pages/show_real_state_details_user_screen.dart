@@ -126,8 +126,12 @@ class ShowRealStateDetailsUserScreen extends StatelessWidget {
               height: ManagerHeight.h8,
             ),
             Padding(
-                padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
-                child: const RealEstateAdInfoWidget()),
+              padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+              child: const RealEstateAdInfoWidget(),
+            ),
+            SizedBox(
+              height: ManagerHeight.h12,
+            ),
           ],
         ),
       ),

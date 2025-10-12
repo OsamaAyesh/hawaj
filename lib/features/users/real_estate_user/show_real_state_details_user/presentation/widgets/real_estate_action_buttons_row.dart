@@ -4,6 +4,7 @@ import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/features/users/real_estate_user/show_real_state_details_user/presentation/widgets/visit_request_dialog.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../../core/util/currency_and_icon/currency_text_widget.dart';
@@ -84,19 +85,37 @@ class RealEstateActionButtonsRow extends StatelessWidget {
             SizedBox(
               height: ManagerHeight.h6,
             ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
-              height: ManagerHeight.h26,
-              decoration: BoxDecoration(
-                color: ManagerColors.primaryColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(ManagerRadius.r4),
-              ),
-              child: Center(
-                child: Text(
-                  "طلب زيارة",
-                  style: getRegularTextStyle(
-                    fontSize: ManagerFontSize.s8,
-                    color: ManagerColors.primaryColor,
+            GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (_) => VisitRequestDialog(
+                    dateController: TextEditingController(),
+                    fromTimeController: TextEditingController(),
+                    toTimeController: TextEditingController(),
+                    onConfirm: () {
+                      Navigator.pop(context);
+                      // تنفيذ الطلب هنا
+                    },
+                    onCancel: () => Navigator.pop(context),
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
+                height: ManagerHeight.h26,
+                decoration: BoxDecoration(
+                  color: ManagerColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(ManagerRadius.r4),
+                ),
+                child: Center(
+                  child: Text(
+                    "طلب زيارة",
+                    style: getRegularTextStyle(
+                      fontSize: ManagerFontSize.s8,
+                      color: ManagerColors.primaryColor,
+                    ),
                   ),
                 ),
               ),

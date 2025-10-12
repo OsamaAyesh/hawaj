@@ -8,6 +8,8 @@ import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/features/users/real_estate_user/show_real_state_details_user/presentation/widgets/verfied_profile_image_widget.dart';
 import 'package:flutter/material.dart';
 
+import 'important_info_dialog.dart';
+
 class RealEstateAdvertiserInfoWidget extends StatelessWidget {
   const RealEstateAdvertiserInfoWidget({super.key});
 
@@ -57,18 +59,33 @@ class RealEstateAdvertiserInfoWidget extends StatelessWidget {
           child: Row(
             children: [
               Expanded(
-                child: Container(
-                  height: ManagerHeight.h24,
-                  decoration: BoxDecoration(
-                    color: ManagerColors.primaryColor.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(ManagerRadius.r4),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "إتصال",
-                      style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s10,
-                        color: ManagerColors.primaryColor,
+                child: GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: false,
+                      builder: (_) => ImportantInfoDialog(
+                        onConfirm: () {
+                          Navigator.pop(context);
+                          // تنفيذ عملية المتابعة هنا
+                        },
+                        onCancel: () => Navigator.pop(context),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: ManagerHeight.h24,
+                    decoration: BoxDecoration(
+                      color: ManagerColors.primaryColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(ManagerRadius.r4),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "إتصال",
+                        style: getBoldTextStyle(
+                          fontSize: ManagerFontSize.s10,
+                          color: ManagerColors.primaryColor,
+                        ),
                       ),
                     ),
                   ),
