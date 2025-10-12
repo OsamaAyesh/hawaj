@@ -830,6 +830,21 @@ class ManagerStrings {
 
   static String get enterPhoneNumber => tr('enter_phone_number');
 
+  static String get realEstateManagementTitle =>
+      tr('real_estate_management_title');
+
+  static String get myPropertiesTitle => tr('my_properties_title');
+
+  static String get myPropertiesSubtitle => tr('my_properties_subtitle');
+
+  static String get addPropertyTitle => tr('add_property_title');
+
+  static String get addPropertySubtitle => tr('add_property_subtitle');
+
+  static String get editMyDataTitle => tr('edit_my_data_title');
+
+  static String get editMyDataSubtitle => tr('edit_my_data_subtitle');
+
   static String get whatsappNumber => tr('whatsapp_number');
 
   static String get enterWhatsappNumber => tr('enter_whatsapp_number');

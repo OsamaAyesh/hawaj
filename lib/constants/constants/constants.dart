@@ -97,4 +97,23 @@ class Constants {
       'subtitle': ManagerStrings.contractsNeedsMapSubTitle,
     },
   ];
+
+  ///====== Manager Real Estate Provider Widget. ======
+  static List<Map<String, String>> itemsManagerProviderRealEstate = [
+    {
+      'icon': ManagerIcons.providerRealStateManager1,
+      'title': ManagerStrings.myPropertiesTitle,
+      'subtitle': ManagerStrings.myPropertiesSubtitle,
+    },
+    {
+      'icon': ManagerIcons.providerRealStateManager2,
+      'title': ManagerStrings.addPropertyTitle,
+      'subtitle': ManagerStrings.addPropertySubtitle,
+    },
+    {
+      'icon': ManagerIcons.providerRealStateManager3,
+      'title': ManagerStrings.editMyDataTitle,
+      'subtitle': ManagerStrings.editMyDataSubtitle,
+    },
+  ];
 }

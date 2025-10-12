@@ -92,4 +92,13 @@ class ManagerIcons {
       "$iconsPath/infomation_realstate_icon7.png";
   static const String informationRealEstateIcon8 =
       "$iconsPath/infomation_realstate_icon8.png";
+
+  ///===>Manager Real Estate Widget Icon
+
+  static const String providerRealStateManager1 =
+      "$iconsPath/provider_real_state_manager1.png";
+  static const String providerRealStateManager2 =
+      "$iconsPath/provider_real_state_manager2.png";
+  static const String providerRealStateManager3 =
+      "$iconsPath/provider_real_state_manager3.png";
 }
