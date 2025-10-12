@@ -14,6 +14,7 @@ import 'package:app_mobile/core/widgets/upload_media_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/widgets/custom_confirm_dialog.dart';
 import '../widgets/account_type_selector_widget.dart';
 
 class RegisterToRealEstateProviderServiceScreen extends StatefulWidget {
@@ -165,14 +166,32 @@ class _RegisterToRealEstateProviderServiceScreenState
 
               SizedBox(height: ManagerHeight.h24),
 
-              /// ===== زر الإضافة =====
               ButtonApp(
                 title: ManagerStrings.addButton,
                 onPressed: () {
-                  // TODO: handle submit
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) {
+                      return CustomConfirmDialog(
+                        title: "تأكيد الإضافة",
+                        subtitle:
+                            "هل أنت متأكد من رغبتك في إضافة هذه البيانات؟",
+                        confirmText: "تأكيد",
+                        cancelText: "إلغاء",
+                        onConfirm: () {
+                          Navigator.pop(context);
+                        },
+                        onCancel: () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  );
                 },
                 paddingWidth: 0,
               ),
+
               SizedBox(height: ManagerHeight.h16),
             ],
           ),
