@@ -1,38 +1,45 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
+import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
 
 class RealEstateCardWidget extends StatelessWidget {
-  final bool isAvailable;
+  final bool showActions; // إذا نعرض أيقونات الإعداد والحذف
   final String imageUrl;
   final String title;
   final String location;
   final String area;
   final String rooms;
-  final String age;
+  final String halls;
   final String baths;
   final String direction;
+  final String purpose;
+  final String age;
   final String commission;
   final String price;
   final List<String> features;
+  final Map<String, String> extraInfo; // مثل تاريخ الإضافة، رقم الترخيص، إلخ
 
   const RealEstateCardWidget({
     super.key,
-    required this.isAvailable,
+    required this.showActions,
     required this.imageUrl,
     required this.title,
     required this.location,
     required this.area,
     required this.rooms,
-    required this.age,
+    required this.halls,
     required this.baths,
     required this.direction,
+    required this.purpose,
+    required this.age,
     required this.commission,
     required this.price,
     required this.features,
+    required this.extraInfo,
   });
 
   @override
@@ -44,15 +51,15 @@ class RealEstateCardWidget extends StatelessWidget {
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 3),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
           ),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// صورة العقار
+          /// ===== الصورة مع الأيقونات =====
           Stack(
             children: [
               ClipRRect(
@@ -61,13 +68,13 @@ class RealEstateCardWidget extends StatelessWidget {
                 child: Image.network(
                   imageUrl,
                   width: double.infinity,
-                  height: 190,
+                  height: 210,
                   fit: BoxFit.cover,
                 ),
               ),
 
-              /// أيقونات التحكم (في حال العقار غير متاح)
-              if (!isAvailable)
+              /// ===== الأيقونات =====
+              if (showActions) ...[
                 Positioned(
                   top: 10,
                   right: 10,
@@ -75,37 +82,61 @@ class RealEstateCardWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                        ),
+                      ],
                     ),
                     padding: const EdgeInsets.all(6),
-                    child: const Icon(Icons.delete_outline,
-                        color: Colors.red, size: 20),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.red,
+                      size: 20,
+                    ),
                   ),
                 ),
-              if (!isAvailable)
                 Positioned(
                   top: 10,
                   left: 10,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: ManagerColors.primaryColor,
                       shape: BoxShape.circle,
                     ),
                     padding: const EdgeInsets.all(6),
-                    child: const Icon(Icons.settings,
-                        color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.settings,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
+              ],
+
+              /// ===== أزرار التنقل بين الصور =====
+              Positioned(
+                left: 8,
+                top: 85,
+                child: _buildArrow(Icons.arrow_back_ios_new_rounded),
+              ),
+              Positioned(
+                right: 8,
+                top: 85,
+                child: _buildArrow(Icons.arrow_forward_ios_rounded),
+              ),
             ],
           ),
 
+          /// ===== المحتوى الداخلي =====
           Padding(
-            padding: EdgeInsets.all(ManagerWidth.w12),
+            padding: EdgeInsets.all(ManagerWidth.w14),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /// العنوان والموقع
+                /// ===== العنوان والموقع =====
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       title,
@@ -114,87 +145,54 @@ class RealEstateCardWidget extends StatelessWidget {
                         color: ManagerColors.primaryColor,
                       ),
                     ),
-                    Row(
-                      children: [
-                        const Icon(Icons.location_on_outlined,
-                            color: Colors.grey, size: 16),
-                        const SizedBox(width: 4),
-                        Text(
-                          location,
-                          style: getRegularTextStyle(
-                            fontSize: ManagerFontSize.s11,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.location_on_outlined,
+                      color: ManagerColors.greyWithColor,
+                      size: 16,
                     ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-
-                /// تفاصيل العقار (صفوف)
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  children: [
-                    _buildDetail("المساحة", area),
-                    _buildDetail("عدد الغرف", rooms),
-                    _buildDetail("عدد الحمامات", baths),
-                    _buildDetail("عمر العقار", age),
-                    _buildDetail("الواجهة", direction),
-                    _buildDetail("عمولة البيع", commission),
-                  ],
-                ),
-
-                const SizedBox(height: 12),
-                Text("مميزات العقار",
-                    style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s13,
-                        color: ManagerColors.primaryColor)),
-                const SizedBox(height: 8),
-
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: features
-                      .map((f) => Padding(
-                            padding: const EdgeInsets.only(bottom: 4),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.check_circle_outline,
-                                    color: ManagerColors.primaryColor,
-                                    size: 16),
-                                const SizedBox(width: 6),
-                                Text(
-                                  f,
-                                  style: getRegularTextStyle(
-                                    fontSize: ManagerFontSize.s12,
-                                    color: Colors.grey.shade800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ))
-                      .toList(),
-                ),
-
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  height: 44,
-                  decoration: BoxDecoration(
-                    color: ManagerColors.primaryColor,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Center(
-                    child: Text(
-                      price,
-                      style: getBoldTextStyle(
-                        fontSize: ManagerFontSize.s13,
-                        color: Colors.white,
+                    Expanded(
+                      child: Text(
+                        location,
+                        style: getRegularTextStyle(
+                          fontSize: ManagerFontSize.s12,
+                          color: ManagerColors.greyWithColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                  ],
+                ),
+
+                SizedBox(height: ManagerHeight.h12),
+
+                /// ===== التفاصيل =====
+                _buildDetailsGrid(),
+
+                SizedBox(height: ManagerHeight.h16),
+
+                /// ===== مميزات العقار =====
+                Text(
+                  "مميزات العقار",
+                  style: getBoldTextStyle(
+                    fontSize: ManagerFontSize.s14,
+                    color: ManagerColors.black,
                   ),
                 ),
+                SizedBox(height: ManagerHeight.h10),
+
+                _buildFeatures(),
+
+                SizedBox(height: ManagerHeight.h12),
+
+                /// ===== المعلومات الإضافية داخل مربع منقط =====
+                _buildDottedBox(),
+
+                SizedBox(height: ManagerHeight.h12),
+
+                /// ===== الأزرار السفلية =====
+                _buildBottomButtons(),
               ],
             ),
           ),
@@ -203,22 +201,187 @@ class RealEstateCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildDetail(String title, String value) {
+  /// ✅ أسهم التنقل في الصور
+  Widget _buildArrow(IconData icon) {
+    return Container(
+      width: 30,
+      height: 30,
+      decoration: const BoxDecoration(
+        color: ManagerColors.primaryColor,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(icon, color: Colors.white, size: 16),
+    );
+  }
+
+  /// ✅ الشبكة العلوية للتفاصيل
+  Widget _buildDetailsGrid() {
+    final details = {
+      "المساحة": area,
+      "الواجهة": direction,
+      "عدد غرف النوم": rooms,
+      "الغرض": purpose,
+      "عدد الصالات": halls,
+      "عرض الشارع": "651 م²",
+      "عمر العقار": age,
+      "سعر البيع": commission,
+    };
+
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      runSpacing: 8,
+      children: details.entries.map((entry) {
+        return SizedBox(
+          width: 140,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                entry.key,
+                style: getRegularTextStyle(
+                  fontSize: ManagerFontSize.s12,
+                  color: ManagerColors.greyWithColor,
+                ),
+              ),
+              Text(
+                entry.value,
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s12,
+                  color: ManagerColors.black,
+                ),
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  /// ✅ قائمة المميزات
+  Widget _buildFeatures() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          "$title: ",
-          style: getBoldTextStyle(
-            fontSize: ManagerFontSize.s11,
-            color: Colors.black,
+        Expanded(child: _buildFeatureColumn(features.sublist(0, 2))),
+        Expanded(child: _buildFeatureColumn(features.sublist(2, 4))),
+      ],
+    );
+  }
+
+  Widget _buildFeatureColumn(List<String> items) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: items
+          .map(
+            (item) => Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    size: 16,
+                    color: ManagerColors.primaryColor,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    item,
+                    style: getRegularTextStyle(
+                      fontSize: ManagerFontSize.s12,
+                      color: ManagerColors.greyWithColor,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }
+
+  /// ✅ المربع المنقط
+  Widget _buildDottedBox() {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: ManagerColors.primaryColor.withOpacity(0.2),
+          style: BorderStyle.solid,
+          width: 1,
+        ),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: extraInfo.entries.map((e) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  e.key,
+                  style: getRegularTextStyle(
+                    fontSize: ManagerFontSize.s12,
+                    color: ManagerColors.greyWithColor,
+                  ),
+                ),
+                Text(
+                  e.value,
+                  style: getBoldTextStyle(
+                    fontSize: ManagerFontSize.s12,
+                    color: ManagerColors.primaryColor,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  /// ✅ الأزرار السفلية
+  Widget _buildBottomButtons() {
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: Container(
+            height: 42,
+            decoration: BoxDecoration(
+              color: ManagerColors.primaryColor,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: Text(
+                price,
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s13,
+                  color: Colors.white,
+                ),
+              ),
+            ),
           ),
         ),
-        Text(
-          value,
-          style: getRegularTextStyle(
-            fontSize: ManagerFontSize.s11,
-            color: Colors.grey.shade700,
+        SizedBox(width: ManagerWidth.w8),
+        Expanded(
+          flex: 3,
+          child: Container(
+            height: 42,
+            decoration: BoxDecoration(
+              color: ManagerColors.greyWithColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Center(
+              child: Text(
+                "تم بيع العقار - اضغط لإخفائه من عرض الزائرين",
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s11,
+                  color: ManagerColors.greyWithColor,
+                ),
+              ),
+            ),
           ),
         ),
       ],
