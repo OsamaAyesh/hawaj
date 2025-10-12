@@ -818,6 +818,53 @@ class ManagerStrings {
 
   static String get enableService => tr("enableService");
 
+  // 🏠 Register To Real Estate Provider Screen Strings
+  static String get joinAsRealEstateProvider =>
+      tr('join_as_real_estate_provider');
+
+  static String get startListingProperties => tr('start_listing_properties');
+
+  static String get completeInfoToPublish => tr('complete_info_to_publish');
+
+  static String get enterFullName => tr('enter_full_name');
+
+  static String get enterPhoneNumber => tr('enter_phone_number');
+
+  static String get whatsappNumber => tr('whatsapp_number');
+
+  static String get enterWhatsappNumber => tr('enter_whatsapp_number');
+
+  static String get enterLocationDetails => tr('enter_location_details');
+
+  static String get activityDescription => tr('activity_description');
+
+  static String get enterActivityDescription =>
+      tr('enter_activity_description');
+
+  static String get uploadLogoLabel => tr('upload_logo_label');
+
+  static String get uploadLogoHint => tr('upload_logo_hint');
+
+  static String get uploadLogoNote => tr('upload_logo_note');
+
+  static String get accountType => tr('account_type');
+
+  static String get officeAccount => tr('office_account');
+
+  static String get personalAccount => tr('personal_account');
+
+  static String get brokerageCertificate => tr('brokerage_certificate');
+
+  static String get uploadBrokerageHint => tr('upload_brokerage_hint');
+
+  static String get uploadBrokerageNote => tr('upload_brokerage_note');
+
+  static String get uploadCommercialHint => tr('upload_commercial_hint');
+
+  static String get uploadCommercialNote => tr('upload_commercial_note');
+
+  static String get addButton => tr('add_button');
+
   /// Config Strings
   static String get noRouteFound => tr('noRouteFound');
 
