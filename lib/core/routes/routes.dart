@@ -29,6 +29,7 @@ import '../../features/providers/offers_provider/manage_list_offer/presentation/
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
+import '../../features/providers/real_estate_provider/add_real_estate/presentation/pages/add_real_estate_screen.dart';
 import '../../features/providers/real_estate_provider/dashboard_real_estate_manager/presentation/pages/dashboard_real_estate_manager_screen.dart';
 import '../../features/providers/real_estate_provider/register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
 import '../../features/users/commercial_contract_user/manage_contracrs_user/presentation/pages/manage_contract_user_screen.dart';
@@ -108,6 +109,7 @@ class Routes {
       "registerToRealEstateProviderServiceScreen";
   static const String dashboardRealEstateManagerScreen =
       "dashboardRealEstateManagerScreen";
+  static const String addRealEstateScreen = "addRealEstateScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -226,6 +228,10 @@ class RouteGenerator {
       case Routes.dashboardRealEstateManagerScreen:
         return MaterialPageRoute(
           builder: (_) => DashboardRealEstateManagerScreen(),
+        );
+      case Routes.addRealEstateScreen:
+        return MaterialPageRoute(
+          builder: (_) => AddRealEstateScreen(),
         );
       default:
         return unDefinedRoute();

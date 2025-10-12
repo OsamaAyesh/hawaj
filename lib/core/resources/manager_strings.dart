@@ -944,4 +944,79 @@ class ManagerStrings {
   static String get invalidEmptyDateOfBirth => tr('invalidEmptyDateOfBirth');
 
   static String get invalidEmptyFullName => tr('invalidEmptyFullName');
+
+  static String get addRealEstateTitle => tr('add_real_estate_title');
+
+  static String get addRealEstateSubtitle => tr('add_real_estate_subtitle');
+
+  static String get propertyType => tr('property_type');
+
+  static String get selectPropertyType => tr('select_property_type');
+
+  static String get city => tr('city');
+
+  static String get selectCity => tr('select_city');
+
+  static String get district => tr('district');
+
+  static String get selectDistrict => tr('select_district');
+
+  static String get propertyLocation => tr('property_location');
+
+  static String get setPropertyLocation => tr('set_property_location');
+
+  static String get propertyPrice => tr('property_price');
+
+  static String get enterPropertyPrice => tr('enter_property_price');
+
+  static String get propertyArea => tr('property_area');
+
+  static String get enterPropertyArea => tr('enter_property_area');
+
+  static String get constructionYear => tr('construction_year');
+
+  static String get enterConstructionYear => tr('enter_construction_year');
+
+  static String get bathroomsCount => tr('bathrooms_count');
+
+  static String get enterBathroomsCount => tr('enter_bathrooms_count');
+
+  static String get bedroomsCount => tr('bedrooms_count');
+
+  static String get enterBedroomsCount => tr('enter_bedrooms_count');
+
+  static String get livingroomsCount => tr('livingrooms_count');
+
+  static String get enterLivingroomsCount => tr('enter_livingrooms_count');
+
+  static String get streetWidth => tr('street_width');
+
+  static String get enterStreetWidth => tr('enter_street_width');
+
+  static String get propertyFacing => tr('property_facing');
+
+  static String get selectPropertyFacing => tr('select_property_facing');
+
+  static String get propertyUsage => tr('property_usage');
+
+  static String get selectPropertyUsage => tr('select_property_usage');
+
+  static String get propertyDescription => tr('property_description');
+
+  static String get enterPropertyDescription =>
+      tr('enter_property_description');
+
+  static String get propertyFeatures => tr('property_features');
+
+  static String get selectPropertyFeatures => tr('select_property_features');
+
+  static String get visitDays => tr('visit_days');
+
+  static String get selectVisitDays => tr('select_visit_days');
+
+  static String get propertyImages => tr('property_images');
+
+  static String get uploadPropertyImages => tr('upload_property_images');
+
+  static String get submitProperty => tr('submit_property');
 }
