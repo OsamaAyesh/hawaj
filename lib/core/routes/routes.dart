@@ -36,6 +36,7 @@ import '../../features/providers/real_estate_provider/register_to_real_estate_pr
 import '../../features/users/commercial_contract_user/manage_contracrs_user/presentation/pages/manage_contract_user_screen.dart';
 import '../../features/users/commercial_contract_user/manager_my_requests_contract_user/presentation/pages/manager_my_requests_contract_user_screen.dart';
 import '../../features/users/commercial_contract_user/show_details_contract_provider/presentation/pages/show_details_contract_provider_screen.dart';
+import '../../features/users/jobs_user_app/add_cv_user/presentation/add_cv_user_screen.dart';
 import '../../features/users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
 import '../../features/users/real_estate_user/show_real_state_details_user/presentation/pages/show_real_state_details_user_screen.dart';
 import '../resources/manager_strings.dart';
@@ -113,6 +114,10 @@ class Routes {
   static const String addRealEstateScreen = "addRealEstateScreen";
   static const String managerMyRealEstateProviderScreen =
       "managerMyRealEstateProviderScreen";
+
+  //Jobs User Screen
+
+  static const String addCvUserScreen = "addCvUserScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -239,6 +244,10 @@ class RouteGenerator {
       case Routes.managerMyRealEstateProviderScreen:
         return MaterialPageRoute(
           builder: (_) => ManagerMyRealEstateProviderScreen(),
+        );
+      case Routes.addCvUserScreen:
+        return MaterialPageRoute(
+          builder: (_) => AddCvUserScreen(),
         );
       default:
         return unDefinedRoute();

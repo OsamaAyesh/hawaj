@@ -15,6 +15,9 @@ import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
+import '../../../register_to_real_estate_provider_service/domain/di/di.dart'
+    show initAddMyPropertyOwners;
+import '../../../register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
 
 class DashboardRealEstateManagerScreen extends StatefulWidget {
   const DashboardRealEstateManagerScreen({super.key});
@@ -55,8 +58,8 @@ class _DashboardRealEstateManagerScreenState
         if (kDebugMode) {
           print("إضافة عقار");
         }
-        // initCreateOfferProvider();
-        // Get.to(AddOfferProviderScreen());
+        initAddMyPropertyOwners();
+        Get.to(RegisterToRealEstateProviderServiceScreen());
       },
       () {
         if (kDebugMode) {

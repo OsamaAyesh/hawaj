@@ -20,4 +20,6 @@ class RequestConstantsEndpoints {
   static const String completedProfile = '$apiUrlBase/myprofile';
   static const String getCompany = '$apiUrlBase/getorganization';
   static const String sendData = '$apiUrlBase/senddata';
+  static const String addMyPropertyOwners = '$apiUrlBase/addmypropertyowners';
+
 }

@@ -49,9 +49,9 @@ class MyApp extends StatelessWidget {
           // locale: const Locale("ar"),
           locale: localeSettings.defaultLocale,
           debugShowCheckedModeBanner:
-          dotenv.env[EnvConstants.debug].onNullBool(),
+              dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
-          initialRoute: Routes.splash,
+          initialRoute: Routes.dashboardRealEstateManagerScreen,
           navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,
