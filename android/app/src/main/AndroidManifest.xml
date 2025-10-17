@@ -51,7 +51,7 @@
         <!--  مفتاح Google Maps API -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBWWRB_KjU9mh0A1fempRe4SWQcX7ahWqM" />
+            android:value="AIzaSyB85M9uPAyS7HuSW-eipymIXGnAZwfqMeM" />
     </application>
 
     <queries>

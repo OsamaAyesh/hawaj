@@ -191,4 +191,11 @@ abstract class AppService {
     @Query(RequestConstants.lng) String? lng,
     @Query(RequestConstants.language) String? language,
   );
+
+  ///Edit My Property Owners => In POSTMAN setmypropertyowner
+  @POST(RequestConstantsEndpoints.editProfileMyPropertyOwner)
+  @MultiPart()
+  Future<WithOutDataResponse> editProfileMyPropertyOwner(
+    @Body() FormData formData,
+  );
 }

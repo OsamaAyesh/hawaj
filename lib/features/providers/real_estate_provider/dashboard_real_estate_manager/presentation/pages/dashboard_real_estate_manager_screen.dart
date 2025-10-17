@@ -15,6 +15,8 @@ import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
+import '../../../edit_profile_real_state_owner/domain/di/di.dart';
+import '../../../edit_profile_real_state_owner/presentation/pages/edit_profile_real_state_owner_screen.dart';
 import '../../../register_to_real_estate_provider_service/domain/di/di.dart'
     show initAddMyPropertyOwners;
 import '../../../register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
@@ -70,8 +72,8 @@ class _DashboardRealEstateManagerScreenState
       },
       () {
         if (kDebugMode) {
-          // initGetMyCompany();
-          // Get.to(ManageListOfferProviderScreen());
+          initEditProfileMyPropertyOwnerModule();
+          Get.to(EditProfileRealStateOwnerScreen());
           print("تعديل بياناتي");
         }
       },
