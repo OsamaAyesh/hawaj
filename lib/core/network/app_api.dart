@@ -198,4 +198,11 @@ abstract class AppService {
   Future<WithOutDataResponse> editProfileMyPropertyOwner(
     @Body() FormData formData,
   );
+
+  ///Add Real Estate Request =>addmypropertys
+  @POST(RequestConstantsEndpoints.addMyProperty)
+  @MultiPart()
+  Future<WithOutDataResponse> addRalEstate(
+    @Body() FormData formData,
+  );
 }
