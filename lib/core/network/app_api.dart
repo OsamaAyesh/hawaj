@@ -200,7 +200,7 @@ abstract class AppService {
   );
 
   ///Add Real Estate Request =>addmypropertys
-  @POST(RequestConstantsEndpoints.addMyProperty)
+  @POST(RequestConstantsEndpoints.addRalEstate)
   @MultiPart()
   Future<WithOutDataResponse> addRalEstate(
     @Body() FormData formData,

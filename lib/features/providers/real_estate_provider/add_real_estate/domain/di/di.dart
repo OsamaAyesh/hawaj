@@ -1,51 +1,77 @@
-import 'package:app_mobile/features/providers/real_estate_provider/add_real_estate/data/data_source/add_real_estate_data_source.dart';
-import 'package:app_mobile/features/providers/real_estate_provider/add_real_estate/domain/use_cases/add_real_estate_use_case.dart';
+import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 
-import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
+// ===== Data & Domain =====
+import '../../../../../common/lists/data/data_source/get_lists_data_source.dart';
+import '../../../../../common/lists/data/repository/get_lists_repository.dart';
+import '../../../../../common/lists/domain/use_cases/get_lists_use_case.dart';
+import '../../data/data_source/add_real_estate_data_source.dart';
 import '../../data/repository/add_real_estate_repository.dart';
+import '../../domain/use_cases/add_real_estate_use_case.dart';
+// ===== Controller =====
+import '../../presentation/controller/add_real_estate_controller.dart';
 
-initAddRealEstateRequest() {
-  if (!GetIt.I.isRegistered<AddRealEstateDataSource>()) {
+void initAddRealEstateModule() {
+  final instance = GetIt.I;
+
+  // ===== Get Lists =====
+  if (!instance.isRegistered<GetListsDataSource>()) {
+    instance.registerLazySingleton<GetListsDataSource>(
+        () => GetListsDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!instance.isRegistered<GetListsRepository>()) {
+    instance.registerLazySingleton<GetListsRepository>(
+        () => GetListsRepositoryImplement(instance(), instance()));
+  }
+
+  if (!instance.isRegistered<GetListsUseCase>()) {
+    instance.registerFactory<GetListsUseCase>(
+        () => GetListsUseCase(instance<GetListsRepository>()));
+  }
+
+  // ===== Add Real Estate =====
+  if (!instance.isRegistered<AddRealEstateDataSource>()) {
     instance.registerLazySingleton<AddRealEstateDataSource>(
         () => AddRealEstateDataSourceImplement(instance<AppService>()));
   }
 
-  if (!GetIt.I.isRegistered<AddRealEstateRepository>()) {
+  if (!instance.isRegistered<AddRealEstateRepository>()) {
     instance.registerLazySingleton<AddRealEstateRepository>(
         () => AddRealEstateRepositoryImplement(instance(), instance()));
   }
 
-  if (!GetIt.I.isRegistered<AddRealEstateUseCase>()) {
+  if (!instance.isRegistered<AddRealEstateUseCase>()) {
     instance.registerFactory<AddRealEstateUseCase>(
         () => AddRealEstateUseCase(instance<AddRealEstateRepository>()));
   }
+
+  // ===== Controller =====
+  if (!Get.isRegistered<AddRealEstateController>()) {
+    Get.put(AddRealEstateController(
+      instance<AddRealEstateUseCase>(),
+      instance<GetListsUseCase>(),
+    ));
+  }
 }
 
-disposeAddRealEstateRequest() {
-  if (GetIt.I.isRegistered<AddRealEstateDataSource>()) {
+void disposeAddRealEstateModule() {
+  final instance = GetIt.I;
+
+  if (instance.isRegistered<GetListsDataSource>())
+    instance.unregister<GetListsDataSource>();
+  if (instance.isRegistered<GetListsRepository>())
+    instance.unregister<GetListsRepository>();
+  if (instance.isRegistered<GetListsUseCase>())
+    instance.unregister<GetListsUseCase>();
+  if (instance.isRegistered<AddRealEstateDataSource>())
     instance.unregister<AddRealEstateDataSource>();
-  }
-
-  if (GetIt.I.isRegistered<AddRealEstateRepository>()) {
+  if (instance.isRegistered<AddRealEstateRepository>())
     instance.unregister<AddRealEstateRepository>();
-  }
-
-  if (GetIt.I.isRegistered<AddRealEstateUseCase>()) {
+  if (instance.isRegistered<AddRealEstateUseCase>())
     instance.unregister<AddRealEstateUseCase>();
-  }
-}
 
-void initAddRealEstate() {
-  initAddRealEstateRequest();
-  // Get.put(SendOtpController(
-  //   instance<SendOtpUseCase>(),
-  //   instance<VerfiyOtpUseCase>(),
-  // ));
-}
-
-void disposeAddRealEstate() {
-  disposeAddRealEstateRequest();
-  // Get.delete<SendOtpController>();
+  if (Get.isRegistered<AddRealEstateController>())
+    Get.delete<AddRealEstateController>();
 }
