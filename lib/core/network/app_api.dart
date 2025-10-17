@@ -16,6 +16,7 @@ import '../../features/common/lists/data/response/get_lists_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
+import '../../features/providers/real_estate_provider/edit_profile_real_state_owner/data/response/get_property_owners_response.dart';
 import '../../features/users/offer_user/list_offers/data/response/get_organizations_response.dart';
 import '../service/env_service.dart';
 
@@ -180,6 +181,14 @@ abstract class AppService {
   ///===> Get Lists Request
   @GET(RequestConstantsEndpoints.getLists)
   Future<GetListsResponse> getLists(
+    @Query(RequestConstants.language) String? language,
+  );
+
+  ///=>=====getMyPropertyOwners
+  @GET(RequestConstantsEndpoints.getMyPropertyOwners)
+  Future<GetPropertyOwnersResponse> getMyPropertyOwners(
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.lng) String? lng,
     @Query(RequestConstants.language) String? language,
   );
 }

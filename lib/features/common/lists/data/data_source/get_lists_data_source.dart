@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/core/resources/manager_mockup.dart';
+import 'package:app_mobile/core/util/get_app_langauge.dart';
 import 'package:app_mobile/features/common/lists/data/request/get_lists_request.dart';
 import 'package:app_mobile/features/common/lists/data/response/get_lists_response.dart';
 import 'package:flutter/services.dart' as rootBundle;
@@ -31,7 +32,7 @@ class GetListsDataSourceImplement implements GetListsDataSource {
       );
     }
     return await _appService.getLists(
-      request.language,
+      AppLanguage().getCurrentLocale(),
     );
   }
 }
