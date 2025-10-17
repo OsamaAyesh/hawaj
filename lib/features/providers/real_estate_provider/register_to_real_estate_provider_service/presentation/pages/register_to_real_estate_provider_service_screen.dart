@@ -217,15 +217,7 @@ class RegisterToRealEstateProviderServiceScreen extends StatelessWidget {
             ),
 
             /// ===== Loading Overlay =====
-            if (controller.isLoading.value)
-              Positioned.fill(
-                child: Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: const Center(
-                    child: LoadingWidget(),
-                  ),
-                ),
-              ),
+            if (controller.isLoading.value) LoadingWidget(),
           ],
         );
       }),
