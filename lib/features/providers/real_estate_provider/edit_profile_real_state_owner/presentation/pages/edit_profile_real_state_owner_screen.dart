@@ -12,15 +12,42 @@ import '../../../../../../core/widgets/loading_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../../core/widgets/sized_box_between_feilads_widgets.dart';
 import '../../../../../../core/widgets/upload_media_widget.dart';
+import '../../domain/di/di.dart';
 import '../../presentation/controller/edit_profile_my_property_owner_controller.dart';
 
-class EditProfileRealStateOwnerScreen extends StatelessWidget {
+class EditProfileRealStateOwnerScreen extends StatefulWidget {
   const EditProfileRealStateOwnerScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.find<EditProfileMyPropertyOwnerController>();
+  State<EditProfileRealStateOwnerScreen> createState() =>
+      _EditProfileRealStateOwnerScreenState();
+}
 
+class _EditProfileRealStateOwnerScreenState
+    extends State<EditProfileRealStateOwnerScreen> {
+  late final EditProfileMyPropertyOwnerController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// 🟢 الحصول على الـ Controller عند بناء الشاشة
+    controller = Get.find<EditProfileMyPropertyOwnerController>();
+  }
+
+  @override
+  void dispose() {
+    /// 🔴 عند مغادرة الشاشة → إزالة الـ Controller والـ DI module
+    if (Get.isRegistered<EditProfileMyPropertyOwnerController>()) {
+      Get.delete<EditProfileMyPropertyOwnerController>();
+    }
+
+    disposeEditProfileMyPropertyOwnerModule(); // unregister dependencies
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // TextControllers
     final nameController = TextEditingController();
     final mobileController = TextEditingController();
@@ -121,7 +148,6 @@ class EditProfileRealStateOwnerScreen extends StatelessWidget {
 
                   SizedBox(height: ManagerHeight.h24),
 
-                  /// ===== زر التعديل =====
                   ButtonApp(
                     title: "تعديل",
                     onPressed: () {
@@ -150,11 +176,7 @@ class EditProfileRealStateOwnerScreen extends StatelessWidget {
             ),
 
             /// ===== الـ Loading فوق المحتوى =====
-            if (controller.isLoading.value)
-              Container(
-                color: Colors.black.withOpacity(0.2),
-                child: const Center(child: LoadingWidget()),
-              ),
+            if (controller.isLoading.value) const LoadingWidget(),
           ],
         );
       }),
