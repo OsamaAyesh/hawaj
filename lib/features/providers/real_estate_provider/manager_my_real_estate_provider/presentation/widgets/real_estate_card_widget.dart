@@ -70,61 +70,43 @@ class RealEstateCardWidget extends StatelessWidget {
                   width: double.infinity,
                   height: 210,
                   fit: BoxFit.cover,
+                  // 🔹 Display a loading indicator while the image is loading
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      width: double.infinity,
+                      height: 210,
+                      color: Colors.grey.shade200,
+                      alignment: Alignment.center,
+                      child: const CircularProgressIndicator(strokeWidth: 2),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: double.infinity,
+                      height: 210,
+                      color: Colors.grey.shade300,
+                      alignment: Alignment.center,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.broken_image_outlined,
+                            color: Colors.grey,
+                            size: 40,
+                          ),
+                          SizedBox(height: 8),
+                          Text(
+                            "فشل في عرض الصورة",
+                            style: getRegularTextStyle(
+                                fontSize: ManagerFontSize.s12,
+                                color: ManagerColors.greyWithColor),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-              ),
-
-              /// ===== الأيقونات =====
-              if (showActions) ...[
-                Positioned(
-                  top: 10,
-                  right: 10,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                      size: 20,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  child: Container(
-                    decoration: const BoxDecoration(
-                      color: ManagerColors.primaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    padding: const EdgeInsets.all(6),
-                    child: const Icon(
-                      Icons.settings,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ],
-
-              /// ===== أزرار التنقل بين الصور =====
-              Positioned(
-                left: 8,
-                top: 85,
-                child: _buildArrow(Icons.arrow_back_ios_new_rounded),
-              ),
-              Positioned(
-                right: 8,
-                top: 85,
-                child: _buildArrow(Icons.arrow_forward_ios_rounded),
               ),
             ],
           ),

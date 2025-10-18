@@ -19,9 +19,8 @@ import '../../../add_real_estate/domain/di/di.dart';
 import '../../../add_real_estate/presentation/pages/add_real_estate_screen.dart';
 import '../../../edit_profile_real_state_owner/domain/di/di.dart';
 import '../../../edit_profile_real_state_owner/presentation/pages/edit_profile_real_state_owner_screen.dart';
-import '../../../register_to_real_estate_provider_service/domain/di/di.dart'
-    show initAddMyPropertyOwners;
-import '../../../register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
+import '../../../manager_my_real_estate_provider/domain/di/di.dart';
+import '../../../manager_my_real_estate_provider/presentation/pages/manager_my_real_estate_provider_screen.dart';
 
 class DashboardRealEstateManagerScreen extends StatefulWidget {
   const DashboardRealEstateManagerScreen({super.key});
@@ -62,8 +61,10 @@ class _DashboardRealEstateManagerScreenState
         if (kDebugMode) {
           print("عقاراتي");
         }
-        initAddMyPropertyOwners();
-        Get.to(RegisterToRealEstateProviderServiceScreen());
+        initGetMyRealEstates();
+        Get.to(ManagerMyRealEstateProviderScreen());
+        // initAddMyPropertyOwners();
+        // Get.to(RegisterToRealEstateProviderServiceScreen());
       },
       () {
         if (kDebugMode) {

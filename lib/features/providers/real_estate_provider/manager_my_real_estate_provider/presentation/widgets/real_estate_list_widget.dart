@@ -2,53 +2,71 @@ import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/model/real_estate_item_model.dart';
 import 'real_estate_card_widget.dart';
 
 class RealEstateListWidget extends StatelessWidget {
   final bool isAvailable;
+  final List<RealEstateItemModel> realEstates;
 
-  const RealEstateListWidget({super.key, required this.isAvailable});
+  const RealEstateListWidget({
+    super.key,
+    required this.isAvailable,
+    required this.realEstates,
+  });
 
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
       padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+      itemCount: realEstates.length,
+      separatorBuilder: (_, __) => SizedBox(height: ManagerHeight.h16),
       itemBuilder: (context, index) {
+        final estate = realEstates[index];
+
         return RealEstateCardWidget(
+          // 🔹 Show actions only if property is not available (for future use)
           showActions: !isAvailable,
-          // 🔹 لو العقار غير متاح نعرض الأيقونات
-          imageUrl: "https://i.imgur.com/O8QqY9G.jpeg",
-          title: "فيلا للبيع",
-          location: "حي العزيزية، مدينة الرياض، منطقة الرياض",
-          area: "651 م²",
-          rooms: "7",
-          halls: "2",
-          // 🔹 عدد الصالات
-          age: "10 سنوات",
-          baths: "2",
-          direction: "شمالي غربي",
-          purpose: "سكني",
-          // 🔹 الغرض
-          commission: "2.5%",
-          price: "450000 دولار أمريكي",
-          features: const [
-            "الفيلا مؤثثة",
-            "الفيلا يوجد بها حوش",
-            "مطابخ مجهزة بالكامل",
-            "مدخل سيارات خاص",
+
+          // 🔹 Use real API data
+          imageUrl: estate.propertyImages,
+          title: estate.propertySubject,
+          location: estate.propertyDetailedAddress,
+          area: "${estate.areaSqm} م²",
+          rooms: estate.featureIds.isNotEmpty
+              ? estate.featureIds.split(',').length.toString()
+              : "--",
+          halls: estate.facilityIds.isNotEmpty
+              ? estate.facilityIds.split(',').length.toString()
+              : "--",
+          age: "--",
+          // API currently doesn't provide property age
+          baths: "--",
+          // API currently doesn't provide baths count
+          direction: "--",
+          // API currently doesn't provide direction info
+          purpose: estate.usageTypeLabel,
+          commission: "${estate.commissionPercentage}%",
+          price: "${estate.price} دولار أمريكي",
+
+          // 🔹 You can later map these from featureIds/facilityIds if the backend provides labels
+          features: [
+            "النوع: ${estate.propertyTypeLabel}",
+            "نوع العملية: ${estate.operationTypeLabel}",
+            "نوع البيع: ${estate.saleTypeLabel}",
+            "الدور: ${estate.advertiserRoleLabel}",
+            "الاستخدام: ${estate.usageTypeLabel}",
           ],
 
-          /// 🔹 البيانات الإضافية في القسم المنقط
-          extraInfo: const {
-            "تاريخ الإضافة": "14-07-2027",
-            "رقم الترخيص": "3928492389482933",
-            "تاريخ انتهاء الرخصة": "14-07-2028",
-            "المساحة على حسب الصك": "635 م²",
+          // 🔹 Extra information (you can enhance this with real fields if available)
+          extraInfo: {
+            "المالك": estate.propertyOwnerIdLabel,
+            "الإحداثيات": "(${estate.lat}, ${estate.lng})",
+            "وقت الزيارة": "${estate.visitTimeFrom} - ${estate.visitTimeTo}",
+            "أيام الزيارة": estate.visitDays,
           },
         );
       },
-      separatorBuilder: (_, __) => SizedBox(height: ManagerHeight.h16),
-      itemCount: 2,
     );
   }
 }

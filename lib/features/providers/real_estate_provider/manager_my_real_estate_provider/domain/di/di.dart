@@ -1,10 +1,13 @@
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/data_source/get_my_real_estates_data_source.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/repository/get_my_real_estates_repository.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/domain/use_cases/get_my_real_estates_use_cases.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
+import '../../presentation/controller/get_my_real_estates_controller.dart';
 
 initGetMyRealEstatesRequest() {
   if (!GetIt.I.isRegistered<GetMyRealEstatesDataSource>()) {
@@ -39,13 +42,12 @@ disposeGetMyRealEstatesRequest() {
 
 void initGetMyRealEstates() {
   initGetMyRealEstatesRequest();
-  // Get.put(AddOfferController(
-  //   instance<CreateOfferProviderUseCase>(),
-  //   instance<GetMyCompanySetOfferUseCase>(),
-  // ));
+  Get.put(GetMyRealEstatesController(
+    instance<GetMyRealEstatesUseCases>(),
+  ));
 }
 
 void disposeGetMyRealEstates() {
   disposeGetMyRealEstatesRequest();
-  // Get.delete<AddOfferController>();
+  Get.delete<GetMyRealEstatesController>();
 }
