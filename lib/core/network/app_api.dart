@@ -17,6 +17,7 @@ import '../../features/providers/offers_provider/add_offer/data/response/get_my_
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
 import '../../features/providers/real_estate_provider/edit_profile_real_state_owner/data/response/get_property_owners_response.dart';
+import '../../features/providers/real_estate_provider/manager_my_real_estate_provider/data/response/get_my_real_estates_response.dart';
 import '../../features/users/offer_user/list_offers/data/response/get_organizations_response.dart';
 import '../service/env_service.dart';
 
@@ -204,5 +205,13 @@ abstract class AppService {
   @MultiPart()
   Future<WithOutDataResponse> addRalEstate(
     @Body() FormData formData,
+  );
+
+  /// Get My Real Estates Request => getmypropertys
+  @GET(RequestConstantsEndpoints.getMyRealEstate)
+  Future<GetMyRealEstatesResponse> getMyRealEstate(
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.lng) String? lng,
+    @Query(RequestConstants.language) String? language,
   );
 }
