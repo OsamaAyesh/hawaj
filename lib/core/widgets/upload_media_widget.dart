@@ -1,16 +1,16 @@
 import 'dart:io';
-import 'package:flutter/material.dart';
-import 'package:dotted_border/dotted_border.dart';
-import 'package:get/get.dart';
-import 'package:file_picker/file_picker.dart';
 
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_icons.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
-import 'package:app_mobile/core/resources/manager_icons.dart';
+import 'package:dotted_border/dotted_border.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class UploadMediaField extends StatelessWidget {
   final String? label;
@@ -18,22 +18,30 @@ class UploadMediaField extends StatelessWidget {
   final String? note;
   final Rx<File?> file;
 
+  final Function(File)? onFilePicked;
+
   const UploadMediaField({
     super.key,
     this.label,
     this.hint,
     this.note,
     required this.file,
+    this.onFilePicked,
   });
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ["png", "jpg", "jpeg", "mp4", "mov", "avi"],
+      allowedExtensions: ["png", "jpg", "jpeg", "mp4", "mov", "avi", "pdf"],
     );
 
     if (result != null && result.files.single.path != null) {
-      file.value = File(result.files.single.path!);
+      final picked = File(result.files.single.path!);
+      file.value = picked;
+
+      if (onFilePicked != null) {
+        onFilePicked!(picked);
+      }
     }
   }
 
@@ -62,8 +70,9 @@ class UploadMediaField extends StatelessWidget {
 
           if (currentFile != null) {
             final path = currentFile.path.toLowerCase();
-            final isImage =
-                path.endsWith(".png") || path.endsWith(".jpg") || path.endsWith(".jpeg");
+            final isImage = path.endsWith(".png") ||
+                path.endsWith(".jpg") ||
+                path.endsWith(".jpeg");
             final isVideo = path.endsWith(".mp4") ||
                 path.endsWith(".mov") ||
                 path.endsWith(".avi");
@@ -95,7 +104,8 @@ class UploadMediaField extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                         color: ManagerColors.greyWithColor.withOpacity(0.2),
                       ),
-                      child: const Icon(Icons.videocam, color: Colors.red, size: 30),
+                      child: const Icon(Icons.videocam,
+                          color: Colors.red, size: 30),
                     )
                   else
                     Icon(Icons.insert_drive_file,

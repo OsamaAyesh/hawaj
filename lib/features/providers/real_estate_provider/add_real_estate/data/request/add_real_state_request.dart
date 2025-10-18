@@ -91,7 +91,7 @@ class AddRealStateRequest {
       for (var image in propertyImages!) {
         formData.files.add(
           MapEntry(
-            'property_images[]',
+            'property_images',
             await MultipartFile.fromFile(
               image.path,
               filename: image.path.split('/').last,
@@ -106,7 +106,7 @@ class AddRealStateRequest {
       for (var video in propertyVideos!) {
         formData.files.add(
           MapEntry(
-            'property_videos[]',
+            'property_videos',
             await MultipartFile.fromFile(
               video.path,
               filename: video.path.split('/').last,

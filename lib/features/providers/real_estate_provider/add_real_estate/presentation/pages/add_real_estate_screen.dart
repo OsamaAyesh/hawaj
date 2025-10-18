@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,7 +7,6 @@ import '../../../../../../core/resources/manager_height.dart';
 import '../../../../../../core/resources/manager_strings.dart';
 import '../../../../../../core/resources/manager_styles.dart';
 import '../../../../../../core/resources/manager_width.dart';
-import '../../../../../../core/util/currency_and_icon/currency_icon_widget.dart';
 import '../../../../../../core/widgets/button_app.dart';
 import '../../../../../../core/widgets/labeled_text_field.dart';
 import '../../../../../../core/widgets/lable_drop_down_button.dart';
@@ -21,22 +18,52 @@ import '../../../../../../core/widgets/title_text_screen_widget.dart';
 import '../../../../../../core/widgets/upload_media_widget.dart';
 import '../../../../../common/map_ticker/domain/di/di.dart';
 import '../../../../../common/map_ticker/presenation/pages/map_ticker_screen.dart';
+import '../../domain/di/di.dart';
 import '../controller/add_real_estate_controller.dart';
 
-class AddRealEstateScreen extends StatelessWidget {
+class AddRealEstateScreen extends StatefulWidget {
   const AddRealEstateScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final c = Get.find<AddRealEstateController>();
+  State<AddRealEstateScreen> createState() => _AddRealEstateScreenState();
+}
 
+class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
+  late AddRealEstateController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<AddRealEstateController>();
+  }
+
+  @override
+  void dispose() {
+    disposeAddRealEstateModule();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ScaffoldWithBackButton(
       title: ManagerStrings.addRealEstateTitle,
       body: Obx(() {
-        if (!c.isListsLoaded.value) {
-          return const Center(child: CircularProgressIndicator());
+        if (controller.isPageLoading.value) {
+          return const LoadingWidget();
         }
 
+        if (!controller.hasOwner.value) {
+          return Center(
+            child: Text(
+              "⚠️ لا يمكنك إضافة عقار حالياً.\nيجب تسجيل نفسك كمالك أولاً.",
+              textAlign: TextAlign.center,
+              style: getBoldTextStyle(
+                fontSize: ManagerFontSize.s14,
+                color: ManagerColors.primaryColor,
+              ),
+            ),
+          );
+        }
         return Stack(
           children: [
             SingleChildScrollView(
@@ -47,288 +74,356 @@ class AddRealEstateScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 8),
-
                   TitleTextScreenWidget(
-                      title: ManagerStrings.addRealEstateTitle),
+                    title: ManagerStrings.addRealEstateTitle,
+                  ),
                   SubTitleTextScreenWidget(
                     subTitle: ManagerStrings.addRealEstateSubtitle,
                   ),
                   SizedBox(height: ManagerHeight.h20),
 
-                  /// ===== نوع العقار =====
+                  /// نوع العقار
                   LabeledDropdownField<String>(
                     label: "نوع العقار",
-                    hint: "اختر نوع العقار (فيلا، شقة، أرض...)",
-                    value: c.selectedPropertyType.value,
-                    items: c.propertyTypes
+                    hint: "اختر نوع العقار",
+                    value: controller.selectedPropertyType.value,
+                    items: controller.propertyTypes
                         .map((e) => DropdownMenuItem(
-                              value: e['id'],
-                              child: Text(e['label'] ?? ''),
-                            ))
+                            value: e['id'], child: Text(e['label'] ?? '')))
                         .toList(),
-                    onChanged: (v) => c.selectedPropertyType.value = v,
+                    onChanged: (v) => controller.selectedPropertyType.value = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== نوع العملية =====
+                  /// نوع العملية
                   LabeledDropdownField<String>(
                     label: "نوع العملية",
-                    hint: "اختر هل العقار للبيع أم للإيجار",
-                    value: c.selectedOperationType.value,
-                    items: c.operationTypes
+                    hint: "اختر نوع العملية",
+                    value: controller.selectedOperationType.value,
+                    items: controller.operationTypes
                         .map((e) => DropdownMenuItem(
-                              value: e['id'],
-                              child: Text(e['label'] ?? ''),
-                            ))
+                            value: e['id'], child: Text(e['label'] ?? '')))
                         .toList(),
-                    onChanged: (v) => c.selectedOperationType.value = v,
+                    onChanged: (v) =>
+                        controller.selectedOperationType.value = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== صفة المعلن =====
+                  /// صفة المعلن
                   LabeledDropdownField<String>(
                     label: "صفة المعلن",
-                    hint: "اختر صفتك (مالك، وكيل، مفوض)",
-                    value: c.selectedAdvertiserRole.value,
-                    items: c.advertiserRoles
+                    hint: "اختر صفتك (مالك، وكيل...)",
+                    value: controller.selectedAdvertiserRole.value,
+                    items: controller.advertiserRoles
                         .map((e) => DropdownMenuItem(
-                              value: e['id'],
-                              child: Text(e['label'] ?? ''),
-                            ))
+                            value: e['id'], child: Text(e['label'] ?? '')))
                         .toList(),
-                    onChanged: (v) => c.selectedAdvertiserRole.value = v,
+                    onChanged: (v) =>
+                        controller.selectedAdvertiserRole.value = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== نوع البيع =====
+                  /// نوع البيع
                   LabeledDropdownField<String>(
                     label: "نوع البيع",
                     hint: "اختر نوع البيع (عاجل / عادي)",
-                    value: c.selectedSaleType.value,
-                    items: c.saleTypes
+                    value: controller.selectedSaleType.value,
+                    items: controller.saleTypes
                         .map((e) => DropdownMenuItem(
-                              value: e['id'],
-                              child: Text(e['label'] ?? ''),
-                            ))
+                            value: e['id'], child: Text(e['label'] ?? '')))
                         .toList(),
-                    onChanged: (v) => c.selectedSaleType.value = v,
+                    onChanged: (v) => controller.selectedSaleType.value = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== نوع الاستخدام =====
+                  /// نوع الاستخدام
                   LabeledDropdownField<String>(
                     label: "نوع الاستخدام",
                     hint: "اختر نوع الاستخدام (سكني، تجاري...)",
-                    value: c.selectedUsageType.value,
-                    items: c.usageTypes
+                    value: controller.selectedUsageType.value,
+                    items: controller.usageTypes
                         .map((e) => DropdownMenuItem(
-                              value: e['id'],
-                              child: Text(e['label'] ?? ''),
-                            ))
+                            value: e['id'], child: Text(e['label'] ?? '')))
                         .toList(),
-                    onChanged: (v) => c.selectedUsageType.value = v,
+                    onChanged: (v) => controller.selectedUsageType.value = v,
                   ),
-                  SizedBox(height: ManagerHeight.h24),
+                  const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== الموقع الجغرافي =====
+                  /// الموقع الجغرافي
                   LabeledTextField(
-                    label: "تعيين الموقع الجغرافي",
-                    controller: c.locationLatController,
+                    widthButton: ManagerWidth.w130,
+                    label: "الموقع الجغرافي",
+                    controller: controller.locationLatController,
                     hintText: "حدد موقع العقار على الخريطة",
-                    widthButton: 140,
                     onButtonTap: () async {
                       MapTickerBindings().dependencies();
                       final result =
                           await Get.to(() => const MapTickerScreen());
                       if (result != null) {
-                        c.locationLatController.text =
+                        controller.locationLatController.text =
                             result.latitude.toString();
-                        c.locationLngController.text =
+                        controller.locationLngController.text =
                             result.longitude.toString();
                       }
                     },
                     buttonWidget: Container(
-                      width: ManagerWidth.w140,
-                      height: ManagerHeight.h44,
+                      width: ManagerWidth.w120,
+                      height: ManagerHeight.h40,
                       decoration: BoxDecoration(
                         color: ManagerColors.primaryColor,
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Center(
                         child: Text(
-                          "حدد موقع العقار",
+                          "تحديد الموقع",
                           style: getBoldTextStyle(
-                            fontSize: ManagerFontSize.s12,
-                            color: ManagerColors.white,
-                          ),
+                              fontSize: ManagerFontSize.s12,
+                              color: ManagerColors.white),
                         ),
                       ),
                     ),
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== عنوان الإعلان =====
+                  /// العنوان
                   LabeledTextField(
-                    widthButton: ManagerWidth.w130,
+                    widthButton: ManagerWidth.w12,
                     label: "عنوان الإعلان",
                     hintText: "اكتب عنوان الإعلان هنا",
-                    onChanged: (v) => c.propertySubject = v,
+                    onChanged: (v) => controller.propertySubject = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== العنوان التفصيلي =====
+                  /// العنوان التفصيلي
                   LabeledTextField(
-                    widthButton: ManagerWidth.w130,
+                    widthButton: ManagerWidth.w12,
                     label: "العنوان التفصيلي",
                     hintText: "ادخل العنوان التفصيلي للعقار",
-                    onChanged: (v) => c.detailedAddress = v,
+                    onChanged: (v) => controller.detailedAddress = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  // / ===== السعر =====
-                  LabeledTextField(
-                    label: "السعر المطلوب",
-                    hintText: "أدخل السعر (بيع أو إيجار شهري)",
-                    keyboardType: TextInputType.number,
-                    onChanged: (v) => c.price = v,
-                    widthButton: ManagerWidth.w44,
-                    onButtonTap: () {},
-                    buttonWidget: Container(
-                      width: ManagerWidth.w44,
-                      height: ManagerHeight.h44,
-                      decoration: BoxDecoration(
-                        color: ManagerColors.primaryColor,
-                        borderRadius: BorderRadius.only(
-                          topLeft:
-                              Directionality.of(context) == TextDirection.rtl
-                                  ? const Radius.circular(8)
-                                  : Radius.zero,
-                          bottomLeft:
-                              Directionality.of(context) == TextDirection.rtl
-                                  ? const Radius.circular(8)
-                                  : Radius.zero,
-                          topRight:
-                              Directionality.of(context) == TextDirection.ltr
-                                  ? const Radius.circular(8)
-                                  : Radius.zero,
-                          bottomRight:
-                              Directionality.of(context) == TextDirection.ltr
-                                  ? const Radius.circular(8)
-                                  : Radius.zero,
-                        ),
-                      ),
-                      child: Center(
-                        child: CurrencyIconWidget(
-                          height: ManagerHeight.h18,
-                          width: ManagerWidth.w18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBoxBetweenFieldWidgets(),
-
-                  /// ===== المساحة والعمولة =====
+                  /// السعر و المساحة
                   Row(
                     children: [
                       Expanded(
                         child: LabeledTextField(
-                          widthButton: ManagerWidth.w130,
-                          label: "المساحة (م²)",
-                          hintText: "ادخل مساحة العقار بالمتر",
+                          widthButton: ManagerWidth.w12,
+                          label: "السعر المطلوب",
+                          hintText: "أدخل السعر",
                           keyboardType: TextInputType.number,
-                          onChanged: (v) => c.area = v,
+                          onChanged: (v) => controller.price = v,
                         ),
                       ),
                       SizedBox(width: ManagerWidth.w8),
                       Expanded(
                         child: LabeledTextField(
-                          widthButton: ManagerWidth.w130,
-                          label: "نسبة العمولة",
-                          hintText: "عمولة البيع بالنسبة %",
+                          widthButton: ManagerWidth.w12,
+                          label: "المساحة (م²)",
+                          hintText: "ادخل المساحة",
                           keyboardType: TextInputType.number,
-                          onChanged: (v) => c.commission = v,
+                          onChanged: (v) => controller.area = v,
                         ),
                       ),
                     ],
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== وصف العقار =====
+                  /// العمولة ونسبة أخرى
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LabeledTextField(
+                          widthButton: ManagerWidth.w12,
+                          label: "نسبة العمولة %",
+                          hintText: "ادخل النسبة",
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => controller.commission = v,
+                        ),
+                      ),
+                      SizedBox(width: ManagerWidth.w8),
+                      Expanded(
+                        child: LabeledTextField(
+                          widthButton: ManagerWidth.w12,
+                          label: "الكلمات المفتاحية",
+                          hintText: "مثلاً: فيلا، شقة، جدة",
+                          onChanged: (v) => controller.keywords = v,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// الحقول الإضافية
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LabeledTextField(
+                          widthButton: ManagerWidth.w12,
+                          label: "عدد الغرف",
+                          hintText: "ادخل عدد الغرف",
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => controller.roomCount = v,
+                        ),
+                      ),
+                      SizedBox(width: ManagerWidth.w8),
+                      Expanded(
+                        child: LabeledTextField(
+                          widthButton: ManagerWidth.w12,
+                          label: "عدد دورات المياه",
+                          hintText: "ادخل عددها",
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => controller.bathroomCount = v,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LabeledTextField(
+                          widthButton: ManagerWidth.w12,
+                          label: "عمر العقار",
+                          hintText: "بالسنوات",
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => controller.buildingAge = v,
+                        ),
+                      ),
+                      SizedBox(width: ManagerWidth.w8),
+                      Expanded(
+                        child: LabeledTextField(
+                          widthButton: ManagerWidth.w12,
+                          label: "عدد الأدوار",
+                          hintText: "ادخل العدد",
+                          keyboardType: TextInputType.number,
+                          onChanged: (v) => controller.floorCount = v,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  // Row(
+                  //   children: [
+                  //     // Expanded(
+                  //     //   child: LabeledDropdownField<String>(
+                  //     //     label: "نوع الواجهة",
+                  //     //     hint: "اختر الواجهة",
+                  //     //     items: const [
+                  //     //       DropdownMenuItem(value: "1", child: Text("شمالية")),
+                  //     //       DropdownMenuItem(value: "2", child: Text("جنوبية")),
+                  //     //       DropdownMenuItem(value: "3", child: Text("شرقية")),
+                  //     //       DropdownMenuItem(value: "4", child: Text("غربية")),
+                  //     //     ],
+                  //     //     onChanged: (v) => c.facadeType = v,
+                  //     //   ),
+                  //     // ),
+                  //     SizedBox(width: ManagerWidth.w8),
+                  //     Expanded(
+                  //       child: LabeledTextField(
+                  //         widthButton: ManagerWidth.w130,
+                  //         label: "عرض الشارع (م)",
+                  //         hintText: "ادخل عرض الشارع",
+                  //         keyboardType: TextInputType.number,
+                  //         onChanged: (v) => controller.streetWidth = v,
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
                   LabeledTextField(
                     widthButton: ManagerWidth.w130,
-                    label: "الوصف",
+                    label: "عرض الشارع (م)",
+                    hintText: "ادخل عرض الشارع",
+                    keyboardType: TextInputType.number,
+                    onChanged: (v) => controller.streetWidth = v,
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// وصف العقار
+                  LabeledTextField(
+                    widthButton: ManagerWidth.w12,
+                    label: "وصف العقار",
                     hintText: "أدخل وصفًا واضحًا للعقار",
                     minLines: 3,
                     maxLines: 5,
-                    onChanged: (v) => c.propertyDescription = v,
+                    onChanged: (v) => controller.propertyDescription = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== المميزات =====
+                  /// المميزات / المرافق / الأيام
                   _MultiSelectPicker(
                     title: "المميزات",
-                    placeholder: "أدخل المميزات الخاصة بالعقار الخاص فيك",
-                    allItems: c.features,
-                    selectedIds: c.selectedFeatureIds,
-                    onToggleId: (id) => c.toggleFeature(id),
-                  ),
-                  SizedBox(height: ManagerHeight.h16),
-
-                  /// ===== المرافق =====
-                  _MultiSelectPicker(
-                    title: "المرافق",
-                    placeholder: "أدخل المرافق المتاحة (موقف، صالة...)",
-                    allItems: c.facilities,
-                    selectedIds: c.selectedFacilityIds,
-                    onToggleId: (id) => c.toggleFacility(id),
-                  ),
-                  SizedBox(height: ManagerHeight.h16),
-
-                  /// ===== الأيام المتاحة للزيارة =====
-                  _MultiSelectPicker(
-                    title: "الأيام المتاحة للزيارة",
-                    placeholder: "اختر الأيام من أيام الأسبوع",
-                    allItems: c.weekDays,
-                    selectedIds: c.selectedVisitDayIds,
-                    onToggleId: (id) => c.toggleVisitDay(id),
-                  ),
-                  SizedBox(height: ManagerHeight.h24),
-
-                  /// ===== صور العقار =====
-                  UploadMediaField(
-                    label: "صور العقار",
-                    hint: "رفع الصور أو الفيديوهات",
-                    note: "أضف صورًا واضحة للعقار لجذب العملاء.",
-                    file: c.propertyImages.isNotEmpty
-                        ? Rx<File?>(c.propertyImages.last)
-                        : Rx<File?>(null),
+                    placeholder: "اختر المميزات الخاصة بالعقار",
+                    allItems: controller.features,
+                    selectedIds: controller.selectedFeatureIds,
+                    onToggleId: controller.toggleFeature,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// ===== صك العقار =====
+                  _MultiSelectPicker(
+                    title: "المرافق",
+                    placeholder: "اختر المرافق المتاحة (موقف، صالة...)",
+                    allItems: controller.facilities,
+                    selectedIds: controller.selectedFacilityIds,
+                    onToggleId: controller.toggleFacility,
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  _MultiSelectPicker(
+                    title: "الأيام المتاحة للزيارة",
+                    placeholder: "اختر الأيام من الأسبوع",
+                    allItems: controller.weekDays,
+                    selectedIds: controller.selectedVisitDayIds,
+                    onToggleId: controller.toggleVisitDay,
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// رفع الملفات
+                  UploadMediaField(
+                    label: "صور العقار",
+                    hint: "رفع الصور",
+                    note: "أضف صورًا واضحة للعقار لجذب العملاء.",
+                    onFilePicked: (file) => controller.propertyImages.add(file),
+                    file: controller.propertyImages.isNotEmpty
+                        ? Rx(controller.propertyImages.last)
+                        : Rx(null),
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  UploadMediaField(
+                    label: "فيديوهات العقار",
+                    hint: "رفع الفيديوهات",
+                    note: "أضف فيديوهات توضيحية للعقار (اختياري).",
+                    onFilePicked: (file) => controller.propertyVideos.add(file),
+                    file: controller.propertyVideos.isNotEmpty
+                        ? Rx(controller.propertyVideos.last)
+                        : Rx(null),
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
                   UploadMediaField(
                     label: "صك العقار",
                     hint: "رفع الملف",
                     note: "قم برفع صك الملكية لإثبات صحة المعلومات.",
-                    file: c.deedDocument != null
-                        ? Rx<File?>(c.deedDocument)
-                        : Rx<File?>(null),
+                    onFilePicked: (file) =>
+                        controller.deedDocument.value = file,
+                    file: controller.deedDocument,
                   ),
                   SizedBox(height: ManagerHeight.h36),
 
-                  /// ===== زر الإضافة =====
+                  /// زر الإرسال
                   ButtonApp(
                     title: "استمرار بالإضافة",
-                    onPressed: () => c.addRealEstate(),
+                    onPressed: () => controller.addRealEstate(),
                     paddingWidth: 0,
                   ),
                   SizedBox(height: ManagerHeight.h32),
                 ],
               ),
             ),
-            if (c.isLoading.value) const LoadingWidget(),
+            if (controller.isActionLoading.value) const LoadingWidget(),
           ],
         );
       }),
@@ -336,9 +431,6 @@ class AddRealEstateScreen extends StatelessWidget {
   }
 }
 
-/// ===============================================
-///         Multi-select picker reusable widget
-/// ===============================================
 class _MultiSelectPicker extends StatelessWidget {
   final String title;
   final String placeholder;
@@ -372,113 +464,11 @@ class _MultiSelectPicker extends StatelessWidget {
               height: ManagerHeight.h44,
               decoration: BoxDecoration(
                 color: ManagerColors.primaryColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Directionality.of(context) == TextDirection.rtl
-                      ? const Radius.circular(8)
-                      : Radius.zero,
-                  bottomLeft: Directionality.of(context) == TextDirection.rtl
-                      ? const Radius.circular(8)
-                      : Radius.zero,
-                  topRight: Directionality.of(context) == TextDirection.ltr
-                      ? const Radius.circular(8)
-                      : Radius.zero,
-                  bottomRight: Directionality.of(context) == TextDirection.ltr
-                      ? const Radius.circular(8)
-                      : Radius.zero,
-                ),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: const Center(
-                child: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                  size: 22,
-                ),
-              ),
+              child: const Icon(Icons.check, color: Colors.white),
             ),
           ),
-          // /// ===== العنوان =====
-          // Padding(
-          //   padding: EdgeInsets.only(bottom: ManagerHeight.h8),
-          //   child: Text(
-          //     title,
-          //     style: getBoldTextStyle(
-          //       fontSize: ManagerFontSize.s12,
-          //       color: ManagerColors.black,
-          //     ),
-          //   ),
-          // ),
-          //
-          // /// ===== الحقل بنفس فكرة LabeledTextField مع زر داخلي =====
-          // Container(
-          //   height: ManagerHeight.h48,
-          //   decoration: BoxDecoration(
-          //     color: Colors.white,
-          //     borderRadius: BorderRadius.circular(8),
-          //     border: Border.all(
-          //       color: ManagerColors.greyWithColor.withOpacity(0.3),
-          //     ),
-          //   ),
-          //   child: Row(
-          //     children: [
-          //       /// 🔹 النص (placeholder أو عدد العناصر المختارة)
-          //       Expanded(
-          //         child: Padding(
-          //           padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
-          //           child: Text(
-          //             selectedIds.isEmpty
-          //                 ? placeholder
-          //                 : "${selectedIds.length} تم اختيارها",
-          //             style: getRegularTextStyle(
-          //               fontSize: ManagerFontSize.s12,
-          //               color: selectedIds.isEmpty
-          //                   ? ManagerColors.greyWithColor
-          //                   : ManagerColors.black,
-          //             ),
-          //             overflow: TextOverflow.ellipsis,
-          //           ),
-          //         ),
-          //       ),
-          //
-          //       /// 🔹 الزر الجانبي (بنفس تصميم زر العملة)
-          //       // GestureDetector(
-          //       //   onTap: () => _openBottomSheet(context),
-          //       //   child: Container(
-          //       //     width: ManagerWidth.w44,
-          //       //     height: double.infinity,
-          //       //     decoration: BoxDecoration(
-          //       //       color: ManagerColors.primaryColor,
-          //       //       borderRadius: BorderRadius.only(
-          //       //         topLeft: Directionality.of(context) == TextDirection.rtl
-          //       //             ? const Radius.circular(8)
-          //       //             : Radius.zero,
-          //       //         bottomLeft:
-          //       //             Directionality.of(context) == TextDirection.rtl
-          //       //                 ? const Radius.circular(8)
-          //       //                 : Radius.zero,
-          //       //         topRight:
-          //       //             Directionality.of(context) == TextDirection.ltr
-          //       //                 ? const Radius.circular(8)
-          //       //                 : Radius.zero,
-          //       //         bottomRight:
-          //       //             Directionality.of(context) == TextDirection.ltr
-          //       //                 ? const Radius.circular(8)
-          //       //                 : Radius.zero,
-          //       //       ),
-          //       //     ),
-          //       //     child: const Center(
-          //       //       child: Icon(
-          //       //         Icons.check,
-          //       //         color: Colors.white,
-          //       //         size: 22,
-          //       //       ),
-          //       //     ),
-          //       //   ),
-          //       // ),
-          //     ],
-          //   ),
-          // ),
-
-          /// ===== التاجات المختارة =====
           if (selectedIds.isNotEmpty) ...[
             SizedBox(height: ManagerHeight.h12),
             Wrap(
@@ -488,10 +478,7 @@ class _MultiSelectPicker extends StatelessWidget {
                 final label =
                     allItems.firstWhereOrNull((e) => e['id'] == id)?['label'] ??
                         id;
-                return _TagPill(
-                  label: label,
-                  onRemove: () => onToggleId(id),
-                );
+                return _TagPill(label: label, onRemove: () => onToggleId(id));
               }).toList(),
             ),
           ],
@@ -500,85 +487,8 @@ class _MultiSelectPicker extends StatelessWidget {
     });
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Obx(() {
-  //     return Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(title,
-  //             style: getBoldTextStyle(
-  //                 fontSize: ManagerFontSize.s12, color: ManagerColors.black)),
-  //         SizedBox(height: ManagerHeight.h8),
-  //
-  //         // Box with check icon
-  //         InkWell(
-  //           onTap: () => _openBottomSheet(context),
-  //           child: Container(
-  //             height: ManagerHeight.h48,
-  //             decoration: BoxDecoration(
-  //               color: Colors.white,
-  //               borderRadius: BorderRadius.circular(8),
-  //               border: Border.all(
-  //                   color: ManagerColors.greyWithColor.withOpacity(0.3)),
-  //             ),
-  //             child: Row(
-  //               children: [
-  //                 Container(
-  //                   height: double.infinity,
-  //                   width: 54,
-  //                   decoration: BoxDecoration(
-  //                     color: ManagerColors.primaryColor,
-  //                     borderRadius: const BorderRadius.only(
-  //                       topRight: Radius.circular(8),
-  //                       bottomRight: Radius.circular(8),
-  //                     ),
-  //                   ),
-  //                   child:
-  //                       const Icon(Icons.check, color: Colors.white, size: 28),
-  //                 ),
-  //                 const SizedBox(width: 12),
-  //                 Expanded(
-  //                   child: Text(
-  //                     placeholder,
-  //                     style: getRegularTextStyle(
-  //                       fontSize: ManagerFontSize.s12,
-  //                       color: ManagerColors.greyWithColor,
-  //                     ),
-  //                     overflow: TextOverflow.ellipsis,
-  //                   ),
-  //                 ),
-  //                 const SizedBox(width: 12),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //
-  //         if (selectedIds.isNotEmpty) ...[
-  //           SizedBox(height: ManagerHeight.h12),
-  //           Wrap(
-  //             spacing: 8,
-  //             runSpacing: 8,
-  //             children: selectedIds.map((id) {
-  //               final label =
-  //                   allItems.firstWhereOrNull((e) => e['id'] == id)?['label'] ??
-  //                       id;
-  //               return _TagPill(
-  //                 label: label,
-  //                 onRemove: () => onToggleId(id),
-  //               );
-  //             }).toList(),
-  //           ),
-  //         ],
-  //       ],
-  //     );
-  //   });
-  // }
-
   void _openBottomSheet(BuildContext context) {
-    final search = TextEditingController();
     final tempSelected = selectedIds.toSet();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -589,12 +499,6 @@ class _MultiSelectPicker extends StatelessWidget {
       builder: (_) {
         return StatefulBuilder(
           builder: (context, setState) {
-            List<Map<String, String>> filtered = allItems
-                .where((e) => (e['label'] ?? '')
-                    .toLowerCase()
-                    .contains(search.text.toLowerCase()))
-                .toList();
-
             return Padding(
               padding: EdgeInsets.fromLTRB(
                 20,
@@ -604,86 +508,39 @@ class _MultiSelectPicker extends StatelessWidget {
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  /// ===== عنوان النافذة =====
-                  Center(
-                    child: Container(
-                      height: 4,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: ManagerColors.greyWithColor.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                    ),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: allItems.map((item) {
+                      final id = item['id']!;
+                      final lbl = item['label'] ?? '';
+                      final isSel = tempSelected.contains(id);
+                      return ChoiceChip(
+                        label: Text(lbl,
+                            style: getRegularTextStyle(
+                              fontSize: ManagerFontSize.s12,
+                              color: isSel
+                                  ? Colors.white
+                                  : ManagerColors.primaryColor,
+                            )),
+                        selected: isSel,
+                        selectedColor: ManagerColors.primaryColor,
+                        backgroundColor:
+                            ManagerColors.primaryColor.withOpacity(0.06),
+                        onSelected: (_) {
+                          setState(() {
+                            isSel
+                                ? tempSelected.remove(id)
+                                : tempSelected.add(id);
+                          });
+                        },
+                      );
+                    }).toList(),
                   ),
-                  const SizedBox(height: 16),
-
-                  Text(
-                    "اختر من القائمة",
-                    style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s14,
-                      color: ManagerColors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  /// ===== قائمة الخيارات =====
-                  Flexible(
-                    child: SingleChildScrollView(
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: filtered.map((item) {
-                          final id = item['id']!;
-                          final lbl = item['label'] ?? '';
-                          final isSel = tempSelected.contains(id);
-
-                          return ChoiceChip(
-                            checkmarkColor: ManagerColors.white,
-                            label: Text(
-                              lbl,
-                              style: getRegularTextStyle(
-                                fontSize: ManagerFontSize.s12,
-                                color: isSel
-                                    ? Colors.white
-                                    : ManagerColors.primaryColor,
-                              ),
-                            ),
-                            selected: isSel,
-                            selectedColor: ManagerColors.primaryColor,
-                            backgroundColor:
-                                ManagerColors.primaryColor.withOpacity(0.06),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(
-                                color: isSel
-                                    ? ManagerColors.primaryColor
-                                    : ManagerColors.primaryColor
-                                        .withOpacity(0.3),
-                              ),
-                            ),
-                            onSelected: (_) {
-                              setState(() {
-                                if (isSel) {
-                                  tempSelected.remove(id);
-                                } else {
-                                  tempSelected.add(id);
-                                }
-                              });
-                            },
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  /// ===== الأزرار (زر تم على اليسار، إلغاء على اليمين) =====
+                  const SizedBox(height: 20),
                   Row(
                     children: [
-                      /// زر "تم" على اليسار
                       Expanded(
                         child: ElevatedButton(
                           onPressed: () {
@@ -691,42 +548,24 @@ class _MultiSelectPicker extends StatelessWidget {
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: ManagerColors.primaryColor,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            'تم',
-                            style: getBoldTextStyle(
-                              fontSize: ManagerFontSize.s12,
-                              color: Colors.white,
-                            ),
-                          ),
+                              backgroundColor: ManagerColors.primaryColor),
+                          child: Text('تم',
+                              style: getBoldTextStyle(
+                                  fontSize: ManagerFontSize.s12,
+                                  color: Colors.white)),
                         ),
                       ),
-
-                      const SizedBox(width: 12),
-
-                      /// زر "إلغاء" على اليمين
+                      const SizedBox(width: 10),
                       Expanded(
                         child: OutlinedButton(
                           onPressed: () => Navigator.pop(context),
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: ManagerColors.primaryColor),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                          ),
-                          child: Text(
-                            'إلغاء',
-                            style: getRegularTextStyle(
-                              fontSize: ManagerFontSize.s12,
-                              color: ManagerColors.primaryColor,
-                            ),
-                          ),
+                              side: BorderSide(
+                                  color: ManagerColors.primaryColor)),
+                          child: Text('إلغاء',
+                              style: getRegularTextStyle(
+                                  fontSize: ManagerFontSize.s12,
+                                  color: ManagerColors.primaryColor)),
                         ),
                       ),
                     ],
