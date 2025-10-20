@@ -26,6 +26,7 @@ import '../../features/providers/commercial_contracts/request_for_a_new_service_
 import '../../features/providers/commercial_contracts/subscription_commercial_contracts_provider/presentation/pages/subscription_commercial_contracts_provider_screen.dart';
 import '../../features/providers/commercial_contracts/subscription_information/presentation/pages/subscription_information_screen.dart';
 import '../../features/providers/job_provider_app/add_company_jobs_provider/presentation/pages/add_company_jobs_provider_screen.dart';
+import '../../features/providers/job_provider_app/add_job_provider/presentation/pages/add_jobs_provider_screen.dart';
 import '../../features/providers/job_provider_app/manage_company_jobs_provider/presentation/pages/manage_company_jobs_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
@@ -126,6 +127,7 @@ class Routes {
       "addCompanyJobsProviderScreen";
   static const String manageCompanyJobsProviderScreen =
       "manageCompanyJobsProviderScreen";
+  static const String addJobsProviderScreen = "addJobsProviderScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -264,6 +266,10 @@ class RouteGenerator {
       case Routes.manageCompanyJobsProviderScreen:
         return MaterialPageRoute(
           builder: (_) => ManageCompanyJobsProviderScreen(),
+        );
+      case Routes.addJobsProviderScreen:
+        return MaterialPageRoute(
+          builder: (_) => AddJobsProviderScreen(),
         );
       default:
         return unDefinedRoute();
