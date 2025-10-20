@@ -28,6 +28,7 @@ import '../../features/providers/commercial_contracts/subscription_information/p
 import '../../features/providers/job_provider_app/add_company_jobs_provider/presentation/pages/add_company_jobs_provider_screen.dart';
 import '../../features/providers/job_provider_app/add_job_provider/presentation/pages/add_jobs_provider_screen.dart';
 import '../../features/providers/job_provider_app/manage_company_jobs_provider/presentation/pages/manage_company_jobs_provider_screen.dart';
+import '../../features/providers/job_provider_app/manager_jobs_provider/presentation/presentation/pages/manager_jobs_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
@@ -128,6 +129,7 @@ class Routes {
   static const String manageCompanyJobsProviderScreen =
       "manageCompanyJobsProviderScreen";
   static const String addJobsProviderScreen = "addJobsProviderScreen";
+  static const String managerJobsScreen = "managerJobsScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -270,6 +272,10 @@ class RouteGenerator {
       case Routes.addJobsProviderScreen:
         return MaterialPageRoute(
           builder: (_) => AddJobsProviderScreen(),
+        );
+      case Routes.managerJobsScreen:
+        return MaterialPageRoute(
+          builder: (_) => ManagerJobsScreen(),
         );
       default:
         return unDefinedRoute();
