@@ -25,6 +25,8 @@ import '../../features/providers/commercial_contracts/register_service_provider_
 import '../../features/providers/commercial_contracts/request_for_a_new_service_commercial_contracts/presentation/pages/request_for_a_new_service_commercial_contracts_screen.dart';
 import '../../features/providers/commercial_contracts/subscription_commercial_contracts_provider/presentation/pages/subscription_commercial_contracts_provider_screen.dart';
 import '../../features/providers/commercial_contracts/subscription_information/presentation/pages/subscription_information_screen.dart';
+import '../../features/providers/job_provider_app/add_company_jobs_provider/presentation/pages/add_company_jobs_provider_screen.dart';
+import '../../features/providers/job_provider_app/manage_company_jobs_provider/presentation/pages/manage_company_jobs_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
@@ -118,6 +120,12 @@ class Routes {
   //Jobs User Screen
 
   static const String addCvUserScreen = "addCvUserScreen";
+
+  /// Jobs Provider
+  static const String addCompanyJobsProviderScreen =
+      "addCompanyJobsProviderScreen";
+  static const String manageCompanyJobsProviderScreen =
+      "manageCompanyJobsProviderScreen";
 
   ///Common Screens
   static const String profileScreen = '/profile_screen';
@@ -248,6 +256,14 @@ class RouteGenerator {
       case Routes.addCvUserScreen:
         return MaterialPageRoute(
           builder: (_) => AddCvUserScreen(),
+        );
+      case Routes.addCompanyJobsProviderScreen:
+        return MaterialPageRoute(
+          builder: (_) => AddCompanyJobsProviderScreen(),
+        );
+      case Routes.manageCompanyJobsProviderScreen:
+        return MaterialPageRoute(
+          builder: (_) => ManageCompanyJobsProviderScreen(),
         );
       default:
         return unDefinedRoute();
