@@ -55,7 +55,6 @@ class _ManagerMyRealEstateProviderScreenState
           return const Center(child: Text("لا يوجد عقارات حالياً"));
         }
 
-        // 🔹 Add RefreshIndicator to allow pull-to-refresh
         return RefreshIndicator(
           color: Colors.blue,
           onRefresh: () async {

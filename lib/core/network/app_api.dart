@@ -214,4 +214,11 @@ abstract class AppService {
     @Query(RequestConstants.lng) String? lng,
     @Query(RequestConstants.language) String? language,
   );
+
+  /// Edit My Real Estate Request => setmyproperty
+  @POST(RequestConstantsEndpoints.editRealEstate)
+  @MultiPart()
+  Future<WithOutDataResponse> editRealEstate(
+    @Body() FormData formData,
+  );
 }
