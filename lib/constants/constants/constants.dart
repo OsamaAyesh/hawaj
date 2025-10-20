@@ -116,4 +116,24 @@ class Constants {
       'subtitle': ManagerStrings.editMyDataSubtitle,
     },
   ];
+
+  ///===== Manager Provider Jobs App Features.
+  static List<Map<String, String>> itemsManagerProviderJobs = [
+    {
+      'icon': ManagerIcons.providerJobsManager1,
+      'title': "إضافة وظيفة",
+      'subtitle': "أدخل تفاصيل الوظيفة لتظهر للباحثين وتستقبل الطلبات بسهولة.",
+    },
+    {
+      'icon': ManagerIcons.providerJobsManager2,
+      'title': "إدارة الوظائف",
+      'subtitle':
+          "راجع الوظائف التي نشرتها سابقًا، وقم بتعديل التفاصيل أو إيقاف النشر حسب الحاجة",
+    },
+    {
+      'icon': ManagerIcons.providerJobsManager3,
+      'title': "إدارة بيانات الشركة",
+      'subtitle': "حدث بيانات شركتك لتحافظ على ظهورك بشكل احترافي.",
+    },
+  ];
 }
