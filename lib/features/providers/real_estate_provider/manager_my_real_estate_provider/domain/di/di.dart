@@ -1,7 +1,10 @@
+import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/data_source/delete_my_real_estate_data_source.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/data_source/edit_my_real_estate_data_source.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/data_source/get_my_real_estates_data_source.dart';
+import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/repository/delete_my_real_estate_repository.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/repository/edit_my_real_estate_repository.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/data/repository/get_my_real_estates_repository.dart';
+import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/domain/use_cases/delete_my_real_estate_use_case.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/domain/use_cases/edit_my_real_estate_use_case.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/manager_my_real_estate_provider/domain/use_cases/get_my_real_estates_use_cases.dart';
 import 'package:get/get.dart';
@@ -94,5 +97,48 @@ void initEditMyRealEstate() {
 
 void disposeEditMyRealEstate() {
   disposeEditMyRealEstateRequest();
+  // Get.delete<GetMyRealEstatesController>();
+}
+
+initDeleteMyRealEstateRequest() {
+  if (!GetIt.I.isRegistered<DeleteMyRealEstateDataSource>()) {
+    instance.registerLazySingleton<DeleteMyRealEstateDataSource>(
+        () => DeleteMyRealEstateDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!GetIt.I.isRegistered<DeleteMyRealEstateRepository>()) {
+    instance.registerLazySingleton<DeleteMyRealEstateRepository>(
+        () => DeleteMyRealEstateRepositoryImplement(instance(), instance()));
+  }
+
+  if (!GetIt.I.isRegistered<DeleteMyRealEstateUseCase>()) {
+    instance.registerFactory<DeleteMyRealEstateUseCase>(() =>
+        DeleteMyRealEstateUseCase(instance<DeleteMyRealEstateRepository>()));
+  }
+}
+
+disposeDeleteMyRealEstateRequest() {
+  if (GetIt.I.isRegistered<DeleteMyRealEstateDataSource>()) {
+    instance.unregister<DeleteMyRealEstateDataSource>();
+  }
+
+  if (GetIt.I.isRegistered<DeleteMyRealEstateRepository>()) {
+    instance.unregister<DeleteMyRealEstateRepository>();
+  }
+
+  if (GetIt.I.isRegistered<DeleteMyRealEstateUseCase>()) {
+    instance.unregister<DeleteMyRealEstateUseCase>();
+  }
+}
+
+void initDeleteMyRealEstate() {
+  initDeleteMyRealEstateRequest();
+  // Get.put(GetMyRealEstatesController(
+  //   instance<GetMyRealEstatesUseCases>(),
+  // ));
+}
+
+void disposeDeleteMyRealEstate() {
+  disposeDeleteMyRealEstateRequest();
   // Get.delete<GetMyRealEstatesController>();
 }

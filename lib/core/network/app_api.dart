@@ -221,4 +221,13 @@ abstract class AppService {
   Future<WithOutDataResponse> editRealEstate(
     @Body() FormData formData,
   );
+
+  ///Delete My Real Estate Request => deletemyproperty
+  @POST(RequestConstantsEndpoints.deleteMyRealEstate)
+  Future<WithOutDataResponse> deleteMyRealEstate(
+    @Query(RequestConstants.lat) String? lat,
+    @Query(RequestConstants.id) double? id,
+    @Query(RequestConstants.lng) String? lng,
+    @Query(RequestConstants.language) String? language,
+  );
 }
