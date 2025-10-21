@@ -12,33 +12,28 @@ class EditMyRealEstateController extends GetxController {
 
   EditMyRealEstateController(this._editMyRealEstateUseCase);
 
-  /// Reactive loading indicator
   final isLoading = false.obs;
 
-  /// Function to call the edit use case
   Future<void> editRealEstate(EditMyRealEstateRequest request) async {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    final Either<Failure, WithOutDataModel> response =
-        await _editMyRealEstateUseCase.execute(request);
+      final Either<Failure, WithOutDataModel> response =
+          await _editMyRealEstateUseCase.execute(request);
 
-    response.fold(
-      (failure) {
-        AppSnackbar.error(failure.message);
-        // showCustomSnackBar(
-        //   message: failure.message,
-        //   isError: true,
-        // );
-      },
-      (data) {
-        AppSnackbar.success("تم تعديل العقار بنجاح");
-        // showCustomSnackBar(
-        //   message: "تم تعديل العقار بنجاح ✅",
-        // );
-        update(); // Trigger UI refresh if needed
-      },
-    );
-
-    isLoading.value = false;
+      response.fold(
+        (failure) {
+          AppSnackbar.error(failure.message);
+        },
+        (data) {
+          AppSnackbar.success("تم تعديل العقار بنجاح ✅");
+          Get.back();
+        },
+      );
+    } catch (e) {
+      AppSnackbar.error("حدث خطأ أثناء تعديل العقار");
+    } finally {
+      isLoading.value = false;
+    }
   }
 }

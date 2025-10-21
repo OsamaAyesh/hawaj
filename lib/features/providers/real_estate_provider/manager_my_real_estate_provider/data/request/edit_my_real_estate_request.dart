@@ -1,30 +1,29 @@
 import 'dart:io';
-
 import 'package:dio/dio.dart';
 
-/// Request Model: Add My Property
-
+/// Request Model: Edit My Property
 class EditMyRealEstateRequest {
-  final String propertySubject;
-  final String propertyType;
-  final String operationType;
-  final String advertiserRole;
-  final String saleType;
-  final String keywords;
-  final String lat;
-  final String lng;
-  final String propertyDetailedAddress;
-  final String price;
-  final String areaSqm;
-  final String commissionPercentage;
-  final String usageType;
-  final String propertyDescription;
-  final String featureIds;
-  final String facilityIds;
-  final String visitDays;
-  final String visitTimeFrom;
-  final String visitTimeTo;
-  final String propertyOwnerId;
+  final String? propertySubject;
+  final String? propertyType;
+  final String? operationType;
+  final String? advertiserRole;
+  final String? saleType;
+  final String? keywords;
+  final String? lat;
+  final String? lng;
+  final String? propertyDetailedAddress;
+  final String? price;
+  final String? areaSqm;
+  final String? commissionPercentage;
+  final String? usageType;
+  final String? propertyDescription;
+  final String? featureIds;
+  final String? facilityIds;
+  final String? visitDays;
+  final String? visitTimeFrom;
+  final String? visitTimeTo;
+  final String? propertyOwnerId;
+  final String id;
 
   /// الملفات
   final List<File>? propertyImages;
@@ -52,6 +51,7 @@ class EditMyRealEstateRequest {
     required this.visitTimeFrom,
     required this.visitTimeTo,
     required this.propertyOwnerId,
+    required this.id,
     this.propertyImages,
     this.propertyVideos,
     this.deedDocument,
@@ -60,28 +60,32 @@ class EditMyRealEstateRequest {
   Future<FormData> toFormData() async {
     final formData = FormData();
 
+    // ✅ استخدم القيم الافتراضية إذا كانت null لتجنب الخطأ
+    String safe(String? v) => v ?? '';
+
     // ===== Text Fields =====
     formData.fields.addAll([
-      MapEntry('property_subject', propertySubject),
-      MapEntry('property_type', propertyType),
-      MapEntry('operation_type', operationType),
-      MapEntry('advertiser_role', advertiserRole),
-      MapEntry('sale_type', saleType),
-      MapEntry('keywords', keywords),
-      MapEntry('lat', lat),
-      MapEntry('lng', lng),
-      MapEntry('property_detailed_address', propertyDetailedAddress),
-      MapEntry('price', price),
-      MapEntry('area_sqm', areaSqm),
-      MapEntry('commission_percentage', commissionPercentage),
-      MapEntry('usage_type', usageType),
-      MapEntry('property_description', propertyDescription),
-      MapEntry('feature_ids', featureIds),
-      MapEntry('facility_ids', facilityIds),
-      MapEntry('visit_days', visitDays),
-      MapEntry('visit_time_from', visitTimeFrom),
-      MapEntry('visit_time_to', visitTimeTo),
-      MapEntry('propertyowner_id', propertyOwnerId),
+      MapEntry('property_subject', safe(propertySubject)),
+      MapEntry('property_type', safe(propertyType)),
+      MapEntry('operation_type', safe(operationType)),
+      MapEntry('advertiser_role', safe(advertiserRole)),
+      MapEntry('sale_type', safe(saleType)),
+      MapEntry('keywords', safe(keywords)),
+      MapEntry('lat', safe(lat)),
+      MapEntry('lng', safe(lng)),
+      MapEntry('property_detailed_address', safe(propertyDetailedAddress)),
+      MapEntry('price', safe(price)),
+      MapEntry('area_sqm', safe(areaSqm)),
+      MapEntry('commission_percentage', safe(commissionPercentage)),
+      MapEntry('usage_type', safe(usageType)),
+      MapEntry('property_description', safe(propertyDescription)),
+      MapEntry('feature_ids', safe(featureIds)),
+      MapEntry('facility_ids', safe(facilityIds)),
+      MapEntry('visit_days', safe(visitDays)),
+      MapEntry('visit_time_from', safe(visitTimeFrom)),
+      MapEntry('visit_time_to', safe(visitTimeTo)),
+      MapEntry('propertyowner_id', safe(propertyOwnerId)),
+      MapEntry('id', id),
     ]);
 
     // ===== Files =====

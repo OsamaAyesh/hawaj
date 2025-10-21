@@ -1,16 +1,17 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/widgets/custom_confirm_dialog.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/model/real_estate_item_model.dart';
+import '../../domain/di/di.dart';
 import '../controller/delete_my_real_estate_controller.dart';
 import '../controller/get_my_real_estates_controller.dart';
 import '../widgets/real_estate_list_widget.dart';
+import 'edit_my_real_estate_screen.dart';
 
-/// =====================
-/// 🔹 شاشة إدارة العقارات
-/// =====================
 class ManagerMyRealEstateProviderScreen extends StatefulWidget {
   const ManagerMyRealEstateProviderScreen({super.key});
 
@@ -38,7 +39,6 @@ class _ManagerMyRealEstateProviderScreenState
       title: "عقاراتي",
       body: Stack(
         children: [
-          /// 🔹 المحتوى الرئيسي
           Obx(() {
             if (getController.errorMessage.isNotEmpty) {
               return Center(
@@ -59,9 +59,13 @@ class _ManagerMyRealEstateProviderScreenState
               onRefresh: () async => await getController.refreshEstates(),
               child: RealEstateListWidget(
                 realEstates: getController.realEstates,
-                onEdit: (id) {
-                  // Get.toNamed('/editRealEstate', arguments: id);
+
+                /// ✅ onEdit الآن يأخذ Model مباشرة
+                onEdit: (RealEstateItemModel estate) {
+                  initEditMyRealEstate();
+                  Get.to(() => EditMyRealEstateScreen(realEstate: estate));
                 },
+
                 onDelete: (id) async {
                   await _showDeleteDialog(context, id);
                 },
@@ -69,14 +73,11 @@ class _ManagerMyRealEstateProviderScreenState
             );
           }),
 
-          /// 🔹 Loading يغطي الشاشة بالكامل
+          /// ✅ Loading Overlay
           Obx(() {
             if (getController.isLoading.value ||
                 deleteController.isLoading.value) {
-              return Container(
-                color: Colors.black.withOpacity(0.2),
-                child: const Center(child: LoadingWidget()),
-              );
+              return const LoadingWidget();
             }
             return const SizedBox.shrink();
           }),
@@ -85,37 +86,22 @@ class _ManagerMyRealEstateProviderScreenState
     );
   }
 
-  /// 🔹 دالة عرض الديالوج لتأكيد الحذف
   Future<void> _showDeleteDialog(BuildContext context, String id) async {
     await showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        title: const Text("تأكيد الحذف"),
-        content: const Text("هل أنت متأكد أنك تريد حذف هذا العقار؟"),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text("إلغاء"),
-          ),
-          TextButton(
-            onPressed: () async {
-              Get.back();
-              await deleteController.deleteRealEstate(double.tryParse(id) ?? 1);
-              await getController.refreshEstates();
-            },
-            child: const Text("تأكيد", style: TextStyle(color: Colors.red)),
-          ),
-        ],
+      barrierDismissible: false,
+      builder: (context) => CustomConfirmDialog(
+        title: "تأكيد الحذف",
+        subtitle: "هل أنت متأكد أنك تريد حذف هذا العقار؟",
+        confirmText: "تأكيد",
+        cancelText: "إلغاء",
+        onConfirm: () async {
+          Get.back();
+          await deleteController.deleteRealEstate(double.tryParse(id) ?? 0);
+          await getController.refreshEstates();
+        },
+        onCancel: () => Get.back(),
       ),
     );
   }
 }
-
-/// =====================
-/// 🔹 قائمة العقارات
-/// =====================
-
-/// =====================
-/// 🔹 كارد العقار
-/// =====================
