@@ -62,6 +62,7 @@ class _DashboardRealEstateManagerScreenState
           print("عقاراتي");
         }
         initGetMyRealEstates();
+        initDeleteMyRealEstate();
         Get.to(ManagerMyRealEstateProviderScreen());
         // initAddMyPropertyOwners();
         // Get.to(RegisterToRealEstateProviderServiceScreen());

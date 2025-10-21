@@ -12,6 +12,8 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
+import '../../presentation/controller/delete_my_real_estate_controller.dart';
+import '../../presentation/controller/edit_my_real_estate_controller.dart';
 import '../../presentation/controller/get_my_real_estates_controller.dart';
 
 initGetMyRealEstatesRequest() {
@@ -90,14 +92,14 @@ disposeEditMyRealEstateRequest() {
 
 void initEditMyRealEstate() {
   initEditMyRealEstateRequest();
-  // Get.put(GetMyRealEstatesController(
-  //   instance<GetMyRealEstatesUseCases>(),
-  // ));
+  Get.put(EditMyRealEstateController(
+    instance<EditMyRealEstateUseCase>(),
+  ));
 }
 
 void disposeEditMyRealEstate() {
   disposeEditMyRealEstateRequest();
-  // Get.delete<GetMyRealEstatesController>();
+  Get.delete<EditMyRealEstateController>();
 }
 
 initDeleteMyRealEstateRequest() {
@@ -133,12 +135,12 @@ disposeDeleteMyRealEstateRequest() {
 
 void initDeleteMyRealEstate() {
   initDeleteMyRealEstateRequest();
-  // Get.put(GetMyRealEstatesController(
-  //   instance<GetMyRealEstatesUseCases>(),
-  // ));
+  Get.put(DeleteMyRealEstateController(
+    instance<DeleteMyRealEstateUseCase>(),
+  ));
 }
 
 void disposeDeleteMyRealEstate() {
   disposeDeleteMyRealEstateRequest();
-  // Get.delete<GetMyRealEstatesController>();
+  Get.delete<DeleteMyRealEstateController>();
 }
