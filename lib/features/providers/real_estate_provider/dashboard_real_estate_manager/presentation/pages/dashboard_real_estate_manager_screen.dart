@@ -1,4 +1,5 @@
 import 'package:app_mobile/constants/constants/constants.dart';
+import 'package:app_mobile/features/providers/real_estate_provider/get_real_estate_my_owners/presentation/pages/get_real_estate_my_owners_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -17,8 +18,7 @@ import '../../../../../common/map/domain/di/di.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
 import '../../../add_real_estate/domain/di/di.dart';
 import '../../../add_real_estate/presentation/pages/add_real_estate_screen.dart';
-import '../../../edit_profile_real_state_owner/domain/di/di.dart';
-import '../../../edit_profile_real_state_owner/presentation/pages/edit_profile_real_state_owner_screen.dart';
+import '../../../get_real_estate_my_owners/domain/di.dart';
 import '../../../manager_my_real_estate_provider/domain/di/di.dart';
 import '../../../manager_my_real_estate_provider/presentation/pages/manager_my_real_estate_provider_screen.dart';
 
@@ -59,6 +59,15 @@ class _DashboardRealEstateManagerScreenState
     quickAccessActions = [
       () {
         if (kDebugMode) {
+          print("ملكياتي");
+        }
+        initGetPropertyOwnersModule();
+        Get.to(GetRealEstateMyOwnersScreen());
+        // initAddMyPropertyOwners();
+        // Get.to(RegisterToRealEstateProviderServiceScreen());
+      },
+      () {
+        if (kDebugMode) {
           print("عقاراتي");
         }
         initGetMyRealEstates();
@@ -76,8 +85,8 @@ class _DashboardRealEstateManagerScreenState
       },
       () {
         if (kDebugMode) {
-          initEditProfileMyPropertyOwnerModule();
-          Get.to(EditProfileRealStateOwnerScreen());
+          // initEditProfileMyPropertyOwnerModule();
+          // Get.to(EditProfileRealStateOwnerScreen());
           print("تعديل بياناتي");
         }
       },

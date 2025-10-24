@@ -1,4 +1,3 @@
-import 'package:app_mobile/core/model/real_estate_item_model.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/login_screen.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/otp_login_screen.dart';
 import 'package:app_mobile/features/common/auth/presentation/pages/success_login_screen.dart';
@@ -36,7 +35,7 @@ import '../../features/providers/offers_provider/register_company_offer_provider
 import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
 import '../../features/providers/real_estate_provider/add_real_estate/presentation/pages/add_real_estate_screen.dart';
 import '../../features/providers/real_estate_provider/dashboard_real_estate_manager/presentation/pages/dashboard_real_estate_manager_screen.dart';
-import '../../features/providers/real_estate_provider/manager_my_real_estate_provider/presentation/pages/edit_my_real_estate_screen.dart';
+import '../../features/providers/real_estate_provider/get_real_estate_my_owners/presentation/pages/get_real_estate_my_owners_screen.dart';
 import '../../features/providers/real_estate_provider/manager_my_real_estate_provider/presentation/pages/manager_my_real_estate_provider_screen.dart';
 import '../../features/providers/real_estate_provider/register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
 import '../../features/users/commercial_contract_user/manage_contracrs_user/presentation/pages/manage_contract_user_screen.dart';
@@ -121,6 +120,8 @@ class Routes {
   static const String managerMyRealEstateProviderScreen =
       "managerMyRealEstateProviderScreen";
   static const String editMyRealEstateScreen = "editMyRealEstateScreen";
+  static const String getRealEstateMyOwnersScreen =
+      "getRealEstateMyOwnersScreen";
 
   //Jobs User Screen
 
@@ -279,6 +280,10 @@ class RouteGenerator {
       case Routes.managerJobsScreen:
         return MaterialPageRoute(
           builder: (_) => ManagerJobsScreen(),
+        );
+      case Routes.getRealEstateMyOwnersScreen:
+        return MaterialPageRoute(
+          builder: (_) => GetRealEstateMyOwnersScreen(),
         );
       // case Routes.editMyRealEstateScreen:
       //   return MaterialPageRoute(

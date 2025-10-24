@@ -102,6 +102,11 @@ class Constants {
   static List<Map<String, String>> itemsManagerProviderRealEstate = [
     {
       'icon': ManagerIcons.providerRealStateManager1,
+      'title': "ملكياتي",
+      'subtitle': "للوصول لكل ملكية وتفاصيل العقارات التابعة لها.",
+    },
+    {
+      'icon': ManagerIcons.providerRealStateManager1,
       'title': ManagerStrings.myPropertiesTitle,
       'subtitle': ManagerStrings.myPropertiesSubtitle,
     },

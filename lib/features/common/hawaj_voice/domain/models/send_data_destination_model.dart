@@ -2,7 +2,6 @@ class SendDataDestinationModel {
   final String section;
   final String screen;
 
-  // final dynamic parameters; // خليها dynamic مش List
   final String message;
   final String mp3;
 
@@ -20,9 +19,4 @@ class SendDataDestinationModel {
   bool get hasAudio => mp3.isNotEmpty;
 
   bool get hasMessage => message.isNotEmpty;
-
-// 🔹 Helper لسهولة التعامل
-// bool get isParametersMap => parameters is Map<String, dynamic>;
-//
-// bool get isParametersList => parameters is List;
 }

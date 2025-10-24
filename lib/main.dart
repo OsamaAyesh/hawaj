@@ -52,6 +52,7 @@ class MyApp extends StatelessWidget {
               dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
           initialRoute: Routes.dashboardRealEstateManagerScreen,
+          // initialRoute: Routes.getRealEstateMyOwnersScreen,
           navigatorKey: Get.key,
           theme: ThemeData(
             useMaterial3: true,
