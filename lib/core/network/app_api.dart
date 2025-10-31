@@ -13,6 +13,7 @@ import '../../constants/request_constants/request_constants_endpoints.dart';
 import '../../features/common/auth/data/response/verfiy_otp_response.dart';
 import '../../features/common/hawaj_voice/data/response/send_data_response.dart';
 import '../../features/common/lists/data/response/get_lists_response.dart';
+import '../../features/providers/job_provider_app/list_company_job/data/response/get_list_company_jobs_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
@@ -248,4 +249,8 @@ abstract class AppService {
   Future<WithOutDataResponse> addCompanyJobs(
     @Body() FormData formData,
   );
+
+  ///Get List Company Jobs Request=> getListCompanyJobs
+  @GET(RequestConstantsEndpoints.getListCompanyJobs)
+  Future<GetListCompanyJobsResponse> getListCompanyJobs();
 }

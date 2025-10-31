@@ -30,4 +30,6 @@ class RequestConstantsEndpoints {
   static const String editProfileMyPropertyOwner =
       '$apiUrlBase/setmypropertyowner';
   static const String getMyRealUserEstate = '$apiUrlBase/getproperty';
+  static const String addCompanyJobs = '$apiUrlBase/companies';
+  static const String getListCompanyJobs = '$apiUrlBase/companies';
 }

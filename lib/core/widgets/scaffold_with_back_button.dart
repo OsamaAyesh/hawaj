@@ -69,7 +69,10 @@ class ScaffoldWithBackButton extends StatelessWidget {
                   ? RefreshIndicator(
                       onRefresh: onRefresh!,
                       child: SingleChildScrollView(
+                        padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewInsets.bottom),
                         physics: const BouncingScrollPhysics(),
+                        // physics: const AlwaysScrollableScrollPhysics(),
                         child: body,
                       ),
                     )

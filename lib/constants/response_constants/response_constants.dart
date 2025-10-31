@@ -66,4 +66,19 @@ class ResponseConstants {
   static const String screen = "screen";
   static const String parameters = "parameters";
   static const String mp3 = "mp3";
+  static const String companyName = "company_name";
+  static const String industry = "industry";
+  static const String mobileNumber = "mobile_number";
+  static const String locationLat = "location_lat";
+  static const String locationLng = "location_lng";
+  static const String detailedAddress = "detailed_address";
+  static const String companyDescription = "company_description";
+  static const String companyShortDescription = "company_short_description";
+  static const String companyLogo = "company_logo";
+  static const String contactPersonName = "contact_person_name";
+  static const String contactPersonEmail = "contact_person_email";
+  static const String commercialRegister = "commercial_register";
+  static const String activityLicense = "activity_license";
+  static const String memberId = "member_id";
+  static const String memberIdLable = "member_id_lable";
 }

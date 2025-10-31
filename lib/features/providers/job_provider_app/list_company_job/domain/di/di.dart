@@ -1,15 +1,13 @@
 import 'package:app_mobile/features/providers/job_provider_app/add_company_jobs_provider/data/data_source/add_company_jobs_data_source.dart';
 import 'package:app_mobile/features/providers/job_provider_app/add_company_jobs_provider/data/repository/add_company_jobs_repository.dart';
 import 'package:app_mobile/features/providers/job_provider_app/add_company_jobs_provider/domain/use_cases/add_company_jobs_use_case.dart';
-import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../../core/network/app_api.dart';
-import '../../presentation/controller/add_company_jobs_provider_controller.dart';
 
 final instance = GetIt.instance;
 
-initAddCompanyJobsRequest() {
+initGetListCompanyJobsRequest() {
   if (!GetIt.I.isRegistered<AddCompanyJobsDataSource>()) {
     instance.registerLazySingleton<AddCompanyJobsDataSource>(
         () => AddCompanyJobsDataSourceImplement(instance<AppService>()));
@@ -26,7 +24,7 @@ initAddCompanyJobsRequest() {
   }
 }
 
-disposeAddMyPropertyOwnersRequest() {
+disposeGetListCompanyJobsRequest() {
   if (GetIt.I.isRegistered<AddCompanyJobsDataSource>()) {
     instance.unregister<AddCompanyJobsDataSource>();
   }
@@ -40,14 +38,14 @@ disposeAddMyPropertyOwnersRequest() {
   }
 }
 
-void initAddCompanyJobs() {
-  initAddCompanyJobsRequest();
-  Get.put(AddCompanyJobsController(
-    instance<AddCompanyJobsUseCase>(),
-  ));
+void initGetListCompanyJobs() {
+  initGetListCompanyJobsRequest();
+  // Get.put(AddCompanyJobsController(
+  //   instance<AddCompanyJobsUseCase>(),
+  // ));
 }
 
-void disposeAddCompanyJobs() {
-  disposeAddMyPropertyOwnersRequest();
-  Get.delete<AddCompanyJobsController>();
+void disposeGetListCompanyJobs() {
+  disposeGetListCompanyJobsRequest();
+  // Get.delete<AddCompanyJobsController>();
 }
