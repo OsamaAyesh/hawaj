@@ -24,6 +24,7 @@ class ManagerImages {
   static const String image3remove = "$imagesRemovePath/image3remove.jpg";
   static const String removeRealState =
       "$imagesRemovePath/remove_real_state.png";
+  static const String backRemove = "$imagesRemovePath/back_remove.png";
 
   ///======== Welcome Hawaj Start Images.
   static const String welcomeStartImage = "$imagesPath/welcome_start_image.png";
