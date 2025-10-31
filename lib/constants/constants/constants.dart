@@ -125,6 +125,11 @@ class Constants {
   ///===== Manager Provider Jobs App Features.
   static List<Map<String, String>> itemsManagerProviderJobs = [
     {
+      'icon': ManagerIcons.providerJobsManager4,
+      'title': "شركاتي",
+      'subtitle': "يمكنك إدراة شركاتك بسهولة من خلال هذا القسم",
+    },
+    {
       'icon': ManagerIcons.providerJobsManager1,
       'title': "إضافة وظيفة",
       'subtitle': "أدخل تفاصيل الوظيفة لتظهر للباحثين وتستقبل الطلبات بسهولة.",

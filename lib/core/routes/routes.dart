@@ -43,6 +43,7 @@ import '../../features/users/commercial_contract_user/manager_my_requests_contra
 import '../../features/users/commercial_contract_user/show_details_contract_provider/presentation/pages/show_details_contract_provider_screen.dart';
 import '../../features/users/jobs_user_app/add_cv_user/presentation/add_cv_user_screen.dart';
 import '../../features/users/jobs_user_app/available_jobs_user/presentation/pages/available_jobs_user_screen.dart';
+import '../../features/users/jobs_user_app/show_details_job_user/presentation/pages/show_details_job_user_screen.dart';
 import '../../features/users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
 import '../../features/users/real_estate_user/show_real_state_details_user/presentation/pages/show_real_state_details_user_screen.dart';
 import '../resources/manager_strings.dart';
@@ -128,6 +129,7 @@ class Routes {
 
   static const String addCvUserScreen = "addCvUserScreen";
   static const String availableJobsUserScreen = "availableJobsUserScreen";
+  static const String showDetailsJobUserScreen = "ShowDetailsJobUserScreen";
 
   /// Jobs Provider
   static const String addCompanyJobsProviderScreen =
@@ -290,6 +292,10 @@ class RouteGenerator {
       case Routes.availableJobsUserScreen:
         return MaterialPageRoute(
           builder: (_) => AvailableJobsUserScreen(),
+        );
+      case Routes.showDetailsJobUserScreen:
+        return MaterialPageRoute(
+          builder: (_) => ShowDetailsJobUserScreen(),
         );
       // case Routes.editMyRealEstateScreen:
       //   return MaterialPageRoute(

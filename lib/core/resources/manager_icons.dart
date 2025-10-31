@@ -105,4 +105,5 @@ class ManagerIcons {
   static const String providerJobsManager1 = "$iconsPath/add_job.png";
   static const String providerJobsManager2 = "$iconsPath/manager_job_icon.png";
   static const String providerJobsManager3 = "$iconsPath/manager_data_jobs.png";
+  static const String providerJobsManager4 = "$iconsPath/manager_jobs_icon.png";
 }

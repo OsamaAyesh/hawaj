@@ -240,4 +240,12 @@ abstract class AppService {
     @Query(RequestConstants.lng) String? lng,
     @Query(RequestConstants.language) String? language,
   );
+
+  ///=============================Jobs ================
+  ///Add Company Jobs Request =>
+  @POST(RequestConstantsEndpoints.addCompanyJobs)
+  @MultiPart()
+  Future<WithOutDataResponse> addCompanyJobs(
+    @Body() FormData formData,
+  );
 }
