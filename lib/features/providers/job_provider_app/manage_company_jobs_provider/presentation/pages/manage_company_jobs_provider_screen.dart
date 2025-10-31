@@ -1,4 +1,5 @@
 import 'package:app_mobile/constants/constants/constants.dart';
+import 'package:app_mobile/features/providers/job_provider_app/list_company_job/presentation/list_company_jobs_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,8 @@ import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
+import '../../../list_company_job/domain/di/di.dart'
+    show initGetListCompanyJobs;
 
 class ManageCompanyJobsProviderScreen extends StatefulWidget {
   const ManageCompanyJobsProviderScreen({super.key});
@@ -51,6 +54,13 @@ class _ManageCompanyJobsProviderScreenState
     );
 
     quickAccessActions = [
+      () {
+        if (kDebugMode) {
+          print("شركاتي");
+        }
+        initGetListCompanyJobs();
+        Get.to(ListCompanyJobsScreen());
+      },
       () {
         if (kDebugMode) {
           print("إضافة وظيفة");
