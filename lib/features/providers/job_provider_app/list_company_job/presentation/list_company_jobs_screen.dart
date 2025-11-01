@@ -3,6 +3,7 @@ import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:app_mobile/features/providers/job_provider_app/add_company_jobs_provider/presentation/pages/add_company_jobs_provider_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -10,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../add_company_jobs_provider/domain/di/di.dart';
+import '../../company_jobs_provider_details/presentation/pages/company_jobs_provider_details_screen.dart';
 import 'controller/list_company_jobs_controller.dart';
 
 class ListCompanyJobsScreen extends StatelessWidget {
@@ -77,16 +79,7 @@ class _LoadingState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text("جاري تحميل الشركات..."),
-        ],
-      ),
-    );
+    return const LoadingWidget();
   }
 }
 
@@ -226,7 +219,6 @@ class _CompanyCard extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
-        onTap: () => _showCompanyDetails(context),
         child: Padding(
           padding: EdgeInsets.all(ManagerWidth.w16),
           child: Column(
@@ -347,7 +339,9 @@ class _CompanyCard extends StatelessWidget {
             icon: Icons.visibility_outlined,
             label: "عرض التفاصيل",
             color: ManagerColors.primaryColor,
-            onTap: () => _showCompanyDetails,
+            onTap: () {
+              Get.to(CompanyJobsProviderDetailsScreen(company: company));
+            },
           ),
         ),
         SizedBox(width: ManagerWidth.w8),
@@ -444,13 +438,13 @@ class _CompanyCard extends StatelessWidget {
     );
   }
 
-  void _showCompanyDetails(BuildContext context) {
-    Get.to(
-      () => _CompanyDetailsScreen(company: company),
-      transition: Transition.rightToLeft,
-      duration: const Duration(milliseconds: 300),
-    );
-  }
+  // void _showCompanyDetails(BuildContext context) {
+  //   Get.to(
+  //     () => CompanyJobsProviderDetailsScreen(company: company),
+  //     transition: Transition.rightToLeft,
+  //     duration: const Duration(milliseconds: 300),
+  //   );
+  // }
 
   void _editCompany() {
     initAddCompanyJobs();
@@ -462,179 +456,179 @@ class _CompanyCard extends StatelessWidget {
   }
 }
 
-class _CompanyDetailsScreen extends StatelessWidget {
-  final dynamic company;
-
-  const _CompanyDetailsScreen({required this.company});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          company.companyName,
-          style: getBoldTextStyle(
-            fontSize: ManagerFontSize.s18,
-            color: Colors.white,
-          ),
-        ),
-        backgroundColor: ManagerColors.primaryColor,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Company Logo
-            _buildCompanyLogo(),
-            SizedBox(height: ManagerHeight.h24),
-
-            // Company Info
-            _buildCompanyInfo(),
-            SizedBox(height: ManagerHeight.h24),
-
-            // Contact Information
-            _buildContactSection(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCompanyLogo() {
-    return Center(
-      child: Hero(
-        tag: 'company_logo_${company.id}',
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: CachedNetworkImage(
-            imageUrl: company.companyLogo,
-            width: ManagerWidth.w120,
-            height: ManagerHeight.h120,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              width: ManagerWidth.w120,
-              height: ManagerHeight.h120,
-              decoration: BoxDecoration(
-                color: ManagerColors.greyWithColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: const Icon(Icons.business, color: Colors.grey, size: 40),
-            ),
-            errorWidget: (context, url, error) => Container(
-              width: ManagerWidth.w120,
-              height: ManagerHeight.h120,
-              decoration: BoxDecoration(
-                color: ManagerColors.greyWithColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child:
-                  const Icon(Icons.broken_image, color: Colors.grey, size: 40),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCompanyInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          company.companyName,
-          style: getBoldTextStyle(
-            fontSize: ManagerFontSize.s20,
-            color: ManagerColors.black,
-          ),
-        ),
-        SizedBox(height: ManagerHeight.h8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: ManagerColors.primaryColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Text(
-            company.industry,
-            style: getMediumTextStyle(
-              fontSize: ManagerFontSize.s14,
-              color: ManagerColors.primaryColor,
-            ),
-          ),
-        ),
-        SizedBox(height: ManagerHeight.h16),
-        if (company.companyDescription != null &&
-            company.companyDescription.isNotEmpty)
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "الوصف",
-                style: getBoldTextStyle(
-                  fontSize: ManagerFontSize.s16,
-                  color: ManagerColors.black,
-                ),
-              ),
-              SizedBox(height: ManagerHeight.h8),
-              Text(
-                company.companyDescription,
-                style: getRegularTextStyle(
-                  fontSize: ManagerFontSize.s14,
-                  color: ManagerColors.greyWithColor,
-                ),
-                textAlign: TextAlign.start,
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-
-  Widget _buildContactSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "معلومات التواصل",
-          style: getBoldTextStyle(
-            fontSize: ManagerFontSize.s16,
-            color: ManagerColors.black,
-          ),
-        ),
-        SizedBox(height: ManagerHeight.h16),
-        _buildDetailItem(Icons.phone, company.mobileNumber),
-        _buildDetailItem(Icons.location_on, company.detailedAddress),
-        _buildDetailItem(Icons.person, company.contactPersonName),
-        _buildDetailItem(Icons.email, company.contactPersonEmail),
-        if (company.memberIdLable != null && company.memberIdLable.isNotEmpty)
-          _buildDetailItem(Icons.verified_user, company.memberIdLable),
-      ],
-    );
-  }
-
-  Widget _buildDetailItem(IconData icon, String? value) {
-    if (value == null || value.isEmpty) return const SizedBox.shrink();
-
-    return Padding(
-      padding: EdgeInsets.only(bottom: ManagerHeight.h12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: ManagerColors.primaryColor, size: 20),
-          SizedBox(width: ManagerWidth.w12),
-          Expanded(
-            child: Text(
-              value,
-              style: getRegularTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: ManagerColors.black,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+// class _CompanyDetailsScreen extends StatelessWidget {
+//   final dynamic company;
+//
+//   const _CompanyDetailsScreen({required this.company});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(
+//           company.companyName,
+//           style: getBoldTextStyle(
+//             fontSize: ManagerFontSize.s18,
+//             color: Colors.white,
+//           ),
+//         ),
+//         backgroundColor: ManagerColors.primaryColor,
+//         elevation: 0,
+//       ),
+//       body: SingleChildScrollView(
+//         padding: const EdgeInsets.all(16),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             // Company Logo
+//             _buildCompanyLogo(),
+//             SizedBox(height: ManagerHeight.h24),
+//
+//             // Company Info
+//             _buildCompanyInfo(),
+//             SizedBox(height: ManagerHeight.h24),
+//
+//             // Contact Information
+//             _buildContactSection(),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildCompanyLogo() {
+//     return Center(
+//       child: Hero(
+//         tag: 'company_logo_${company.id}',
+//         child: ClipRRect(
+//           borderRadius: BorderRadius.circular(16),
+//           child: CachedNetworkImage(
+//             imageUrl: company.companyLogo,
+//             width: ManagerWidth.w120,
+//             height: ManagerHeight.h120,
+//             fit: BoxFit.cover,
+//             placeholder: (context, url) => Container(
+//               width: ManagerWidth.w120,
+//               height: ManagerHeight.h120,
+//               decoration: BoxDecoration(
+//                 color: ManagerColors.greyWithColor.withOpacity(0.1),
+//                 borderRadius: BorderRadius.circular(16),
+//               ),
+//               child: const Icon(Icons.business, color: Colors.grey, size: 40),
+//             ),
+//             errorWidget: (context, url, error) => Container(
+//               width: ManagerWidth.w120,
+//               height: ManagerHeight.h120,
+//               decoration: BoxDecoration(
+//                 color: ManagerColors.greyWithColor.withOpacity(0.1),
+//                 borderRadius: BorderRadius.circular(16),
+//               ),
+//               child:
+//                   const Icon(Icons.broken_image, color: Colors.grey, size: 40),
+//             ),
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget _buildCompanyInfo() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           company.companyName,
+//           style: getBoldTextStyle(
+//             fontSize: ManagerFontSize.s20,
+//             color: ManagerColors.black,
+//           ),
+//         ),
+//         SizedBox(height: ManagerHeight.h8),
+//         Container(
+//           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+//           decoration: BoxDecoration(
+//             color: ManagerColors.primaryColor.withOpacity(0.1),
+//             borderRadius: BorderRadius.circular(8),
+//           ),
+//           child: Text(
+//             company.industry,
+//             style: getMediumTextStyle(
+//               fontSize: ManagerFontSize.s14,
+//               color: ManagerColors.primaryColor,
+//             ),
+//           ),
+//         ),
+//         SizedBox(height: ManagerHeight.h16),
+//         if (company.companyDescription != null &&
+//             company.companyDescription.isNotEmpty)
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Text(
+//                 "الوصف",
+//                 style: getBoldTextStyle(
+//                   fontSize: ManagerFontSize.s16,
+//                   color: ManagerColors.black,
+//                 ),
+//               ),
+//               SizedBox(height: ManagerHeight.h8),
+//               Text(
+//                 company.companyDescription,
+//                 style: getRegularTextStyle(
+//                   fontSize: ManagerFontSize.s14,
+//                   color: ManagerColors.greyWithColor,
+//                 ),
+//                 textAlign: TextAlign.start,
+//               ),
+//             ],
+//           ),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildContactSection() {
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Text(
+//           "معلومات التواصل",
+//           style: getBoldTextStyle(
+//             fontSize: ManagerFontSize.s16,
+//             color: ManagerColors.black,
+//           ),
+//         ),
+//         SizedBox(height: ManagerHeight.h16),
+//         _buildDetailItem(Icons.phone, company.mobileNumber),
+//         _buildDetailItem(Icons.location_on, company.detailedAddress),
+//         _buildDetailItem(Icons.person, company.contactPersonName),
+//         _buildDetailItem(Icons.email, company.contactPersonEmail),
+//         if (company.memberIdLable != null && company.memberIdLable.isNotEmpty)
+//           _buildDetailItem(Icons.verified_user, company.memberIdLable),
+//       ],
+//     );
+//   }
+//
+//   Widget _buildDetailItem(IconData icon, String? value) {
+//     if (value == null || value.isEmpty) return const SizedBox.shrink();
+//
+//     return Padding(
+//       padding: EdgeInsets.only(bottom: ManagerHeight.h12),
+//       child: Row(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Icon(icon, color: ManagerColors.primaryColor, size: 20),
+//           SizedBox(width: ManagerWidth.w12),
+//           Expanded(
+//             child: Text(
+//               value,
+//               style: getRegularTextStyle(
+//                 fontSize: ManagerFontSize.s14,
+//                 color: ManagerColors.black,
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
