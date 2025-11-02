@@ -893,7 +893,6 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
 
                         SizedBox(height: ManagerHeight.h12),
 
-                        // زر: موقعي
                         _buildActionButton(
                           icon: Icons.my_location,
                           label: 'موقعي',

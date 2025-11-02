@@ -3,6 +3,7 @@ import 'package:app_mobile/features/common/hawaj_voice/presentation/controller/h
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../../../../core/routes/hawaj_routing/hawaj_audio_service.dart';
 import '../../data/data_source/send_data_to_hawaj_data_source.dart';
 import '../../data/repository/send_data_to_hawaj_repositoy.dart';
 import '../use_cases/send_data_to_hawaj_use_case.dart';
@@ -42,7 +43,10 @@ disposeSendDataRequest() {
 
 void initHawajAI() {
   initSendDataRequest();
-
+  if (!instance.isRegistered<HawajAudioService>()) {
+    instance
+        .registerLazySingleton<HawajAudioService>(() => HawajAudioService());
+  }
   // Get.put(HawajAIController());
   Get.put(HawajController(instance<SendDataToHawajUseCase>()));
 }

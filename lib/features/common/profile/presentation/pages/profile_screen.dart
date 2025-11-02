@@ -1,4 +1,6 @@
+import 'package:app_mobile/core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:app_mobile/features/common/profile/presentation/pages/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,7 +15,6 @@ import '../../../../../core/resources/manager_styles.dart';
 import '../../../../../core/resources/manager_width.dart';
 import '../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
-
 import '../../domain/di/di.dart';
 import '../controller/get_profile_controller.dart';
 import '../widgets/info_card.dart';
@@ -117,7 +118,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         final phone = data.data.phone;
         // final urlImage = data.data.;
 
-        const subscribedCount = '4'; // TODO: replace with API field if available
+        const subscribedCount =
+            '4'; // TODO: replace with API field if available
 
         return RefreshIndicator(
           onRefresh: profileController.refreshProfileData,
@@ -136,7 +138,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                     child: SlideTransition(
                       position: _slideAnimation,
                       child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
                         child: SizedBox(
                           width: double.infinity,
                           child: Column(
@@ -149,8 +152,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 children: [
                                   const CircleAvatar(
                                     radius: 45,
-                                    backgroundImage:
-                                    AssetImage(ManagerImages.imageFoodOneRemove),
+                                    backgroundImage: AssetImage(
+                                        ManagerImages.imageFoodOneRemove),
                                   ),
                                   Container(
                                     padding: const EdgeInsets.all(4),
@@ -230,7 +233,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 icon: ManagerIcons.profileIcon3,
                                 onTap: () {
                                   // TODO
-                                  initUpdateAvatar(data.data.name,"");
+                                  initUpdateAvatar(data.data.name, "");
                                   Get.to(EditProfileScreen());
                                 },
                               ),
@@ -257,7 +260,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                                   showDialogConfirmRegisterCompanyOffer(
                                     title: ManagerStrings.titleConfirmation,
                                     subTitle: ManagerStrings.messageSignout,
-                                    actionConfirmText: ManagerStrings.buttonContinue,
+                                    actionConfirmText:
+                                        ManagerStrings.buttonContinue,
                                     actionCancel: ManagerStrings.buttonCancel,
                                     context,
                                     onConfirm: () {
@@ -287,7 +291,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
         );
       }),
-
-    );
+    ).withHawaj(
+        section: HawajSections.dailyOffers, screen: HawajScreens.profileScreen);
   }
 }
