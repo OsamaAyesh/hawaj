@@ -12,6 +12,8 @@ import '../../../../../../../core/resources/manager_width.dart';
 import '../../../../../../../core/widgets/custom_tab_bar_widget.dart';
 import '../../../../../../../core/widgets/loading_widget.dart';
 import '../../../../../../../core/widgets/scaffold_with_back_button.dart';
+import '../../../../get_applications_job/domain/di/di.dart';
+import '../../../../get_applications_job/presentation/pages/get_applications_job_screen.dart';
 import '../../../domain/di/di.dart';
 import '../../controller/get_list_jobs_controller.dart';
 
@@ -227,22 +229,30 @@ class _JobsListView extends StatelessWidget {
                   ),
                   SizedBox(width: ManagerWidth.w8),
                   Expanded(
-                    child: Container(
-                      height: ManagerHeight.h40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: ManagerColors.primaryColor,
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(ManagerRadius.r8),
-                      ),
-                      child: Center(
-                        child: Text(
-                          "إدارة الطلبات",
-                          style: getBoldTextStyle(
-                            fontSize: ManagerFontSize.s12,
+                    child: GestureDetector(
+                      onTap: () {
+                        initGetJobApplications();
+                        Get.to(GetApplicationsJobScreen(
+                          jobId: job.id,
+                        ));
+                      },
+                      child: Container(
+                        height: ManagerHeight.h40,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
                             color: ManagerColors.primaryColor,
+                            width: 1,
+                          ),
+                          borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                        ),
+                        child: Center(
+                          child: Text(
+                            "إدارة الطلبات",
+                            style: getBoldTextStyle(
+                              fontSize: ManagerFontSize.s12,
+                              color: ManagerColors.primaryColor,
+                            ),
                           ),
                         ),
                       ),

@@ -17,5 +17,6 @@ class RequestConstants {
   static const String lng = 'lng';
   static const String stringUser = 'stri';
   static const String q = 'q';
+  static const String jobId = 'jobId';
   static const String s = 's';
 }

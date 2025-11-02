@@ -5,7 +5,10 @@ import 'package:app_mobile/features/providers/job_provider_app/list_company_job/
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AddJobsController extends GetxController {
+import '../../data/request/add_job_request.dart';
+
+class AddJobsController extends GetxController
+    with GetSingleTickerProviderStateMixin {
   final AddJobUseCase _addJobUseCase;
   final JobSettingsUseCase _jobSettingsUseCase;
   final GetListCompanyJobsUseCase _getListCompanyJobsUseCase;
@@ -16,37 +19,39 @@ class AddJobsController extends GetxController {
     this._getListCompanyJobsUseCase,
   );
 
-  /// Loaders
+  /// 🌀 Loaders
   final isPageLoading = false.obs;
   final isActionLoading = false.obs;
 
-  /// Dropdown Data
+  /// 📋 DropDown lists
   final companies = <Map<String, String>>[].obs;
   final jobTypes = <Map<String, String>>[].obs;
   final workLocations = <Map<String, String>>[].obs;
   final jobStatuses = <Map<String, String>>[].obs;
   final educationDegrees = <Map<String, String>>[].obs;
-  final languages = <Map<String, String>>[].obs;
-  final skills = <Map<String, String>>[].obs;
-  final qualifications = <Map<String, String>>[].obs;
+  final languagesList = <Map<String, String>>[].obs;
+  final skillsList = <Map<String, String>>[].obs;
+  final qualificationsList = <Map<String, String>>[].obs;
 
-  /// Selected
+  /// 🎯 Selected
   final selectedCompanyId = RxnString();
   final selectedJobType = RxnString();
   final selectedWorkLocation = RxnString();
   final selectedJobStatus = RxnString();
-  final selectedEducation = RxnString();
-  final selectedLanguage = RxnString();
-  final selectedSkill = RxnString();
-  final selectedQualification = RxnString();
 
-  /// Text Controllers
+  /// 🧠 Text Controllers
   final jobTitleController = TextEditingController();
   final shortDescController = TextEditingController();
   final experienceController = TextEditingController();
   final salaryController = TextEditingController();
   final deadlineController = TextEditingController();
 
+  /// 🎓 Multi selections
+  final selectedLanguages = <String>[].obs;
+  final selectedSkills = <String>[].obs;
+  final selectedQualifications = <String>[].obs;
+
+  /// 🚀 Init
   @override
   void onInit() {
     super.onInit();
@@ -57,68 +62,59 @@ class AddJobsController extends GetxController {
     isPageLoading.value = true;
     await Future.wait([
       _fetchJobSettings(),
-      _fetchCompanyList(),
+      _fetchCompanies(),
     ]);
     isPageLoading.value = false;
   }
 
-  /// ✅ Fetch Job Settings
+  /// ⚙️ إعدادات الوظائف
   Future<void> _fetchJobSettings() async {
     final result = await _jobSettingsUseCase.execute();
 
     result.fold(
-      (failure) => AppSnackbar.error('فشل في تحميل إعدادات الوظائف'),
+      (failure) => AppSnackbar.error("فشل في تحميل إعدادات الوظائف"),
       (settings) {
-        // ⚙️ تعبئة القوائم بعد المابر
         jobTypes.assignAll(settings.data.jobTypes
             .map((e) => {'id': e.value, 'label': e.label})
             .toList());
-
         workLocations.assignAll(settings.data.workLocations
             .map((e) => {'id': e.value, 'label': e.label})
             .toList());
-
         jobStatuses.assignAll(settings.data.jobStatuses
             .map((e) => {'id': e.value, 'label': e.label})
             .toList());
-
         educationDegrees.assignAll(settings.data.educationDegrees
             .map((e) => {'id': e.value, 'label': e.label})
             .toList());
-
-        languages.assignAll(settings.data.languages
+        languagesList.assignAll(settings.data.languages
             .map((e) => {'id': e.id.toString(), 'label': e.name})
             .toList());
-
-        skills.assignAll(settings.data.skills
+        skillsList.assignAll(settings.data.skills
             .map((e) => {'id': e.id.toString(), 'label': e.name})
             .toList());
-
-        qualifications.assignAll(settings.data.qualifications
+        qualificationsList.assignAll(settings.data.qualifications
             .map((e) => {'id': e.id.toString(), 'label': e.name})
             .toList());
       },
     );
   }
 
-  /// ✅ Fetch Companies
-  Future<void> _fetchCompanyList() async {
+  /// 🏢 الشركات
+  Future<void> _fetchCompanies() async {
     final result = await _getListCompanyJobsUseCase.execute();
 
     result.fold(
       (failure) => AppSnackbar.error('فشل في تحميل الشركات'),
       (response) {
-        companies.assignAll(
-          response.data.data
-              .map((e) => {'id': e.id, 'label': e.companyName})
-              .toList(),
-        );
+        companies.assignAll(response.data.data
+            .map((e) => {'id': e.id, 'label': e.companyName})
+            .toList());
       },
     );
   }
 
-  /// ✅ Validate Fields
-  bool validateFields() {
+  /// ✅ تحقق من الحقول
+  bool validate() {
     if (jobTitleController.text.isEmpty) {
       AppSnackbar.warning('يرجى إدخال عنوان الوظيفة');
       return false;
@@ -135,27 +131,73 @@ class AddJobsController extends GetxController {
       AppSnackbar.warning('يرجى اختيار مكان العمل');
       return false;
     }
+    if (experienceController.text.isEmpty) {
+      AppSnackbar.warning('يرجى إدخال عدد سنوات الخبرة');
+      return false;
+    }
     return true;
   }
 
-  /// ✅ Add Job Action
+  /// 🚀 إضافة وظيفة
   Future<void> addJob() async {
-    if (!validateFields()) return;
+    if (!validate()) return;
+
     isActionLoading.value = true;
 
-    // ⬇️ إرسال البيانات إلى السيرفر
-    // TODO: build AddJobRequest here (كما في كودك السابق)
+    final request = AddJobRequest(
+      jobTitle: jobTitleController.text,
+      jobType: selectedJobType.value!,
+      jobShortDescription: shortDescController.text,
+      experienceYears: experienceController.text,
+      salary: salaryController.text,
+      applicationDeadline: deadlineController.text,
+      workLocation: selectedWorkLocation.value!,
+      companyId: selectedCompanyId.value!,
+      languages: selectedLanguages,
+      skills: selectedSkills,
+      qualifications: selectedQualifications,
+      status: selectedJobStatus.value ?? "1",
+    );
+
+    final result = await _addJobUseCase.execute(request);
+
+    result.fold(
+      (failure) => AppSnackbar.error('فشل في إضافة الوظيفة'),
+      (success) {
+        AppSnackbar.success('✅ تمت إضافة الوظيفة بنجاح');
+        clearForm();
+      },
+    );
 
     isActionLoading.value = false;
   }
 
+  /// 🧹 إعادة تعيين
+  void clearForm() {
+    jobTitleController.clear();
+    shortDescController.clear();
+    experienceController.clear();
+    salaryController.clear();
+    deadlineController.clear();
+    selectedCompanyId.value = null;
+    selectedJobType.value = null;
+    selectedWorkLocation.value = null;
+    selectedJobStatus.value = null;
+    selectedLanguages.clear();
+    selectedSkills.clear();
+    selectedQualifications.clear();
+  }
+
+  /// 🧩 التخلص من الموارد بأمان عند مغادرة الشاشة فقط
   @override
   void onClose() {
-    jobTitleController.dispose();
-    shortDescController.dispose();
-    experienceController.dispose();
-    salaryController.dispose();
-    deadlineController.dispose();
+    try {
+      jobTitleController.dispose();
+      shortDescController.dispose();
+      experienceController.dispose();
+      salaryController.dispose();
+      deadlineController.dispose();
+    } catch (_) {}
     super.onClose();
   }
 }

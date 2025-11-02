@@ -1,7 +1,9 @@
 import 'package:dio/dio.dart';
 
-/// Request Model: Add Job
+/// ✅ Add Job Request (Final Reviewed)
+/// نفس أسلوبك تمامًا لكن بتحسينات طفيفة داخلية من حيث الموثوقية والوضوح
 class AddJobRequest {
+  /// 🏷️ الحقول الأساسية
   final String jobTitle;
   final String jobType;
   final String jobShortDescription;
@@ -11,12 +13,12 @@ class AddJobRequest {
   final String workLocation;
   final String companyId;
 
-  /// Optional lists
+  /// 📋 الحقول الاختيارية (قوائم متعددة)
   final List<String>? languages;
   final List<String>? skills;
   final List<String>? qualifications;
 
-  /// Job status (1=Active, 2=Inactive)
+  /// ⚙️ حالة الوظيفة (1=نشطة، 2=غير نشطة)
   final String? status;
 
   AddJobRequest({
@@ -34,24 +36,27 @@ class AddJobRequest {
     this.status,
   });
 
-  /// Convert all fields to FormData for sending as multipart/form-data
+  /// 🧩 تحويل إلى FormData (multipart/form-data)
   Future<FormData> toFormData() async {
     final formData = FormData();
 
     // ===== Text Fields =====
-    formData.fields.addAll([
-      MapEntry('job_title', jobTitle),
-      MapEntry('job_type', jobType),
-      MapEntry('job_short_description', jobShortDescription),
-      MapEntry('experience_years', experienceYears),
-      MapEntry('salary', salary),
-      MapEntry('application_deadline', applicationDeadline),
-      MapEntry('work_location', workLocation),
-      MapEntry('company_id', companyId),
-    ]);
+    void addIfNotEmpty(String key, String? value) {
+      if (value != null && value.trim().isNotEmpty) {
+        formData.fields.add(MapEntry(key, value.trim()));
+      }
+    }
+
+    addIfNotEmpty('job_title', jobTitle);
+    addIfNotEmpty('job_type', jobType);
+    addIfNotEmpty('job_short_description', jobShortDescription);
+    addIfNotEmpty('experience_years', experienceYears); // ✅ إصلاح هنا
+    addIfNotEmpty('salary', salary);
+    addIfNotEmpty('application_deadline', applicationDeadline);
+    addIfNotEmpty('work_location', workLocation);
+    addIfNotEmpty('company_id', companyId);
 
     // ===== Optional Lists =====
-
     if (languages != null && languages!.isNotEmpty) {
       for (int i = 0; i < languages!.length; i++) {
         formData.fields.add(MapEntry('languages[$i]', languages![i]));
@@ -71,10 +76,31 @@ class AddJobRequest {
     }
 
     // ===== Optional Status =====
-    if (status != null) {
+    if (status != null && status!.isNotEmpty) {
       formData.fields.add(MapEntry('status', status!));
     }
 
     return formData;
+  }
+
+  /// 🔍 لتسهيل الـ Debugging
+  @override
+  String toString() {
+    return '''
+AddJobRequest(
+  jobTitle: $jobTitle,
+  jobType: $jobType,
+  jobShortDescription: $jobShortDescription,
+  experienceYears: $experienceYears,
+  salary: $salary,
+  applicationDeadline: $applicationDeadline,
+  workLocation: $workLocation,
+  companyId: $companyId,
+  languages: $languages,
+  skills: $skills,
+  qualifications: $qualifications,
+  status: $status
+)
+''';
   }
 }

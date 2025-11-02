@@ -1,6 +1,7 @@
 import 'package:app_mobile/core/response/with_out_data_response.dart';
 import 'package:app_mobile/features/common/auth/data/response/send_otp_response.dart';
 import 'package:app_mobile/features/common/profile/data/response/get_profile_response.dart';
+import 'package:app_mobile/features/providers/job_provider_app/get_applications_job/data/response/get_job_applications_response.dart';
 import 'package:app_mobile/features/providers/offers_provider/subscription_offer_provider/data/response/plan_response.dart';
 import 'package:app_mobile/features/splash_and_boarding/data/response/on_boarding_response.dart';
 import 'package:app_mobile/features/users/offer_user/company_with_offer/data/response/get_company_response.dart';
@@ -23,7 +24,6 @@ import '../../features/providers/real_estate_provider/edit_profile_real_state_ow
 import '../../features/providers/real_estate_provider/manager_my_real_estate_provider/data/response/get_my_real_estates_response.dart';
 import '../../features/users/offer_user/list_offers/data/response/get_organizations_response.dart';
 import '../../features/users/real_estate_user/data/response/get_real_estate_user_response.dart';
-import '../response/job_settings_response.dart';
 import '../service/env_service.dart';
 
 part 'app_api.g.dart';
@@ -279,4 +279,10 @@ abstract class AppService {
   ///Get List Jobs Request  =>getList Jobs Request
   @GET(RequestConstantsEndpoints.getListJobsRequest)
   Future<GetListJobsResponse> getListJobsRequest();
+
+  ///Get Applications Jobs  =>getList Jobs Request
+  @GET(RequestConstantsEndpoints.getJobApplications)
+  Future<GetJobApplicationsResponse> getJobApplications(
+    @Path(RequestConstants.jobId) String? jobId,
+  );
 }
