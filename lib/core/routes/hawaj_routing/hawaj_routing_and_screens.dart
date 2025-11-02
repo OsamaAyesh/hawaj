@@ -379,7 +379,7 @@ class HawajRoutes {
     debugPrint('🚀 [HawajRoutes] Starting navigation to ${route.name}');
     debugPrint('📦 Parameters: ${parameters ?? {}}');
 
-    // ✅ تنفيذ init() قبل الانتقال (بدون await لأنها void)
+    // ✅ تنفيذ init() قبل الانتقال
     if (route.init != null) {
       try {
         debugPrint('⚙️ Running init() for ${route.name}');
@@ -391,7 +391,7 @@ class HawajRoutes {
       }
     }
 
-    // ✅ الوصول إلى خدمة الصوت من GetIt
+    // ✅ الوصول إلى خدمة الصوت إن وجدت
     HawajAudioService? audioService;
     try {
       audioService = instance.isRegistered<HawajAudioService>()
@@ -401,34 +401,41 @@ class HawajRoutes {
       audioService = null;
     }
 
-    // 🎧 حفظ حالة الصوت قبل الانتقال
-    final bool wasPlaying = audioService?.isPlaying ?? false;
-    final String? lastUrl = audioService?.currentUrl;
+    final wasPlaying = audioService?.isPlaying ?? false;
+    final lastUrl = audioService?.currentUrl;
 
-    // ✅ بناء الصفحة والانتقال
     final page = route.builder(parameters);
     final transition = getTransition(route.transition);
 
     try {
+      // 🔹 الحل الذكي: استخدام navigatorKey الأساسي للتنقل من أي مكان
+      final navigator = Get.key.currentState;
+
       if (replace) {
-        await Get.offAll(
-          () => page,
-          transition: transition,
-          duration: route.duration,
+        navigator?.pushReplacement(
+          GetPageRoute(
+            page: () => page,
+            transition: transition,
+            transitionDuration: route.duration,
+          ),
         );
       } else {
-        await Get.offAll(
-          () => page,
-          transition: transition,
-          duration: route.duration,
+        navigator?.push(
+          GetPageRoute(
+            page: () => page,
+            transition: transition,
+            transitionDuration: route.duration,
+          ),
         );
       }
+
       debugPrint('✅ [Routing] تم الانتقال إلى ${route.name}');
-    } catch (e) {
+    } catch (e, s) {
       debugPrint('❌ [Routing] فشل الانتقال: $e');
+      debugPrintStack(stackTrace: s);
     }
 
-    // 🎧 استرجاع الصوت بعد الانتقال
+    // 🎧 استرجاع الصوت بعد الانتقال (اختياري)
     if (wasPlaying && lastUrl != null) {
       Future.delayed(const Duration(milliseconds: 800), () async {
         try {
@@ -440,6 +447,94 @@ class HawajRoutes {
       });
     }
   }
+
+  // static Future<void> navigateTo({
+  //   required String section,
+  //   required String screen,
+  //   Map<String, dynamic>? parameters,
+  //   bool replace = false,
+  // }) async {
+  //   final route = findRoute(section, screen);
+  //   if (route == null) {
+  //     debugPrint('❌ Critical Error: Cannot create route ($section-$screen)');
+  //     return;
+  //   }
+  //
+  //   debugPrint('🚀 [HawajRoutes] Starting navigation to ${route.name}');
+  //   debugPrint('📦 Parameters: ${parameters ?? {}}');
+  //
+  //   // ✅ تنفيذ init() قبل الانتقال (بدون await لأنها void)
+  //   if (route.init != null) {
+  //     try {
+  //       debugPrint('⚙️ Running init() for ${route.name}');
+  //       route.init!(parameters);
+  //       debugPrint('✅ Finished init() for ${route.name}');
+  //     } catch (e, s) {
+  //       debugPrint('❌ Error in init() for ${route.name}: $e');
+  //       debugPrintStack(stackTrace: s);
+  //     }
+  //   }
+  //
+  //   // ✅ الوصول إلى خدمة الصوت من GetIt
+  //   HawajAudioService? audioService;
+  //   try {
+  //     audioService = instance.isRegistered<HawajAudioService>()
+  //         ? instance<HawajAudioService>()
+  //         : null;
+  //   } catch (_) {
+  //     audioService = null;
+  //   }
+  //
+  //   // 🎧 حفظ حالة الصوت قبل الانتقال
+  //   final bool wasPlaying = audioService?.isPlaying ?? false;
+  //   final String? lastUrl = audioService?.currentUrl;
+  //
+  //   // ✅ بناء الصفحة والانتقال
+  //   final page = route.builder(parameters);
+  //   final transition = getTransition(route.transition);
+  //
+  //   try {
+  //     // if (replace) {
+  //     //   await Get.offAll(
+  //     //     () => page,
+  //     //     transition: transition,
+  //     //     duration: route.duration,
+  //     //   );
+  //     // } else {
+  //     //   await Get.offAll(
+  //     //     () => page,
+  //     //     transition: transition,
+  //     //     duration: route.duration,
+  //     //   );
+  //     // }
+  //     if (replace) {
+  //       await Get.rootDelegate.offNamed(
+  //         route.name,
+  //         arguments: parameters ?? {},
+  //       );
+  //     } else {
+  //       await Get.rootDelegate.toWidget(
+  //         () => page,
+  //       );
+  //     }
+  //
+  //     debugPrint('✅ [Routing] تم الانتقال إلى ${route.name}');
+  //   } catch (e) {
+  //     debugPrint('❌ [Routing] فشل الانتقال: $e');
+  //   }
+  //
+  //   // 🎧 استرجاع الصوت بعد الانتقال
+  //   if (wasPlaying && lastUrl != null) {
+  //     Future.delayed(const Duration(milliseconds: 800), () async {
+  //       try {
+  //         await audioService?.playUrl(lastUrl);
+  //         debugPrint('🎧 [Audio] Continued playing after navigation');
+  //       } catch (e) {
+  //         debugPrint('⚠️ [Audio] فشل في إعادة تشغيل الصوت: $e');
+  //       }
+  //     });
+  //   }
+  // }
 
   // /// ═══════════════════════════════════════════════════════
   /// 🎨 Navigate to Under Development Screen (استخدام مباشر)
