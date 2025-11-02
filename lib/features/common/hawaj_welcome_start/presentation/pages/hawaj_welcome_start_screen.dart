@@ -1,20 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_images.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
-import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
-import 'package:app_mobile/features/common/map/presenation/pages/map_screen.dart';
-import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
-import '../../../map/domain/di/di.dart';
 
 class HawajWelcomeStartScreen extends StatefulWidget {
   const HawajWelcomeStartScreen({super.key});
@@ -26,523 +21,490 @@ class HawajWelcomeStartScreen extends StatefulWidget {
 
 class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
     with TickerProviderStateMixin {
-  late AnimationController _glowController;
-  late AnimationController _waveController;
-  late AnimationController _buttonAnimationController;
-  late ConfettiController _confettiController;
-
-  /// Speech to Text
-  final SpeechToText _speechToText = SpeechToText();
-  bool _speechEnabled = false;
-  bool _isListening = false;
-  String _wordsSpoken = "";
-  double _confidenceLevel = 0;
-  bool _permissionGranted = false;
-  bool _showActionButton = false;
-  double _audioLevel = 0.0;
-  List<double> _audioLevels = List.generate(20, (index) => 0.0);
+  late AnimationController _floatingController;
+  late AnimationController _pulseController;
+  late AnimationController _slideController;
 
   @override
   void initState() {
     super.initState();
 
-    // Animations
-    _glowController = AnimationController(
+    _floatingController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
+      duration: const Duration(seconds: 3),
     )..repeat(reverse: true);
 
-    _waveController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 800),
-    )..repeat();
-
-    _buttonAnimationController = AnimationController(
+    _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
-    );
+    )..repeat(reverse: true);
 
-    _confettiController =
-        ConfettiController(duration: const Duration(seconds: 2));
-
-    // Speech
-    _initSpeech();
-  }
-
-  /// Initialize Speech Recognition
-  Future<void> _initSpeech() async {
-    /// ======== Request microphone permission first
-    final status = await Permission.microphone.request();
-    if (status.isGranted) {
-      setState(() {
-        _permissionGranted = true;
-      });
-
-      ///====== Initialize speech recognition after getting permission
-      _speechEnabled = await _speechToText.initialize(
-        onStatus: (status) {
-          print('Speech recognition status: $status');
-          if (status == 'notListening' && _isListening) {
-            setState(() {
-              _isListening = false;
-              _showActionButton = _wordsSpoken.isNotEmpty;
-              if (_showActionButton) {
-                _buttonAnimationController.forward();
-                _confettiController.play();
-              }
-            });
-          }
-        },
-        onError: (error) {
-          print('Speech recognition error: $error');
-        },
-      );
-      setState(() {});
-    } else {
-      ///===== If permission was not granted
-      print('Microphone permission denied');
-    }
-  }
-
-  Future<void> _startListening() async {
-    if (!_permissionGranted) {
-      /// ====== If we don't have permission, request it again
-      final status = await Permission.microphone.request();
-      if (!status.isGranted) {
-        /// ==== Inform the user that permission is required
-        if (mounted) {
-          AppSnackbar.error(
-            "يجب منح إذن استخدام الميكروفون للتمكن من التحدث",
-            englishMessage:
-                "You must grant microphone permission in order to speak",
-          );
-        }
-        return;
-      } else {
-        setState(() {
-          _permissionGranted = true;
-        });
-
-        ///====== Initialize speech recognition after obtaining permission
-        _speechEnabled = await _speechToText.initialize(
-          onStatus: (status) {
-            print('Speech recognition status: $status');
-          },
-          onError: (error) {
-            print('Speech recognition error: $error');
-          },
-        );
-      }
-    }
-
-    setState(() {
-      _showActionButton = false;
-      _wordsSpoken = "";
-      _buttonAnimationController.reset();
-    });
-
-    if (_speechEnabled) {
-      await _speechToText.listen(
-        onResult: _onSpeechResult,
-        localeId: "ar-SA",
-        listenMode: ListenMode.confirmation,
-        onSoundLevelChange: (level) {
-          setState(() {
-            _audioLevel = level;
-            _audioLevels.removeAt(0);
-            _audioLevels.add(level);
-          });
-        },
-      );
-      setState(() {
-        _isListening = true;
-      });
-    } else {
-      /// ====== Reinitialize speech recognition if necessary
-      await _initSpeech();
-      if (_speechEnabled) {
-        await _startListening();
-      }
-    }
-  }
-
-  void _stopListening() async {
-    await _speechToText.stop();
-    setState(() {
-      _isListening = false;
-      _showActionButton = _wordsSpoken.isNotEmpty;
-      if (_showActionButton) {
-        _buttonAnimationController.forward();
-        _confettiController.play();
-      }
-    });
-  }
-
-  void _onSpeechResult(result) {
-    setState(() {
-      _wordsSpoken = result.recognizedWords;
-      _confidenceLevel = result.confidence;
-
-      ///======= If recognized speech is detected, we can add an automatic response
-      if (_wordsSpoken.isNotEmpty &&
-          _wordsSpoken.length > 3 &&
-          !_speechToText.isListening) {
-        Future.delayed(const Duration(milliseconds: 500), () {
-          if (mounted) {
-            setState(() {
-              _wordsSpoken =
-                  "حوّاج: سأساعدك في العثور على ${result.recognizedWords}";
-            });
-          }
-        });
-      }
-    });
-  }
-
-  void _navigateToResults() {
-    ///====== Navigate to the results or map page
-    Get.to(
-      () => const MapScreen(),
-      binding: MapBindings(),
-    );
+    _slideController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..forward();
   }
 
   @override
   void dispose() {
-    _glowController.dispose();
-    _waveController.dispose();
-    _buttonAnimationController.dispose();
-    _confettiController.dispose();
-    _speechToText.stop();
+    _floatingController.dispose();
+    _pulseController.dispose();
+    _slideController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          /// Background gradient
-          Container(
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(
+          children: [
+            /// 🌈 خلفية متحركة مع دوائر ملونة
+            _buildAnimatedBackground(),
+
+            /// المحتوى الرئيسي
+            SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    SizedBox(height: ManagerHeight.h40),
+
+                    /// 👋 الرأس بتأثير انزلاق
+                    _buildHeader(),
+
+                    SizedBox(height: ManagerHeight.h50),
+
+                    /// 🤖 صورة المساعد بتأثير طفو
+                    _buildFloatingImage(),
+
+                    SizedBox(height: ManagerHeight.h50),
+
+                    /// ✨ المميزات الأساسية
+                    _buildFeatureCards(),
+
+                    SizedBox(height: ManagerHeight.h30),
+
+                    /// 💬 اقتراح اليوم بتصميم جذاب
+                    // _buildSuggestionCard(),
+
+                    // SizedBox(height: ManagerHeight.h40),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ).withHawaj(
+        screen: "4",
+        section: HawajSections.dailyOffers,
+        onHawajCommand: (command) async {
+          debugPrint("[HawajWelcome] 🎯 Command received: $command");
+        },
+      ),
+    );
+  }
+
+  /// خلفية متحركة مع دوائر ملونة
+  Widget _buildAnimatedBackground() {
+    return Stack(
+      children: [
+        // دائرة علوية يمين
+        Positioned(
+          top: -50,
+          right: -50,
+          child: AnimatedBuilder(
+            animation: _pulseController,
+            builder: (context, child) {
+              return Container(
+                width: 200 + (_pulseController.value * 20),
+                height: 200 + (_pulseController.value * 20),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(
+                    colors: [
+                      ManagerColors.primaryColor.withOpacity(0.15),
+                      ManagerColors.primaryColor.withOpacity(0.0),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        // دائرة وسطى يسار
+        Positioned(
+          top: 200,
+          left: -80,
+          child: AnimatedBuilder(
+            animation: _floatingController,
+            builder: (context, child) {
+              return Transform.translate(
+                offset: Offset(0, _floatingController.value * 15),
+                child: Container(
+                  width: 180,
+                  height: 180,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        ManagerColors.primaryColor.withOpacity(0.1),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+
+        // دائرة سفلية
+        Positioned(
+          bottom: -100,
+          left: MediaQuery.of(context).size.width * 0.3,
+          child: Container(
+            width: 250,
+            height: 250,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              shape: BoxShape.circle,
+              gradient: RadialGradient(
                 colors: [
-                  ManagerColors.primaryColor.withOpacity(0.05),
-                  Colors.white,
-                  ManagerColors.primaryColor.withOpacity(0.05),
+                  ManagerColors.primaryColor.withOpacity(0.08),
+                  Colors.transparent,
                 ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
               ),
             ),
           ),
+        ),
+      ],
+    );
+  }
 
-          /// Confetti
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confettiController,
-              blastDirectionality: BlastDirectionality.explosive,
-              shouldLoop: false,
-              colors: const [
-                Colors.green,
-                Colors.blue,
-                Colors.pink,
-                Colors.orange,
-                Colors.purple
-              ],
+  /// رأس الصفحة بتأثير انزلاق
+  Widget _buildHeader() {
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, -0.5),
+        end: Offset.zero,
+      ).animate(CurvedAnimation(
+        parent: _slideController,
+        curve: Curves.easeOutBack,
+      )),
+      child: FadeTransition(
+        opacity: _slideController,
+        child: Column(
+          children: [
+            /// أيقونة متحركة
+            AnimatedBuilder(
+              animation: _pulseController,
+              builder: (context, child) {
+                return Transform.scale(
+                  scale: 1 + (_pulseController.value * 0.1),
+                  child: Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          ManagerColors.primaryColor,
+                          ManagerColors.primaryColor.withOpacity(0.7),
+                        ],
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: ManagerColors.primaryColor.withOpacity(0.3),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(
+                      Icons.wb_sunny_rounded,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                  ),
+                );
+              },
+            ),
+
+            SizedBox(height: ManagerHeight.h20),
+
+            Text(
+              "مرحباً بك في حوّاج",
+              style: getBoldTextStyle(
+                fontSize: ManagerFontSize.s26,
+                color: ManagerColors.primaryColor,
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            SizedBox(height: ManagerHeight.h12),
+
+            Text(
+              "مساعدك الذكي للحصول على تجربة مميزة",
+              style: getRegularTextStyle(
+                fontSize: ManagerFontSize.s16,
+                color: Colors.grey[600]!,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// صورة طافية بتأثير حركي
+  Widget _buildFloatingImage() {
+    return AnimatedBuilder(
+      animation: _floatingController,
+      builder: (context, child) {
+        return Transform.translate(
+          offset: Offset(0, math.sin(_floatingController.value * math.pi) * 15),
+          child: Transform.rotate(
+            angle: math.sin(_floatingController.value * math.pi) * 0.05,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: ManagerColors.primaryColor.withOpacity(0.2),
+                    blurRadius: 30,
+                    offset: const Offset(0, 15),
+                  ),
+                ],
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(30),
+                child: Image.asset(
+                  ManagerImages.welcomeStartImage,
+                  width: ManagerWidth.w260,
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
           ),
+        );
+      },
+    );
+  }
 
-          /// Main Column
-          SafeArea(
-            child: Column(
-              children: [
-                const Spacer(),
+  /// كروت المميزات
+  Widget _buildFeatureCards() {
+    final features = [
+      {
+        'icon': Icons.flash_on_rounded,
+        'title': 'سريع وذكي',
+        'color': Colors.amber,
+      },
+      {
+        'icon': Icons.favorite_rounded,
+        'title': 'مخصص لك',
+        'color': Colors.red,
+      },
+      {
+        'icon': Icons.shield_rounded,
+        'title': 'آمن تماماً',
+        'color': Colors.green,
+      },
+    ];
 
-                /// Title
-                Text(
-                  "شو بتحب أساعدك فيه اليوم؟",
-                  style: getRegularTextStyle(
-                    fontSize: ManagerFontSize.s16,
-                    color: ManagerColors.primaryColor,
-                  ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: features.asMap().entries.map((entry) {
+        final index = entry.key;
+        final feature = entry.value;
+
+        return TweenAnimationBuilder(
+          tween: Tween<double>(begin: 0, end: 1),
+          duration: Duration(milliseconds: 600 + (index * 200)),
+          curve: Curves.easeOutBack,
+          builder: (context, double value, child) {
+            return Transform.scale(
+              scale: value,
+              child: Container(
+                width: ManagerWidth.w100,
+                padding: EdgeInsets.symmetric(
+                  vertical: ManagerHeight.h16,
+                  horizontal: ManagerWidth.w12,
                 ),
-
-                SizedBox(height: ManagerHeight.h12),
-
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w28),
-                  child: Text(
-                    "حوّاج موجود ليسهل حياتك… يقترح عليك اللي بتحتاجه قبل حتى ما تطلبه ",
-                    style: getBoldTextStyle(
-                      fontSize: ManagerFontSize.s18,
-                      color: ManagerColors.primaryColor,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: (feature['color'] as Color).withOpacity(0.2),
+                    width: 2,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: (feature['color'] as Color).withOpacity(0.1),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
+                  ],
                 ),
-
-                const Spacer(),
-
-                /// AI Robot
-                Image.asset(
-                  ManagerImages.welcomeStartImage,
-                  width: ManagerWidth.w220,
-                ),
-
-                const Spacer(),
-
-                /// Suggestions Card + Spoken Words
-                Container(
-                  margin: EdgeInsets.symmetric(
-                    horizontal: ManagerWidth.w20,
-                    vertical: ManagerHeight.h12,
-                  ),
-                  padding: EdgeInsets.all(ManagerWidth.w16),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(22),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.07),
-                        blurRadius: 12,
-                        offset: const Offset(0, 6),
+                child: Column(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(ManagerWidth.w12),
+                      decoration: BoxDecoration(
+                        color: (feature['color'] as Color).withOpacity(0.1),
+                        shape: BoxShape.circle,
                       ),
-                    ],
+                      child: Icon(
+                        feature['icon'] as IconData,
+                        color: feature['color'] as Color,
+                        size: 28,
+                      ),
+                    ),
+                    SizedBox(height: ManagerHeight.h8),
+                    Text(
+                      feature['title'] as String,
+                      style: getBoldTextStyle(
+                        fontSize: ManagerFontSize.s12,
+                        color: Colors.black87,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }).toList(),
+    );
+  }
+
+  /// كرت الاقتراح اليومي
+  Widget _buildSuggestionCard() {
+    return TweenAnimationBuilder(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 1000),
+      curve: Curves.easeOut,
+      builder: (context, double value, child) {
+        return Transform.scale(
+          scale: value,
+          child: Opacity(
+            opacity: value,
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(ManagerWidth.w20),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    ManagerColors.primaryColor,
+                    ManagerColors.primaryColor.withOpacity(0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: [
+                  BoxShadow(
+                    color: ManagerColors.primaryColor.withOpacity(0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
                   ),
-                  child: Column(
+                ],
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Container(
+                        padding: EdgeInsets.all(ManagerWidth.w8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(
+                          Icons.auto_awesome_rounded,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
+                      SizedBox(width: ManagerWidth.w12),
                       Text(
                         "اقتراح اليوم",
                         style: getBoldTextStyle(
-                          fontSize: ManagerFontSize.s18,
-                          color: ManagerColors.primaryColor,
+                          fontSize: ManagerFontSize.s20,
+                          color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: ManagerHeight.h8),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        child: Text(
-                          key: ValueKey(_wordsSpoken),
-                          _wordsSpoken.isNotEmpty
-                              ? _wordsSpoken
-                              : "حوّاج: خليني أنصحك بأفضل عروض الأكل اليوم ",
-                          style: getRegularTextStyle(
-                            fontSize: ManagerFontSize.s14,
-                            color: Colors.black87,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      if (_speechToText.isNotListening && _confidenceLevel > 0)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 12),
-                          child: Text(
-                            "مستوى الثقة: ${(_confidenceLevel * 100.0).toStringAsFixed(1)}%",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                        ),
                     ],
                   ),
-                ),
-
-                const Spacer(),
-                SizedBox(
-                  height: ManagerHeight.h180,
-                )
-
-                /// Mic button with glow + waves
-                // Stack(
-                //   alignment: Alignment.center,
-                //   children: [
-                //     // Glowing background
-                //     ScaleTransition(
-                //       scale: Tween(begin: 0.9, end: 1.1).animate(
-                //         CurvedAnimation(
-                //           parent: _glowController,
-                //           curve: Curves.easeInOut,
-                //         ),
-                //       ),
-                //       child: Container(
-                //         width: 120,
-                //         height: 120,
-                //         decoration: BoxDecoration(
-                //           shape: BoxShape.circle,
-                //           color: ManagerColors.primaryColor.withOpacity(0.1),
-                //         ),
-                //       ),
-                //     ),
-                //
-                //     // // Waves around mic based on audio level
-                //     // CustomPaint(
-                //     //   painter: VoiceWavePainter(_waveController, _audioLevels),
-                //     //   size: const Size(180, 180),
-                //     // ),
-                //
-                //     // Main Mic button
-                //     // ElevatedButton(
-                //     //   onPressed: _speechToText.isListening
-                //     //       ? _stopListening
-                //     //       : _startListening,
-                //     //   style: ElevatedButton.styleFrom(
-                //     //     shape: const CircleBorder(),
-                //     //     padding: const EdgeInsets.all(28),
-                //     //     backgroundColor: _permissionGranted
-                //     //         ? ManagerColors.primaryColor
-                //     //         : Colors.grey,
-                //     //     shadowColor: _permissionGranted
-                //     //         ? ManagerColors.primaryColor.withOpacity(0.5)
-                //     //         : Colors.grey.withOpacity(0.5),
-                //     //     elevation: 12,
-                //     //   ),
-                //     //   child: Icon(
-                //     //     _speechToText.isListening ? Icons.mic : Icons.mic_none,
-                //     //     size: 40,
-                //     //     color: Colors.white,
-                //     //   ),
-                //     // ),
-                //   ],
-                // ),
-
-                // ///======== Display a message if permission is not granted
-                // if (!_permissionGranted)
-                //   Padding(
-                //     padding: const EdgeInsets.all(16.0),
-                //     child: Text(
-                //       'يجب منح إذن استخدام الميكروفون للتمكن من التحدث',
-                //       style: TextStyle(
-                //         color: Colors.red,
-                //         fontSize: ManagerFontSize.s14,
-                //       ),
-                //       textAlign: TextAlign.center,
-                //     ),
-                //   ),
-
-                // const Spacer(),
-
-                ///====== Animated action button that appears after speech
-                // if (_showActionButton)
-                // ScaleTransition(
-                //   scale: CurvedAnimation(
-                //     parent: _buttonAnimationController,
-                //     curve: Curves.elasticOut,
-                //   ),
-                //   child:
-                // Padding(
-                //   padding: const EdgeInsets.only(bottom: 20.0),
-                //   child: ElevatedButton.icon(
-                //     onPressed: _navigateToResults,
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: ManagerColors.primaryColor,
-                //       foregroundColor: Colors.white,
-                //       padding: const EdgeInsets.symmetric(
-                //         horizontal: 24,
-                //         vertical: 12,
-                //       ),
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(30),
-                //       ),
-                //       elevation: 8,
-                //     ),
-                //     icon: const Icon(Icons.search, size: 24),
-                //     label: Text(
-                //       "استمر للنتائج",
-                //       style: getBoldTextStyle(
-                //         fontSize: ManagerFontSize.s12,
-                //         color: ManagerColors.white,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                // ),
-
-                // if (!_showActionButton) SizedBox(height: ManagerHeight.h20),
-              ],
+                  SizedBox(height: ManagerHeight.h16),
+                  Container(
+                    padding: EdgeInsets.all(ManagerWidth.w16),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.all(ManagerWidth.w12),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            "🍽️",
+                            style: TextStyle(fontSize: ManagerFontSize.s24),
+                          ),
+                        ),
+                        SizedBox(width: ManagerWidth.w16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "مطاعم مميزة",
+                                style: getBoldTextStyle(
+                                  fontSize: ManagerFontSize.s16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                              SizedBox(height: ManagerHeight.h4),
+                              Text(
+                                "أفضل أماكن العشاء قريبة منك",
+                                style: getRegularTextStyle(
+                                  fontSize: ManagerFontSize.s13,
+                                  color: Colors.white.withOpacity(0.9),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          )
-          //           .withHawajVoiceAdvanced(
-          //         section: "2",
-          // screen: "1",
-          // welcomeMessage: "مرحباً بك في المنتجات",
-          // x: 20,
-          // y: 100,
-          // ),
-        ],
-      ),
-    ).withHawaj(
-      screen: "4",
-      section: HawajSections.dailyOffers,
-      // 🔊 Callback عند طلب حواج "offers"
-      onHawajCommand: (command) async {
-        debugPrint(
-            '[MapScreen] 🎯 Hawaj command detected -> refresh & animate');
-        // final lower = command.toLowerCase();
-        // if (lower.contains('عرض') ||
-        //     lower.contains('offers') ||
-        //     lower.contains('خريطة')) {
-        //   debugPrint(
-        //       '[MapScreen] 🎯 Hawaj command detected -> refresh & animate');
-        //
-        //   // 1️⃣ تحميل الموقع الحالي مجددًا
-        //   if (mapC.currentLocation.value != null) {
-        //     await offersC.fetchOffers(mapC.currentLocation.value!);
-        //   } else {
-        //     await mapC.loadCurrentLocation();
-        //     if (mapC.currentLocation.value != null) {
-        //       await offersC.fetchOffers(mapC.currentLocation.value!);
-        //     }
-        //   }
-        //
-        //   // 2️⃣ انتظار بسيط لحين اكتمال التحميل
-        //   Future.delayed(const Duration(milliseconds: 1500), () {
-        //     _animateToBounds();
-        //   });
-        // }
+          ),
+        );
       },
     );
-    // .withHawajVoiceSmart();
   }
-}
-
-/// ====== Voice Wave Painter for Animated Mic ======
-class VoiceWavePainter extends CustomPainter {
-  final Animation<double> animation;
-  final List<double> audioLevels;
-
-  VoiceWavePainter(this.animation, this.audioLevels)
-      : super(repaint: animation);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final baseRadius = size.width / 4;
-
-    /// ======= Draw multiple waves based on the sound level
-    for (int i = 0; i < audioLevels.length; i++) {
-      final level = audioLevels[i];
-      if (level > 0) {
-        final progress = ((animation.value + (i * 0.05)) % 1.0);
-        final waveRadius = baseRadius + (progress * 40) + (level * 5);
-
-        final paint = Paint()
-          ..color = Colors.deepPurple
-              .withOpacity((1 - progress).clamp(0.1, 0.5) * (level / 100))
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.5 + (level / 30);
-
-        canvas.drawCircle(center, waveRadius, paint);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant VoiceWavePainter oldDelegate) =>
-      oldDelegate.animation != animation ||
-      oldDelegate.audioLevels != audioLevels;
 }
