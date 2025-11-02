@@ -7,10 +7,11 @@ import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
+import 'package:app_mobile/features/providers/offers_provider/add_offer/presentation/pages/add_offer_provider_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../core/routes/routes.dart';
+import '../../../add_offer/domain/di/di.dart';
 
 class SuccessRegisterCompanyOfferProviderScreen extends StatefulWidget {
   const SuccessRegisterCompanyOfferProviderScreen({super.key});
@@ -86,6 +87,9 @@ class _SuccessRegisterCompanyOfferProviderScreenState
                     title: ManagerStrings.completeSubscriptionButton,
                     paddingWidth: ManagerWidth.w24,
                     onPressed: () {
+                      initCreateOfferProvider();
+                      Get.off(AddOfferProviderScreen());
+                      // Get.to(page)
                       // Navigate to choose subscription plan screen
                       // Get.toNamed(Routes.);
                     },

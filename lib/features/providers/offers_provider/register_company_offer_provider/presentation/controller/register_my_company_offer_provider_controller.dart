@@ -143,7 +143,7 @@ class RegisterMyCompanyOfferProviderController extends GetxController {
           englishMessage: 'Company registered successfully',
         );
         _clearForm();
-        Get.offAll(const SuccessRegisterCompanyOfferProviderScreen());
+        Get.off(const SuccessRegisterCompanyOfferProviderScreen());
       },
     );
 

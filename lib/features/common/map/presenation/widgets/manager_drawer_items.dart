@@ -4,7 +4,9 @@ import '../../../../../core/resources/manager_icons.dart';
 import '../../../../../core/resources/manager_strings.dart';
 import '../../../../common/profile/domain/di/di.dart';
 import '../../../../common/profile/presentation/pages/profile_screen.dart';
+import '../../../../providers/job_provider_app/manage_company_jobs_provider/presentation/pages/manage_company_jobs_provider_screen.dart';
 import '../../../../providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
+import '../../../../providers/real_estate_provider/dashboard_real_estate_manager/presentation/pages/dashboard_real_estate_manager_screen.dart';
 import 'drawer_widget.dart';
 
 /// مفاتيح الأقسام المتاحة
@@ -55,7 +57,6 @@ class DrawerNavigationRoutes {
     // TODO: أضف التنقل لصفحة العروض اليومية
     // initDailyOffers();
     // Get.to(() => DailyOffersScreen());
-    Get.snackbar('قيد التطوير', 'صفحة العروض اليومية');
   }
 
   static void navigateToContracts() {
@@ -90,21 +91,22 @@ class DrawerNavigationRoutes {
   static void navigateToManageOffers() {
     // TODO: أضف التنقل لإدارة العروض
     // initManageOffers();
-    Get.to(() => ManagerProductsOfferProviderScreen());
+    Get.offAll(() => ManagerProductsOfferProviderScreen());
   }
 
   static void navigateToManageContracts() {
     // TODO: أضف التنقل لإدارة العقود
     // initManageContracts();
     // Get.to(() => ManageContractsScreen());
-    Get.snackbar('قيد التطوير', 'إدارة العقود');
+    // Get.snackbar('قيد التطوير', 'إدارة العقود');
   }
 
   static void navigateToManageRealEstate() {
     // TODO: أضف التنقل لإدارة العقارات
     // initManageRealEstate();
+    Get.offAll(() => DashboardRealEstateManagerScreen());
     // Get.to(() => ManageRealEstateScreen());
-    Get.snackbar('قيد التطوير', 'إدارة العقارات');
+    // Get.snackbar('قيد التطوير', 'إدارة العقارات');
   }
 
   static void navigateToDeliveryDashboard() {
@@ -117,8 +119,9 @@ class DrawerNavigationRoutes {
   static void navigateToManageJobs() {
     // TODO: أضف التنقل لإدارة الوظائف
     // initManageJobs();
+    Get.offAll(() => ManageCompanyJobsProviderScreen());
     // Get.to(() => ManageJobsScreen());
-    Get.snackbar('قيد التطوير', 'إدارة الوظائف');
+    // Get.snackbar('قيد التطوير', 'إدارة الوظائف');
   }
 }
 

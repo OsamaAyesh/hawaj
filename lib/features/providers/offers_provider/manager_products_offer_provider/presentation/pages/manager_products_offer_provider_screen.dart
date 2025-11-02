@@ -1,4 +1,5 @@
 import 'package:app_mobile/constants/constants/constants.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -165,7 +166,7 @@ class _ManagerProductsOfferProviderScreenState
               SizedBox(height: ManagerHeight.h16),
             ],
           ),
-        ),
+        ).withHawaj(screen: "13", section: "1"),
       ],
     );
   }

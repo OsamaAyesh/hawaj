@@ -497,83 +497,87 @@ class _MultiSelectPicker extends StatelessWidget {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (_) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: EdgeInsets.fromLTRB(
-                20,
-                20,
-                20,
-                MediaQuery.of(context).viewInsets.bottom + 24,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: allItems.map((item) {
-                      final id = item['id']!;
-                      final lbl = item['label'] ?? '';
-                      final isSel = tempSelected.contains(id);
-                      return ChoiceChip(
-                        label: Text(lbl,
-                            style: getRegularTextStyle(
-                              fontSize: ManagerFontSize.s12,
-                              color: isSel
-                                  ? Colors.white
-                                  : ManagerColors.primaryColor,
-                            )),
-                        selected: isSel,
-                        selectedColor: ManagerColors.primaryColor,
-                        backgroundColor:
-                            ManagerColors.primaryColor.withOpacity(0.06),
-                        onSelected: (_) {
-                          setState(() {
-                            isSel
-                                ? tempSelected.remove(id)
-                                : tempSelected.add(id);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: () {
-                            selectedIds.assignAll(tempSelected);
-                            Navigator.pop(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: ManagerColors.primaryColor),
-                          child: Text('تم',
-                              style: getBoldTextStyle(
-                                  fontSize: ManagerFontSize.s12,
-                                  color: Colors.white)),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: OutlinedButton(
-                          onPressed: () => Navigator.pop(context),
-                          style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                  color: ManagerColors.primaryColor)),
-                          child: Text('إلغاء',
+        return SafeArea(
+          top: false,
+          bottom: true,
+          child: StatefulBuilder(
+            builder: (context, setState) {
+              return Padding(
+                padding: EdgeInsets.fromLTRB(
+                  20,
+                  20,
+                  20,
+                  MediaQuery.of(context).viewInsets.bottom + 24,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: allItems.map((item) {
+                        final id = item['id']!;
+                        final lbl = item['label'] ?? '';
+                        final isSel = tempSelected.contains(id);
+                        return ChoiceChip(
+                          label: Text(lbl,
                               style: getRegularTextStyle(
-                                  fontSize: ManagerFontSize.s12,
-                                  color: ManagerColors.primaryColor)),
+                                fontSize: ManagerFontSize.s12,
+                                color: isSel
+                                    ? Colors.white
+                                    : ManagerColors.primaryColor,
+                              )),
+                          selected: isSel,
+                          selectedColor: ManagerColors.primaryColor,
+                          backgroundColor:
+                              ManagerColors.primaryColor.withOpacity(0.06),
+                          onSelected: (_) {
+                            setState(() {
+                              isSel
+                                  ? tempSelected.remove(id)
+                                  : tempSelected.add(id);
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              selectedIds.assignAll(tempSelected);
+                              Navigator.pop(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: ManagerColors.primaryColor),
+                            child: Text('تم',
+                                style: getBoldTextStyle(
+                                    fontSize: ManagerFontSize.s12,
+                                    color: Colors.white)),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context),
+                            style: OutlinedButton.styleFrom(
+                                side: BorderSide(
+                                    color: ManagerColors.primaryColor)),
+                            child: Text('إلغاء',
+                                style: getRegularTextStyle(
+                                    fontSize: ManagerFontSize.s12,
+                                    color: ManagerColors.primaryColor)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
         );
       },
     );

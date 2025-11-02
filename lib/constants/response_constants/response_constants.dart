@@ -81,4 +81,21 @@ class ResponseConstants {
   static const String activityLicense = "activity_license";
   static const String memberId = "member_id";
   static const String memberIdLable = "member_id_lable";
+
+  // Job Settings keys
+  static const String jobTypes = "job_types";
+  static const String workLocations = "work_locations";
+  static const String jobStatuses = "job_statuses";
+  static const String applicationStatuses = "application_statuses";
+  static const String languageLevels = "language_levels";
+  static const String educationDegrees = "education_degrees";
+  static const String skills = "skills";
+  static const String qualifications = "qualifications";
+  static const String languages = "languages";
+
+  // Common keys
+  static const String description = "description";
+  static const String value = "value";
+  static const String label = "label";
+  static const String type = "type";
 }

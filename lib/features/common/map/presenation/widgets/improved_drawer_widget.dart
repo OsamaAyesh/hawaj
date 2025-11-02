@@ -53,12 +53,14 @@ class AppDrawer extends StatelessWidget {
     // إنشاء الـ manager هنا
     final visibilityManager = DrawerVisibilityManager(enabled: {
       DrawerFeatures.userProfile,
-      DrawerFeatures.userDailyOffers,
-      DrawerFeatures.userDelivery,
-      DrawerFeatures.userContracts,
-      DrawerFeatures.userRealEstate,
+      // DrawerFeatures.userDailyOffers,
+      // DrawerFeatures.userDelivery,
+      // DrawerFeatures.userContracts,
+      // DrawerFeatures.userRealEstate,
       DrawerFeatures.providerManageOffers,
-      DrawerFeatures.providerManageContracts,
+      // DrawerFeatures.providerManageContracts,
+      DrawerFeatures.providerManageJobs,
+      DrawerFeatures.providerRealEstateManage
     });
 
     final userItems = visibilityManager.buildUserItems();
@@ -277,7 +279,9 @@ class AppDrawer extends StatelessWidget {
           textCancel: 'إلغاء',
           confirmTextColor: Colors.white,
           onConfirm: () {
-            Get.back();
+            // AppSettingsPrefs().clear();
+            // Get.offAll(SplashScreen());
+            // Get.back();
           },
         );
       },

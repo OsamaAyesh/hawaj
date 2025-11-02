@@ -13,7 +13,9 @@ import '../../constants/request_constants/request_constants_endpoints.dart';
 import '../../features/common/auth/data/response/verfiy_otp_response.dart';
 import '../../features/common/hawaj_voice/data/response/send_data_response.dart';
 import '../../features/common/lists/data/response/get_lists_response.dart';
+import '../../features/providers/job_provider_app/add_job_provider/data/response/get_settings_base_response.dart';
 import '../../features/providers/job_provider_app/list_company_job/data/response/get_list_company_jobs_response.dart';
+import '../../features/providers/job_provider_app/manager_jobs_provider/data/response/get_list_jobs_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
@@ -21,6 +23,7 @@ import '../../features/providers/real_estate_provider/edit_profile_real_state_ow
 import '../../features/providers/real_estate_provider/manager_my_real_estate_provider/data/response/get_my_real_estates_response.dart';
 import '../../features/users/offer_user/list_offers/data/response/get_organizations_response.dart';
 import '../../features/users/real_estate_user/data/response/get_real_estate_user_response.dart';
+import '../response/job_settings_response.dart';
 import '../service/env_service.dart';
 
 part 'app_api.g.dart';
@@ -261,4 +264,19 @@ abstract class AppService {
     @Query(RequestConstants.id) String? id,
     @Body() FormData formData,
   );
+
+  ///Get Jobs Settings =>JobSettingsResponse
+  @GET(RequestConstantsEndpoints.jobsSettingsRequest)
+  Future<GetSettingsBaseResponse> jobsSettingsRequest();
+
+  ////====> Add Job Request
+  @POST(RequestConstantsEndpoints.addJobRequest)
+  @MultiPart()
+  Future<WithOutDataResponse> addJobRequest(
+    @Body() FormData formData,
+  );
+
+  ///Get List Jobs Request  =>getList Jobs Request
+  @GET(RequestConstantsEndpoints.getListJobsRequest)
+  Future<GetListJobsResponse> getListJobsRequest();
 }
