@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-import '../../../../users/offer_user/list_offers/presentation/controller/get_organizations_controller.dart';
 import '../../domain/entities/location_entity.dart';
 
 /// أنواع الأقسام المتاحة في الخريطة
@@ -75,7 +74,9 @@ class MapSectionsController extends GetxController {
 
       switch (section) {
         case MapSectionType.dailyOffers:
-          await _fetchDailyOffers(location);
+          await _fetchContracts(location);
+
+          // await _fetchDailyOffers(location);
           break;
         case MapSectionType.contracts:
           await _fetchContracts(location);
@@ -119,20 +120,20 @@ class MapSectionsController extends GetxController {
   // ===== Private Methods لجلب البيانات =====
 
   /// جلب العروض اليومية
-  Future<void> _fetchDailyOffers(LocationEntity location) async {
-    if (!Get.isRegistered<OffersController>()) {
-      if (kDebugMode) {
-        print('[MapSections] ⚠️ OffersController غير مسجل');
-      }
-      return;
-    }
-
-    final offersC = Get.find<OffersController>();
-    await offersC.fetchOffers(location);
-
-    // تخزين البيانات في sectionsData
-    sectionsData[MapSectionType.dailyOffers]!.value = offersC.organizations;
-  }
+  // Future<void> _fetchDailyOffers(LocationEntity location) async {
+  //   if (!Get.isRegistered<OffersController>()) {
+  //     if (kDebugMode) {
+  //       print('[MapSections] ⚠️ OffersController غير مسجل');
+  //     }
+  //     return;
+  //   }
+  //
+  //   final offersC = Get.find<OffersController>();
+  //   await offersC.fetchOffers(location);
+  //
+  //   // تخزين البيانات في sectionsData
+  //   sectionsData[MapSectionType.dailyOffers]!.value = offersC.organizations;
+  // }
 
   /// جلب العقود
   Future<void> _fetchContracts(LocationEntity location) async {

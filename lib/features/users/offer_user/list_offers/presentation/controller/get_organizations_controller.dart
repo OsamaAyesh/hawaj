@@ -22,7 +22,7 @@ class OffersController extends GetxController {
   final RxList<OrganizationCompanyDailyOfferItemModel> organizations =
       <OrganizationCompanyDailyOfferItemModel>[].obs;
 
-  final RxMap<int, Marker> markers = <int, Marker>{}.obs;
+  final RxMap<String, Marker> markers = <String, Marker>{}.obs;
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
   final Rxn<LocationEntity> currentLocation = Rxn<LocationEntity>();
@@ -259,7 +259,7 @@ class OffersController extends GetxController {
         anchor: const Offset(0.5, 0.5), // مركز الـ marker
       );
 
-      markers[org.id] = marker;
+      markers[org.id.toString()] = marker;
     }
 
     if (kDebugMode) {

@@ -1,4 +1,5 @@
 import 'package:app_mobile/features/common/hawaj_voice/data/response/send_data_destination_response.dart';
+import 'package:app_mobile/features/common/hawaj_voice/data/response/send_data_results_response.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../../constants/response_constants/response_constants.dart';
@@ -14,7 +15,10 @@ class SendDataDataResponse {
   String? s;
 
   @JsonKey(name: ResponseConstants.d)
-  SendDataDestinationResponse? d;
+  SendDataResultsResponse? d;
+
+  @JsonKey(name: "ai_response")
+  SendDataDestinationResponse? aiResponse;
 
   SendDataDataResponse({
     this.q,

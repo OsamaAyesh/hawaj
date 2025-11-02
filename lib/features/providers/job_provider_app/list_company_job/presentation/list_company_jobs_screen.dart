@@ -12,6 +12,8 @@ import 'package:get/get.dart';
 
 import '../../add_company_jobs_provider/domain/di/di.dart';
 import '../../company_jobs_provider_details/presentation/pages/company_jobs_provider_details_screen.dart';
+import '../../edit_company_job_provider/domain/di/di.dart';
+import '../../edit_company_job_provider/presentation/pages/edit_company_job_provider_screen.dart';
 import 'controller/list_company_jobs_controller.dart';
 
 class ListCompanyJobsScreen extends StatelessWidget {
@@ -447,9 +449,11 @@ class _CompanyCard extends StatelessWidget {
   // }
 
   void _editCompany() {
-    initAddCompanyJobs();
+    initEditCompanyJobsProvider();
     Get.to(
-      () => const AddCompanyJobsProviderScreen(),
+      () => EditCompanyJobsProviderScreen(
+        company: company,
+      ),
       transition: Transition.downToUp,
       duration: const Duration(milliseconds: 300),
     );
@@ -587,7 +591,7 @@ class _CompanyCard extends StatelessWidget {
 //   }
 //
 //   Widget _buildContactSection() {
-//     return Column(
+//
 //       crossAxisAlignment: CrossAxisAlignment.start,
 //       children: [
 //         Text(

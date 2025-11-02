@@ -1,4 +1,3 @@
-import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
@@ -7,6 +6,7 @@ import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
@@ -61,105 +61,109 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          SizedBox(height: ManagerHeight.h130),
+    return SafeArea(
+      top: false,
+      bottom: true,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          children: [
+            SizedBox(height: ManagerHeight.h130),
 
-          /// Logo
-          Center(
-            child: Image.asset(
-              ManagerImages.logoSecondWithPrimaryColor,
-              height: ManagerHeight.h156,
-              width: ManagerWidth.w180,
-              fit: BoxFit.contain,
-            )
-                .animate()
-                .fadeIn(duration: 700.ms)
-                .scale(curve: Curves.easeOutBack, duration: 700.ms),
-          ),
-
-          SizedBox(height: ManagerHeight.h42),
-
-          /// Title
-          Text(
-            ManagerStrings.chooseLanguageTitle,
-            style: getBoldTextStyle(
-              fontSize: ManagerFontSize.s20,
-              color: ManagerColors.primaryColor,
+            /// Logo
+            Center(
+              child: Image.asset(
+                ManagerImages.logoSecondWithPrimaryColor,
+                height: ManagerHeight.h156,
+                width: ManagerWidth.w180,
+                fit: BoxFit.contain,
+              )
+                  .animate()
+                  .fadeIn(duration: 700.ms)
+                  .scale(curve: Curves.easeOutBack, duration: 700.ms),
             ),
-          )
-              .animate()
-              .fadeIn(delay: 300.ms, duration: 500.ms)
-              .slideY(begin: 0.3, end: 0, curve: Curves.easeOut),
 
-          /// Subtitle
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w34),
-            child: Text(
-              ManagerStrings.chooseLanguageSubtitle,
-              style: getRegularTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: ManagerColors.chooseLanguageSubtitleColor,
-              ),
-              textAlign: TextAlign.center,
-            )
-                .animate()
-                .fadeIn(delay: 500.ms, duration: 500.ms)
-                .slideY(begin: 0.3, end: 0),
-          ),
+            SizedBox(height: ManagerHeight.h42),
 
-          SizedBox(height: ManagerHeight.h42),
-
-          /// Arabic Button
-          _buildLangButton(
-            lang: "ar",
-            bgColor: ManagerColors.primaryColor,
-            title: ManagerStrings.arabic,
-            subtitle: ManagerStrings.arabicEn,
-            textColor: Colors.white,
-            delay: 700,
-          ),
-
-          SizedBox(height: ManagerHeight.h16),
-
-          /// English Button
-          _buildLangButton(
-            lang: "en",
-            bgColor: ManagerColors.secondColor,
-            title: ManagerStrings.english,
-            subtitle: ManagerStrings.englishAr,
-            textColor: ManagerColors.black,
-            delay: 900,
-          ),
-
-          const Spacer(),
-
-          /// Confirm Button
-          ElevatedButton(
-            onPressed: _confirmLanguage,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: ManagerColors.primaryColor,
-              padding: EdgeInsets.symmetric(
-                horizontal: ManagerWidth.w34,
-                vertical: ManagerHeight.h12,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ManagerRadius.r6),
-              ),
-            ),
-            child: Text(
-              selectedLang == "ar" ? "متابعة" : "Continue",
+            /// Title
+            Text(
+              ManagerStrings.chooseLanguageTitle,
               style: getBoldTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: Colors.white,
+                fontSize: ManagerFontSize.s20,
+                color: ManagerColors.primaryColor,
               ),
-            ),
-          ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.3, end: 0),
+            )
+                .animate()
+                .fadeIn(delay: 300.ms, duration: 500.ms)
+                .slideY(begin: 0.3, end: 0, curve: Curves.easeOut),
 
-          SizedBox(height: ManagerHeight.h24),
-        ],
+            /// Subtitle
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w34),
+              child: Text(
+                ManagerStrings.chooseLanguageSubtitle,
+                style: getRegularTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: ManagerColors.chooseLanguageSubtitleColor,
+                ),
+                textAlign: TextAlign.center,
+              )
+                  .animate()
+                  .fadeIn(delay: 500.ms, duration: 500.ms)
+                  .slideY(begin: 0.3, end: 0),
+            ),
+
+            SizedBox(height: ManagerHeight.h42),
+
+            /// Arabic Button
+            _buildLangButton(
+              lang: "ar",
+              bgColor: ManagerColors.primaryColor,
+              title: ManagerStrings.arabic,
+              subtitle: ManagerStrings.arabicEn,
+              textColor: Colors.white,
+              delay: 700,
+            ),
+
+            SizedBox(height: ManagerHeight.h16),
+
+            /// English Button
+            _buildLangButton(
+              lang: "en",
+              bgColor: ManagerColors.secondColor,
+              title: ManagerStrings.english,
+              subtitle: ManagerStrings.englishAr,
+              textColor: ManagerColors.black,
+              delay: 900,
+            ),
+
+            const Spacer(),
+
+            /// Confirm Button
+            ElevatedButton(
+              onPressed: _confirmLanguage,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ManagerColors.primaryColor,
+                padding: EdgeInsets.symmetric(
+                  horizontal: ManagerWidth.w34,
+                  vertical: ManagerHeight.h12,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(ManagerRadius.r6),
+                ),
+              ),
+              child: Text(
+                selectedLang == "ar" ? "متابعة" : "Continue",
+                style: getBoldTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: Colors.white,
+                ),
+              ),
+            ).animate().fadeIn(delay: 1100.ms).slideY(begin: 0.3, end: 0),
+
+            SizedBox(height: ManagerHeight.h24),
+          ],
+        ),
       ),
     );
   }
@@ -189,12 +193,12 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
           ),
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: bgColor.withOpacity(0.4),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
-            )
-          ]
+                  BoxShadow(
+                    color: bgColor.withOpacity(0.4),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  )
+                ]
               : [],
         ),
         child: Center(
@@ -228,10 +232,7 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen> {
             ],
           ),
         ),
-      )
-          .animate()
-          .fadeIn(delay: delay.ms, duration: 500.ms)
-          .slideX(
+      ).animate().fadeIn(delay: delay.ms, duration: 500.ms).slideX(
           begin: lang == "ar" ? -0.3 : 0.3, end: 0, curve: Curves.easeOut),
     );
   }

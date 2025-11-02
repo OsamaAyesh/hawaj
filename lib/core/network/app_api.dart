@@ -253,4 +253,12 @@ abstract class AppService {
   ///Get List Company Jobs Request=> getListCompanyJobs
   @GET(RequestConstantsEndpoints.getListCompanyJobs)
   Future<GetListCompanyJobsResponse> getListCompanyJobs();
+
+  ///Edit Profile Company Jobs Request >editCompanyJobsProvider
+  @PUT(RequestConstantsEndpoints.editCompanyJobsProvider)
+  @MultiPart()
+  Future<WithOutDataResponse> editCompanyJobsProvider(
+    @Query(RequestConstants.id) String? id,
+    @Body() FormData formData,
+  );
 }

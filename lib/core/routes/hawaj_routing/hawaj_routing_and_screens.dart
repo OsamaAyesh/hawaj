@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../features/common/map/domain/di/di.dart';
+import '../../../features/common/map/presenation/controller/hawaj_map_data_controller.dart';
 import '../../../features/common/map/presenation/controller/map_controller.dart';
 import '../../../features/common/profile/domain/di/di.dart';
 import '../../../features/common/profile/presentation/pages/contact_us_screen.dart';
@@ -24,9 +25,9 @@ import '../../../features/providers/offers_provider/manage_list_offer/presentati
 class HawajSections {
   static const String dailyOffers = "1";
   static const String commercialContracts = "2";
-  static const String restaurants = "3";
+  static const String realEstates = "3";
   static const String orders = "4";
-  static const String profile = "5";
+  static const String jobs = "5";
 }
 
 /// ═══════════════════════════════════════════════════════════
@@ -131,6 +132,8 @@ class HawajRoutes {
       builder: (params) => const MapScreen(),
       transition: HawajTransition.fade,
       init: (params) {
+        Get.put(HawajMapDataController(), permanent: true);
+
         // ✅ تنفيذ الـ Binding الخاص بالخريطة مرة واحدة داخل init
         if (!Get.isRegistered<MapController>()) {
           MapBindings().dependencies();
@@ -234,6 +237,49 @@ class HawajRoutes {
       name: 'Details My Company Screen',
       builder: (params) => DetailsMyCompanyScreen(),
       transition: HawajTransition.slideUp,
+    ),
+    HawajRouteConfig(
+      section: HawajSections.realEstates,
+      screen: HawajScreens.map,
+      name: 'Details My Company Screen',
+      builder: (params) => const MapScreen(),
+      transition: HawajTransition.fade,
+      init: (params) {
+        Get.put(HawajMapDataController(), permanent: true);
+
+        // ✅ تنفيذ الـ Binding الخاص بالخريطة مرة واحدة داخل init
+        if (!Get.isRegistered<MapController>()) {
+          MapBindings().dependencies();
+          debugPrint('[HawajRouting] ✅ MapBindings initialized inside init()');
+        }
+
+        // يمكنك هنا استدعاء تحميل الموقع أو أي بيانات أخرى
+        // مثل:
+        // final mapC = Get.find<MapController>();
+        // mapC.loadCurrentLocation();
+      },
+    ),
+
+    HawajRouteConfig(
+      section: HawajSections.jobs,
+      screen: HawajScreens.map,
+      name: 'Details My Company Screen',
+      builder: (params) => const MapScreen(),
+      transition: HawajTransition.fade,
+      init: (params) {
+        Get.put(HawajMapDataController(), permanent: true);
+
+        // ✅ تنفيذ الـ Binding الخاص بالخريطة مرة واحدة داخل init
+        if (!Get.isRegistered<MapController>()) {
+          MapBindings().dependencies();
+          debugPrint('[HawajRouting] ✅ MapBindings initialized inside init()');
+        }
+
+        // يمكنك هنا استدعاء تحميل الموقع أو أي بيانات أخرى
+        // مثل:
+        // final mapC = Get.find<MapController>();
+        // mapC.loadCurrentLocation();
+      },
     ),
   ];
 
