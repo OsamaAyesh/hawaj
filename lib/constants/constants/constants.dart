@@ -50,8 +50,8 @@ class Constants {
     },
     {
       'icon': ManagerIcons.offerManagerIcons3,
-      'title': ManagerStrings.businessDetails,
-      'subtitle': ManagerStrings.businessDetailsDesc,
+      'title': "شركاتي",
+      'subtitle': "متابعة شركاتي الخاصة بالعروض اليومية",
     },
   ];
 

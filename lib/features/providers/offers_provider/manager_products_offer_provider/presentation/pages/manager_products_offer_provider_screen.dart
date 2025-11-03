@@ -16,6 +16,8 @@ import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
+import '../../../../offer_provider_new/get_my_organization_offer/domain/di/di.dart';
+import '../../../../offer_provider_new/get_my_organization_offer/presentation/pages/get_my_organization_offer_screen.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
 import '../../../details_my_company/domain/di/di.dart';
@@ -73,10 +75,10 @@ class _ManagerProductsOfferProviderScreenState
       },
       () {
         if (kDebugMode) {
-          print("تفاصيل المنشأة");
+          print("شركاتي");
         }
-        initGetMyCompanyDetails();
-        Get.to(DetailsMyCompanyScreen());
+        initGetMyOrganizationOffer();
+        Get.to(GetMyOrganizationOfferScreen());
       },
     ];
 

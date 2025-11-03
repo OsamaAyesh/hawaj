@@ -9,19 +9,18 @@ final instance = GetIt.instance;
 
 initGetMyCompanyRequest() {
   if (!GetIt.I.isRegistered<GetMyCompanyDataSource>()) {
-    instance.registerLazySingleton<GetMyCompanyDataSource>(() =>
-        GetMyCompanyDataSourceImplement(instance<AppService>()));
+    instance.registerLazySingleton<GetMyCompanyDataSource>(
+        () => GetMyCompanyDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<GetMyCompanyRepository>()) {
-    instance.registerLazySingleton<GetMyCompanyRepository>(() =>
-        GetMyCompanyRepositoryImplement(instance(), instance()));
+    instance.registerLazySingleton<GetMyCompanyRepository>(
+        () => GetMyCompanyRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<GetMyCompanyUseCase>()) {
-    instance.registerFactory<GetMyCompanyUseCase>(() =>
-        GetMyCompanyUseCase(
-            instance<GetMyCompanyRepository>()));
+    instance.registerFactory<GetMyCompanyUseCase>(
+        () => GetMyCompanyUseCase(instance<GetMyCompanyRepository>()));
   }
 }
 
@@ -39,14 +38,14 @@ disposeGetMyCompanyRequest() {
   }
 }
 
-void initGetMyCompany() {
+void initGetMyCompanyNew() {
   initGetMyCompanyRequest();
   // Get.put(EditCompanyJobProviderController(
   //   instance<EditCompanyJobsProviderUseCase>(),
   // ));
 }
 
-void disposeGetMyCompany() {
+void disposeGetMyCompanyNew() {
   disposeGetMyCompanyRequest();
   // Get.delete<EditCompanyJobProviderController>();
 }

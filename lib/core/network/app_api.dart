@@ -290,4 +290,11 @@ abstract class AppService {
   ////====== New Offers
   @GET(RequestConstantsEndpoints.getMyCompany)
   Future<GetMyCompanyResponse> getMyCompany();
+
+  ///Add Offer New Reqyest
+  @POST(RequestConstantsEndpoints.addOfferNewRequest)
+  @MultiPart()
+  Future<WithOutDataResponse> addOfferNewRequest(
+    @Body() FormData formData,
+  );
 }

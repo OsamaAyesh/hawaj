@@ -39,4 +39,5 @@ class RequestConstantsEndpoints {
   static const String getMyCompany = '$apiUrlBase/getmyorganizations';
   static const String getJobApplications =
       '$apiUrlBase/jobs/{jobId}/applications';
+  static const String addOfferNewRequest = '$apiUrlBase/setoffer';
 }
