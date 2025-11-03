@@ -1,6 +1,7 @@
-import 'package:app_mobile/features/providers/offer_provider_new/common/domain/models/get_my_company_model.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
 import '../../../common/domain/use_cases/get_my_company_use_case.dart';
 
 class GetMyCompanyController extends GetxController {
@@ -10,7 +11,7 @@ class GetMyCompanyController extends GetxController {
   final isLoading = false.obs;
 
   /// Company data
-  final company = Rxn<GetMyCompanyModel>();
+  final companies = <GetOrganizationItemWithOfferModel>[].obs;
 
   GetMyCompanyController(this._useCase);
 
@@ -23,10 +24,10 @@ class GetMyCompanyController extends GetxController {
     result.fold(
       (failure) {
         isLoading.value = false;
-        Get.snackbar("Error", failure.message);
+        AppSnackbar.error(failure.message);
       },
       (data) {
-        company.value = data;
+        companies.value = data.data; // ⬅️ نعرض قائمة المؤسسات
         isLoading.value = false;
       },
     );
