@@ -303,4 +303,16 @@ abstract class AppService {
   Future<GetCompanyResponse> getOrganizationById(
     @Query(RequestConstants.id) String? id,
   );
+
+  /// Add Visit To Real Estate
+  /// Endpoint: addmyvisitrequests
+  @POST(RequestConstantsEndpoints.addVisitRealEstate)
+  Future<WithOutDataResponse> addVisitRealEstate(
+    @Field(RequestConstants.visitDate) String visitDate,
+    @Field(RequestConstants.timeFrom) String timeFrom,
+    @Field(RequestConstants.timeTo) String timeTo,
+    @Field(RequestConstants.visitorMemberId) String visitorMemberId,
+    @Field(RequestConstants.propertyId) String propertyId,
+    @Field(RequestConstants.visitStatus) String visitStatus,
+  );
 }

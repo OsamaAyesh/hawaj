@@ -18,5 +18,11 @@ class RequestConstants {
   static const String stringUser = 'stri';
   static const String q = 'q';
   static const String jobId = 'jobId';
+  static const String visitDate = 'visit_date';
   static const String s = 's';
+  static const String timeFrom = 'time_from';
+  static const String timeTo = 'time_to';
+  static const String visitorMemberId = 'visitor_member_id';
+  static const String propertyId = 'property_id';
+  static const String visitStatus = 'visit_status';
 }
