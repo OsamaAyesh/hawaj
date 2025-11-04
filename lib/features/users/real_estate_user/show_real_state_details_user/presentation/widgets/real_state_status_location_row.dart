@@ -6,31 +6,41 @@ import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
 
 class RealStateStatusLocationRow extends StatelessWidget {
-  const RealStateStatusLocationRow({super.key});
+  final String status;
+  final String address;
+
+  const RealStateStatusLocationRow({
+    super.key,
+    required this.status,
+    required this.address,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Row(
-          children: [
-            const Icon(
-              Icons.location_on_rounded,
-              size: 18,
-              color: ManagerColors.primaryColor,
-            ),
-            SizedBox(width: ManagerWidth.w2),
-            Text(
-              "حي عريزة , مدينة الزلفى , منطقة الرياض",
-              style: getRegularTextStyle(
-                fontSize: ManagerFontSize.s12,
-                color: ManagerColors.locationColorText,
+        Expanded(
+          child: Row(
+            children: [
+              const Icon(
+                Icons.location_on_rounded,
+                size: 18,
+                color: ManagerColors.primaryColor,
               ),
-            ),
-          ],
+              SizedBox(width: ManagerWidth.w2),
+              Flexible(
+                child: Text(
+                  address.isNotEmpty ? address : "غير محدد",
+                  style: getRegularTextStyle(
+                    fontSize: ManagerFontSize.s12,
+                    color: ManagerColors.locationColorText,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
         ),
-        const Spacer(),
-        // ---------------- العقار متاح ----------------
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
@@ -38,7 +48,7 @@ class RealStateStatusLocationRow extends StatelessWidget {
             borderRadius: BorderRadius.circular(ManagerRadius.r8),
           ),
           child: Text(
-            "العقار متاح",
+            status.isNotEmpty ? status : "غير محدد",
             style: getMediumTextStyle(
               fontSize: ManagerFontSize.s12,
               color: ManagerColors.primaryColor,

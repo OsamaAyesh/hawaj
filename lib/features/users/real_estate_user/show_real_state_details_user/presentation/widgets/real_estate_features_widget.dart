@@ -6,20 +6,23 @@ import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:flutter/material.dart';
 
 class RealEstateFeaturesWidget extends StatelessWidget {
-  const RealEstateFeaturesWidget({super.key});
+  final List<String> features;
+
+  const RealEstateFeaturesWidget({super.key, required this.features});
 
   @override
   Widget build(BuildContext context) {
-    final List<String> features = [
-      "الفيلا مؤثثة",
-      "الفيلا يوجد بها حوش",
-      "مطابخ مجهزة بالكامل",
-      "مدخل سيارات خاص",
-      "الواجهة شمالية",
-      "غرفة خادمة",
-      "غرفة غسيل",
-      "مسبح خاص",
-    ];
+    if (features.isEmpty) {
+      return Center(
+        child: Text(
+          "لا توجد ميزات مضافة لهذا العقار",
+          style: getRegularTextStyle(
+            fontSize: ManagerFontSize.s12,
+            color: ManagerColors.locationColorText,
+          ),
+        ),
+      );
+    }
 
     final int half = (features.length / 2).ceil();
     final List<String> leftColumn = features.sublist(0, half);
@@ -62,11 +65,14 @@ class RealEstateFeaturesWidget extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: ManagerWidth.w6),
-                  Text(
-                    text,
-                    style: getRegularTextStyle(
-                      fontSize: ManagerFontSize.s12,
-                      color: ManagerColors.locationColorText,
+                  Flexible(
+                    child: Text(
+                      text,
+                      style: getRegularTextStyle(
+                        fontSize: ManagerFontSize.s12,
+                        color: ManagerColors.locationColorText,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

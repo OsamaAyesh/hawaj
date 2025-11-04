@@ -255,7 +255,9 @@ class RouteGenerator {
         );
       case Routes.showRealStateDetailsUserScreen:
         return MaterialPageRoute(
-          builder: (_) => ShowRealStateDetailsUserScreen(),
+          builder: (_) => ShowRealStateDetailsUserScreen(
+            id: '',
+          ),
         );
       case Routes.registerToRealEstateProviderServiceScreen:
         return MaterialPageRoute(

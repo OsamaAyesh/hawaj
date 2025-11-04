@@ -12,24 +12,42 @@ import '../../../../../../core/resources/manager_styles.dart';
 import '../../../../offer_user/company_with_offer/presentation/widgets/circle_icon_widget.dart';
 
 class WidgetImagesAndIcons extends StatelessWidget {
-  const WidgetImagesAndIcons({super.key});
+  final List<String> imageUrls;
+
+  const WidgetImagesAndIcons({
+    super.key,
+    required this.imageUrls,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final hasImages = imageUrls.isNotEmpty;
+
     return Stack(
       children: [
-        Image.asset(
-          ManagerImages.removeRealState,
-          height: ManagerHeight.h316,
-          width: double.infinity,
-          fit: BoxFit.cover,
-        ),
+        hasImages
+            ? Image.network(
+                imageUrls.first,
+                height: ManagerHeight.h316,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Image.asset(
+                  ManagerImages.removeRealState,
+                  height: ManagerHeight.h316,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : Image.asset(
+                ManagerImages.removeRealState,
+                height: ManagerHeight.h316,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            SizedBox(
-              height: ManagerHeight.h51,
-            ),
+            SizedBox(height: ManagerHeight.h51),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
               child: Row(
@@ -46,27 +64,23 @@ class WidgetImagesAndIcons extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              height: ManagerHeight.h190,
-            ),
+            SizedBox(height: ManagerHeight.h190),
             Container(
               height: ManagerHeight.h32,
-              padding: EdgeInsets.symmetric(
-                horizontal: ManagerWidth.w12,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(ManagerRadius.r4),
                 color: ManagerColors.black.withOpacity(ManagerOpacity.op0_4),
               ),
-              child: _viewPhotosWidget(),
+              child: _viewPhotosWidget(imageCount: imageUrls.length),
             ),
           ],
-        )
+        ),
       ],
     );
   }
 
-  Widget _viewPhotosWidget() {
+  Widget _viewPhotosWidget({required int imageCount}) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.black.withOpacity(0.5),
@@ -77,14 +91,14 @@ class WidgetImagesAndIcons extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            "3",
+            "$imageCount",
             style: getMediumTextStyle(
               fontSize: ManagerFontSize.s14,
               color: Colors.white,
             ),
           ),
           SizedBox(width: ManagerWidth.w4),
-          Icon(
+          const Icon(
             Icons.image_outlined,
             color: Colors.white,
             size: 20,

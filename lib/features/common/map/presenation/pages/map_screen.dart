@@ -19,6 +19,8 @@ import '../../../../users/offer_user/common_widgets_offer_user/organization_shee
 import '../../../../users/offer_user/company_with_offer/domain/di/di.dart';
 import '../../../../users/offer_user/company_with_offer/presentation/pages/company_with_offer_screen.dart';
 import '../../../../users/offer_user/list_offers/presentation/controller/get_organizations_controller.dart';
+import '../../../../users/real_estate_user/domain/di/di.dart';
+import '../../../../users/real_estate_user/show_real_state_details_user/presentation/pages/show_real_state_details_user_screen.dart';
 import '../../../hawaj_voice/domain/models/job_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/domain/models/property_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/presentation/controller/hawaj_ai_controller.dart';
@@ -446,7 +448,13 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
                             borderRadius: BorderRadius.circular(12),
                           ),
                         ),
-                        child: const Text('عرض التفاصيل الكاملة'),
+                        child: Text(
+                          'عرض التفاصيل الكاملة',
+                          style: getRegularTextStyle(
+                            fontSize: ManagerFontSize.s12,
+                            color: ManagerColors.white,
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -590,6 +598,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     if (type == 'offer') {
       initGetCompany();
       Get.to(() => CompanyWithOfferScreen(idOrganization: item.id));
+    } else if (type == "property") {
+      initGetRealEstateUser();
+      Get.to(() => ShowRealStateDetailsUserScreen(id: item.id));
     } else {
       // يمكنك إضافة navigation للعقارات والوظائف هنا
       ScaffoldMessenger.of(context).showSnackBar(

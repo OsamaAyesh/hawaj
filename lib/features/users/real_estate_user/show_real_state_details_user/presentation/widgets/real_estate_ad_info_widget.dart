@@ -7,7 +7,20 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 
 class RealEstateAdInfoWidget extends StatelessWidget {
-  const RealEstateAdInfoWidget({super.key});
+  final String advertiserRole;
+  final String saleType;
+  final String visitDays;
+  final String visitTimeFrom;
+  final String visitTimeTo;
+
+  const RealEstateAdInfoWidget({
+    super.key,
+    required this.advertiserRole,
+    required this.saleType,
+    required this.visitDays,
+    required this.visitTimeFrom,
+    required this.visitTimeTo,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,30 +30,30 @@ class RealEstateAdInfoWidget extends StatelessWidget {
       radius: const Radius.circular(12),
       dashPattern: const [6, 3],
       strokeWidth: 1.2,
-      child: const Padding(
-        padding: EdgeInsets.all(12),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _AdInfoItem(
-              title: "تاريخ الإضافة",
-              value: "14-07-2027",
+              title: "دور المعلن",
+              value: advertiserRole.isNotEmpty ? advertiserRole : "غير محدد",
             ),
             _AdInfoItem(
-              title: "رقم الترخيص",
-              value: "3928492389482933",
+              title: "نوع البيع",
+              value: saleType.isNotEmpty ? saleType : "غير محدد",
             ),
             _AdInfoItem(
-              title: "تاريخ انتهاء الرخصة",
-              value: "14-07-2028",
+              title: "أيام الزيارة",
+              value: visitDays.isNotEmpty ? visitDays : "غير محدد",
             ),
             _AdInfoItem(
-              title: "المساحة على حسب الصك",
-              value: "635 م²",
+              title: "وقت الزيارة من",
+              value: visitTimeFrom.isNotEmpty ? visitTimeFrom : "غير محدد",
             ),
             _AdInfoItem(
-              title: "وقت الزيارات المتاح",
-              value: "الأحد - الإثنين - الأربعاء",
+              title: "وقت الزيارة إلى",
+              value: visitTimeTo.isNotEmpty ? visitTimeTo : "غير محدد",
               highlight: true,
             ),
           ],
@@ -85,13 +98,16 @@ class _AdInfoItem extends StatelessWidget {
             ),
           ),
           SizedBox(width: ManagerWidth.w4),
-          Text(
-            value,
-            style: getBoldTextStyle(
-              fontSize: ManagerFontSize.s13,
-              color: highlight
-                  ? ManagerColors.primaryColor
-                  : ManagerColors.primaryColor.withOpacity(0.9),
+          Flexible(
+            child: Text(
+              value,
+              style: getBoldTextStyle(
+                fontSize: ManagerFontSize.s13,
+                color: highlight
+                    ? ManagerColors.primaryColor
+                    : ManagerColors.primaryColor.withOpacity(0.9),
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

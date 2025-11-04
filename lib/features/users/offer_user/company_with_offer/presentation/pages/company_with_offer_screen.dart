@@ -48,39 +48,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
           }
 
           if (controller.errorMessage.isNotEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Colors.red[300],
-                  ),
-                  SizedBox(height: ManagerHeight.h16),
-                  Text(
-                    controller.errorMessage.value,
-                    textAlign: TextAlign.center,
-                    style: getMediumTextStyle(
-                      fontSize: ManagerFontSize.s12,
-                      color: Colors.red,
-                    ),
-                  ),
-                  SizedBox(height: ManagerHeight.h16),
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      controller.refreshCompany(widget.idOrganization);
-                    },
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('إعادة المحاولة'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ManagerColors.primaryColor,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return _buildErrorState();
           }
 
           final company = controller.companyModel.value?.data;
@@ -96,22 +64,18 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
                 parent: BouncingScrollPhysics(),
               ),
               slivers: [
-                // Header Image
-                SliverToBoxAdapter(
-                  child: _buildHeader(company),
-                ),
+                // Header
+                SliverToBoxAdapter(child: _buildHeader(company)),
 
                 // Discount Banner
-                SliverToBoxAdapter(
-                  child: _buildDiscountBanner(),
-                ),
+                SliverToBoxAdapter(child: _buildDiscountBanner()),
 
                 // Products Title
                 SliverToBoxAdapter(
                   child: _buildProductsTitle(company.offers.length),
                 ),
 
-                // Products Grid
+                // Offers Grid
                 SliverPadding(
                   padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
                   sliver: SliverGrid(
@@ -134,10 +98,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
                   ),
                 ),
 
-                // Bottom Spacing
-                SliverToBoxAdapter(
-                  child: SizedBox(height: ManagerHeight.h24),
-                ),
+                SliverToBoxAdapter(child: SizedBox(height: ManagerHeight.h24)),
               ],
             ),
           );
@@ -146,11 +107,42 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
     );
   }
 
-  /// Header مع الصورة والأيقونات
+  /// 🔹 واجهة الخطأ
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+          SizedBox(height: ManagerHeight.h16),
+          Text(
+            controller.errorMessage.value,
+            textAlign: TextAlign.center,
+            style: getMediumTextStyle(
+              fontSize: ManagerFontSize.s12,
+              color: Colors.red,
+            ),
+          ),
+          SizedBox(height: ManagerHeight.h16),
+          ElevatedButton.icon(
+            onPressed: () => controller.refreshCompany(widget.idOrganization),
+            icon: const Icon(Icons.refresh),
+            label: const Text('إعادة المحاولة'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ManagerColors.primaryColor,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// 🔹 الهيدر العلوي مع الصورة والبطاقة
   Widget _buildHeader(company) {
     return Stack(
       children: [
-        // Background Image
+        // صورة الغلاف
         Image.asset(
           ManagerImages.imageRemoveIt,
           height: ManagerHeight.h200,
@@ -158,9 +150,10 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
           fit: BoxFit.cover,
         ),
         Padding(
-            padding: EdgeInsets.only(top: ManagerHeight.h160),
-            child: _buildCompanyCard(company)),
-        // Top Icons
+          padding: EdgeInsets.only(top: ManagerHeight.h160),
+          child: _buildCompanyCard(company),
+        ),
+        // أزرار الأعلى
         Positioned(
           top: MediaQuery.of(context).padding.top + 8,
           left: ManagerWidth.w16,
@@ -192,7 +185,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
     );
   }
 
-  /// Company Card
+  /// 🔹 بطاقة بيانات الشركة
   Widget _buildCompanyCard(company) {
     return Transform.translate(
       offset: Offset(0, -ManagerHeight.h16),
@@ -216,37 +209,31 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Logo + Discount Badge
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // Company Logo
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(ManagerRadius.r8),
-                        child: Image.network(
-                          company.organizationLogo,
-                          height: ManagerHeight.h60,
-                          width: ManagerWidth.w60,
-                          fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Image.asset(
-                            ManagerImages.image3remove,
-                            height: ManagerHeight.h60,
-                            width: ManagerWidth.w60,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                  // شعار الشركة
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(ManagerRadius.r8),
+                    child: Image.network(
+                      company.organizationLogo,
+                      height: ManagerHeight.h60,
+                      width: ManagerWidth.w60,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Image.asset(
+                        ManagerImages.image3remove,
+                        height: ManagerHeight.h60,
+                        width: ManagerWidth.w60,
+                        fit: BoxFit.cover,
                       ),
-                    ],
+                    ),
                   ),
                   SizedBox(width: ManagerWidth.w8),
 
-                  // Company Info
+                  // بيانات الشركة
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          company.organization,
+                          company.organizationName,
                           style: getBoldTextStyle(
                             fontSize: ManagerFontSize.s14,
                             color: Colors.black87,
@@ -267,7 +254,8 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
                   ),
 
                   SizedBox(width: ManagerWidth.w12),
-                  // Phone Button
+
+                  // زر الاتصال
                   Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: ManagerWidth.w10,
@@ -280,11 +268,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(
-                          Icons.phone,
-                          color: Colors.white,
-                          size: 14,
-                        ),
+                        const Icon(Icons.phone, color: Colors.white, size: 14),
                         SizedBox(width: ManagerWidth.w4),
                         Text(
                           company.phoneNumber,
@@ -301,18 +285,14 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
 
               SizedBox(height: ManagerHeight.h12),
 
-              // Info Icons Row
+              // العنوان
               Row(
                 children: [
-                  Icon(
-                    Icons.location_pin,
-                    size: 14,
-                    color: Colors.grey[700],
-                  ),
+                  Icon(Icons.location_pin, size: 14, color: Colors.grey[700]),
                   SizedBox(width: ManagerWidth.w4),
                   Expanded(
                     child: Text(
-                      company.address,
+                      company.organizationDetailedAddress,
                       style: getRegularTextStyle(
                         fontSize: ManagerFontSize.s9,
                         color: Colors.grey[700]!,
@@ -326,7 +306,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
 
               SizedBox(height: ManagerHeight.h10),
 
-              // Working Hours
+              // أوقات العمل
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: ManagerWidth.w12,
@@ -339,11 +319,8 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.access_time,
-                      size: 14,
-                      color: ManagerColors.primaryColor,
-                    ),
+                    Icon(Icons.access_time,
+                        size: 14, color: ManagerColors.primaryColor),
                     SizedBox(width: ManagerWidth.w6),
                     Flexible(
                       child: Text(
@@ -366,19 +343,15 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
     );
   }
 
-  /// Discount Banner
+  /// 🔹 بانر الخصومات
   Widget _buildDiscountBanner() {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16),
       child: Container(
-        // margin: EdgeInsets.only(bottom: ManagerHeight.h8),
         padding: EdgeInsets.all(ManagerWidth.w16),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              const Color(0xFF3D3B6B),
-              const Color(0xFF5A4BA3),
-            ],
+          gradient: const LinearGradient(
+            colors: [Color(0xFF3D3B6B), Color(0xFF5A4BA3)],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
           ),
@@ -437,7 +410,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
     );
   }
 
-  /// Products Title
+  /// 🔹 عنوان المنتجات
   Widget _buildProductsTitle(int count) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -445,7 +418,7 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
         vertical: ManagerHeight.h12,
       ),
       child: Text(
-        'قائمة المنتجات',
+        "قائمة المنتجات ($count)",
         style: getBoldTextStyle(
           fontSize: ManagerFontSize.s14,
           color: Colors.black87,
