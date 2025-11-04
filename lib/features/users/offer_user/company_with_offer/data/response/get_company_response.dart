@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 import '../../../../../../constants/response_constants/response_constants.dart';
+import '../../../../../../core/response/get_organization_item_with_offer_response.dart';
 import '../../../../../../core/response/organization_company_daily_offer_item_response.dart';
 
 part 'get_company_response.g.dart';
@@ -12,7 +13,7 @@ class GetCompanyResponse {
   @JsonKey(name: ResponseConstants.message)
   String? message;
   @JsonKey(name: ResponseConstants.data)
-  OrganizationCompanyDailyOfferItemResponse? data;
+  GetOrganizationItemWithOfferResponse? data;
 
   GetCompanyResponse({
     this.error,

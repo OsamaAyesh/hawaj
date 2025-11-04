@@ -297,4 +297,10 @@ abstract class AppService {
   Future<WithOutDataResponse> addOfferNewRequest(
     @Body() FormData formData,
   );
+
+  ///Get Orgnization By Org. Id
+  @GET(RequestConstantsEndpoints.getOrganizationById)
+  Future<GetCompanyResponse> getOrganizationById(
+    @Query(RequestConstants.id) String? id,
+  );
 }

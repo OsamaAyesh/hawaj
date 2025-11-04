@@ -10,6 +10,8 @@ import 'package:get/get.dart';
 
 import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
 import '../../../../../../core/widgets/loading_widget.dart';
+import '../../../../offers_provider/add_offer/domain/di/di.dart';
+import '../../../../offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../../../offers_provider/register_company_offer_provider/domain/di/di.dart';
 import '../../../../offers_provider/register_company_offer_provider/presentation/pages/register_company_offer_provider_screen.dart';
 import '../controller/get_my_organization_offer_controller.dart';
@@ -130,19 +132,27 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
             ],
           ),
           SizedBox(height: ManagerHeight.h16),
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: ManagerColors.primaryColor,
-              borderRadius: BorderRadius.circular(ManagerWidth.w8),
-            ),
-            padding: EdgeInsets.symmetric(vertical: ManagerHeight.h12),
-            alignment: Alignment.center,
-            child: Text(
-              "إدارة العروض (${company.offers.length})",
-              style: getMediumTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: Colors.white,
+          GestureDetector(
+            onTap: () {
+              initGetMyCompany();
+              Get.to(ManageListOfferProviderScreen(
+                companyId: company.id,
+              ));
+            },
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: ManagerColors.primaryColor,
+                borderRadius: BorderRadius.circular(ManagerWidth.w8),
+              ),
+              padding: EdgeInsets.symmetric(vertical: ManagerHeight.h12),
+              alignment: Alignment.center,
+              child: Text(
+                "إدارة العروض (${company.offers.length})",
+                style: getMediumTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),

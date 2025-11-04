@@ -11,7 +11,7 @@ import '../../../../../../constants/env/env_constants.dart';
 import '../../../../../../core/network/app_api.dart';
 
 abstract class GetCompanyDataSource {
-  Future<GetCompanyResponse> getCompany(GetCompanyRequest request);
+  Future<GetCompanyResponse> getOrganizationById(GetCompanyRequest request);
 }
 
 class GetCompanyDataSourceImplement implements GetCompanyDataSource {
@@ -20,7 +20,8 @@ class GetCompanyDataSourceImplement implements GetCompanyDataSource {
   GetCompanyDataSourceImplement(this._appService);
 
   @override
-  Future<GetCompanyResponse> getCompany(GetCompanyRequest request) async {
+  Future<GetCompanyResponse> getOrganizationById(
+      GetCompanyRequest request) async {
     if (dotenv.env[EnvConstants.debug].onNullBool()) {
       return GetCompanyResponse.fromJson(
         json.decode(
@@ -30,11 +31,8 @@ class GetCompanyDataSourceImplement implements GetCompanyDataSource {
         ),
       );
     }
-    return await _appService.getOrganization(
-      request.lat,
+    return await _appService.getOrganizationById(
       request.id,
-      request.lng,
-      request.language,
     );
   }
 }

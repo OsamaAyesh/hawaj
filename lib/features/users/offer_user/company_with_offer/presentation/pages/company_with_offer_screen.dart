@@ -14,7 +14,7 @@ import '../widgets/circle_icon_widget.dart';
 import '../widgets/user_offer_card_widget.dart';
 
 class CompanyWithOfferScreen extends StatefulWidget {
-  final int idOrganization;
+  final String idOrganization;
 
   const CompanyWithOfferScreen({super.key, required this.idOrganization});
 

@@ -230,7 +230,9 @@ class HawajRoutes {
       section: HawajSections.dailyOffers,
       screen: HawajScreens.manageListOfferProviderScreen,
       name: 'Manage List Offer Provider Screen',
-      builder: (params) => ManageListOfferProviderScreen(),
+      builder: (params) => ManageListOfferProviderScreen(
+        companyId: '',
+      ),
       transition: HawajTransition.slideUp,
     ),
     HawajRouteConfig(

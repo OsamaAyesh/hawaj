@@ -1,7 +1,6 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
-import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
@@ -17,136 +16,140 @@ import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
 import '../controller/manage_list_offer_provider_controller.dart';
 import '../widgets/offer_card_widget.dart';
 
-class ManageListOfferProviderScreen extends StatelessWidget {
-  const ManageListOfferProviderScreen({super.key});
+class ManageListOfferProviderScreen extends StatefulWidget {
+  final String companyId;
+
+  const ManageListOfferProviderScreen({super.key, required this.companyId});
+
+  @override
+  State<ManageListOfferProviderScreen> createState() =>
+      _ManageListOfferProviderScreenState();
+}
+
+class _ManageListOfferProviderScreenState
+    extends State<ManageListOfferProviderScreen> {
+  late ManageListOfferProviderController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<ManageListOfferProviderController>();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchOffersByCompanyId(widget.companyId);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    // ✅ الحصول على الـController المسجل مسبقاً عبر الـBindings
-    final controller = Get.find<ManageListOfferProviderController>();
-
     return ScaffoldWithBackButton(
       title: ManagerStrings.productList,
       body: Obx(() {
-        // ===== حالة التحميل =====
-        if (controller.isLoading.value && !controller.hasCompany) {
+        if (controller.isLoading.value) {
           return const LoadingWidget();
         }
 
-        // ===== حالة الخطأ =====
-        if (controller.errorMessage.isNotEmpty && !controller.hasCompany) {
-          // يمكنك لاحقاً إضافة Widget مخصص لعرض رسالة الخطأ
-          // return ErrorOffersWidget(
-          //   message: controller.errorMessage.value,
-          //   onRetry: () => controller.fetchOffers(),
-          // );
+        if (controller.errorMessage.isNotEmpty && !controller.hasOffers) {
+          return _buildErrorState();
         }
 
-        // ===== حالة عدم وجود بيانات =====
         if (!controller.hasOffers) {
-          return const EmptyStateWidget();
+          return const EmptyStateWidget(
+            messageAr: "لا توجد عروض حالياً",
+          );
         }
 
-        // ===== حالة النجاح =====
-        return Column(
-          children: [
-            // شريط توضيح حالة العروض
-            const StatusLegendWidget(),
-            SizedBox(height: ManagerHeight.h8),
-
-            // قائمة العروض
-            Expanded(
-              child: RefreshIndicator(
-                color: ManagerColors.primaryColor,
-                backgroundColor: Colors.white,
-                onRefresh: () => controller.fetchOffers(isRefresh: true),
-                child: Stack(
-                  children: [
-                    // GridView لعرض العروض
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
-                      child: GridView.builder(
-                        padding: EdgeInsets.only(
-                          top: ManagerHeight.h8,
-                          bottom: ManagerHeight.h80,
-                        ),
-                        physics: const AlwaysScrollableScrollPhysics(
-                          parent: BouncingScrollPhysics(),
-                        ),
-                        itemCount: controller.offers.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisExtent: ManagerHeight.h210,
-                          crossAxisSpacing: ManagerWidth.w12,
-                          mainAxisSpacing: ManagerHeight.h12,
-                        ),
-                        itemBuilder: (context, index) {
-                          final offer = controller.offers[index];
-                          return OfferCardWidget(offer: offer);
-                        },
-                      ),
-                    ),
-
-                    // شريط علوي يظهر عند التحديث بالسحب
-                    if (controller.isRefreshing.value)
-                      Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: Container(
-                          padding: EdgeInsets.all(ManagerWidth.w8),
-                          decoration: BoxDecoration(
-                            color: ManagerColors.primaryColor.withOpacity(0.9),
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(ManagerRadius.r12),
-                              bottomRight: Radius.circular(ManagerRadius.r12),
-                            ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              SizedBox(width: ManagerWidth.w8),
-                              Text(
-                                'جاري التحديث...',
-                                style: getMediumTextStyle(
-                                  fontSize: ManagerFontSize.s12,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        );
+        return _buildOffersList();
       }),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: ManagerColors.primaryColor,
         onPressed: () {
           initCreateOfferProvider();
-          Get.to(AddOfferProviderScreen());
+          Get.to(() => const AddOfferProviderScreen());
         },
         icon: const Icon(Icons.add, color: Colors.white),
         label: Text(
-          'إضافة عرض',
+          "إضافة عرض",
           style: getBoldTextStyle(
             fontSize: ManagerFontSize.s14,
             color: Colors.white,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildErrorState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
+          SizedBox(height: ManagerHeight.h12),
+          Text(
+            controller.errorMessage.value,
+            style: getMediumTextStyle(
+              fontSize: ManagerFontSize.s12,
+              color: Colors.red,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          SizedBox(height: ManagerHeight.h16),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.refresh),
+            onPressed: () =>
+                controller.fetchOffersByCompanyId(widget.companyId),
+            label: const Text("إعادة المحاولة"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ManagerColors.primaryColor,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOffersList() {
+    return RefreshIndicator(
+      color: ManagerColors.primaryColor,
+      onRefresh: () =>
+          controller.fetchOffersByCompanyId(widget.companyId, isRefresh: true),
+      child: Column(
+        children: [
+          const StatusLegendWidget(),
+          SizedBox(height: ManagerHeight.h8),
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w12),
+              child: GridView.builder(
+                padding: EdgeInsets.only(
+                  top: ManagerHeight.h8,
+                  bottom: ManagerHeight.h80,
+                ),
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
+                ),
+                itemCount: controller.offers.length,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisExtent: ManagerHeight.h210,
+                  crossAxisSpacing: ManagerWidth.w12,
+                  mainAxisSpacing: ManagerHeight.h12,
+                ),
+                itemBuilder: (context, index) {
+                  final offer = controller.offers[index];
+                  return OfferCardWidget(offer: offer);
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

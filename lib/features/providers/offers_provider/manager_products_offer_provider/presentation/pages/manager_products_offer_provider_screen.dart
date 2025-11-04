@@ -20,9 +20,6 @@ import '../../../../offer_provider_new/get_my_organization_offer/domain/di/di.da
 import '../../../../offer_provider_new/get_my_organization_offer/presentation/pages/get_my_organization_offer_screen.dart';
 import '../../../add_offer/domain/di/di.dart';
 import '../../../add_offer/presentation/pages/add_offer_provider_screen.dart';
-import '../../../details_my_company/domain/di/di.dart';
-import '../../../details_my_company/presentation/pages/details_my_company_screen.dart';
-import '../../../manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 
 class ManagerProductsOfferProviderScreen extends StatefulWidget {
   const ManagerProductsOfferProviderScreen({super.key});
@@ -66,13 +63,13 @@ class _ManagerProductsOfferProviderScreenState
         initCreateOfferProvider();
         Get.to(AddOfferProviderScreen());
       },
-      () {
-        if (kDebugMode) {
-          initGetMyCompany();
-          Get.to(ManageListOfferProviderScreen());
-          print("إدارة المنتجات");
-        }
-      },
+      // () {
+      //   if (kDebugMode) {
+      //     // initGetMyCompany();
+      //     // Get.to(ManageListOfferProviderScreen());
+      //     print("إدارة المنتجات");
+      //   }
+      // },
       () {
         if (kDebugMode) {
           print("شركاتي");

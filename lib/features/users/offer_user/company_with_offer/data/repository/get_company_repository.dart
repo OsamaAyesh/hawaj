@@ -1,4 +1,3 @@
-
 import 'package:app_mobile/core/mapper/with_out_data_mapper.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
 import 'package:app_mobile/features/common/auth/data/data_source/send_otp_data_source.dart';
@@ -19,9 +18,9 @@ import '../../../../../../core/internet_checker/interent_checker.dart';
 import '../request/get_company_request.dart';
 
 abstract class GetCompanyRepository {
-  Future<Either<Failure, GetCompanyModel>> getCompany(
-      GetCompanyRequest request,
-      );
+  Future<Either<Failure, GetCompanyModel>> getOrganizationById(
+    GetCompanyRequest request,
+  );
 }
 
 class GetCompanyRepositoryImplement implements GetCompanyRepository {
@@ -31,11 +30,12 @@ class GetCompanyRepositoryImplement implements GetCompanyRepository {
   GetCompanyRepositoryImplement(this._networkInfo, this.remoteDataSource);
 
   @override
-  Future<Either<Failure, GetCompanyModel>> getCompany(GetCompanyRequest request) async {
+  Future<Either<Failure, GetCompanyModel>> getOrganizationById(
+      GetCompanyRequest request) async {
     // if (await _networkInfo.isConnected) {
     /// Its connected
     try {
-      final response = await remoteDataSource.getCompany(request);
+      final response = await remoteDataSource.getOrganizationById(request);
       return Right(response.toDomain());
     } catch (e) {
       return Left(ErrorHandler.handle(e).failure);

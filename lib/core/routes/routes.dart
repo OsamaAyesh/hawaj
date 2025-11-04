@@ -167,10 +167,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case Routes.otpLoginScreen:
         return MaterialPageRoute(
-            builder: (_) =>
-            const OtpLoginScreen(
-              phoneNumber: '',
-            ));
+            builder: (_) => const OtpLoginScreen(
+                  phoneNumber: '',
+                ));
       case Routes.successLoginScreen:
         return MaterialPageRoute(builder: (_) => const SuccessLoginScreen());
       case Routes.completeInformationScreen:
@@ -196,7 +195,9 @@ class RouteGenerator {
             builder: (_) => const AddOfferProviderScreen());
       case Routes.manageListOfferProviderScreen:
         return MaterialPageRoute(
-            builder: (_) => const ManageListOfferProviderScreen());
+            builder: (_) => const ManageListOfferProviderScreen(
+                  companyId: '',
+                ));
       case Routes.profileScreen:
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case Routes.mapScreen:
@@ -212,10 +213,9 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => TestScreen());
       case Routes.companyWithOfferScreen:
         return MaterialPageRoute(
-            builder: (_) =>
-            const CompanyWithOfferScreen(
-              idOrganization: 1,
-            ));
+            builder: (_) => const CompanyWithOfferScreen(
+                  idOrganization: "1",
+                ));
       case Routes.registerServiceProviderContractScreen:
         return MaterialPageRoute(
             builder: (_) => RegisterServiceProviderContractScreen());
@@ -311,31 +311,32 @@ class RouteGenerator {
         );
       case Routes.companyJobsProviderDetailsScreen:
         return MaterialPageRoute(
-          builder: (_) =>
-              CompanyJobsProviderDetailsScreen(company: JobCompanyItemModel(
-                  id: "",
-                  companyName: "",
-                  industry: "",
-                  mobileNumber: "",
-                  locationLat: "",
-                  locationLng: "",
-                  detailedAddress: "",
-                  companyDescription: "",
-                  companyShortDescription: "",
-                  companyLogo: "",
-                  contactPersonName: "",
-                  contactPersonEmail: "",
-                  commercialRegister: "",
-                  activityLicense: "",
-                  memberId: "",
-                  memberIdLable: ""),),
+          builder: (_) => CompanyJobsProviderDetailsScreen(
+            company: JobCompanyItemModel(
+                id: "",
+                companyName: "",
+                industry: "",
+                mobileNumber: "",
+                locationLat: "",
+                locationLng: "",
+                detailedAddress: "",
+                companyDescription: "",
+                companyShortDescription: "",
+                companyLogo: "",
+                contactPersonName: "",
+                contactPersonEmail: "",
+                commercialRegister: "",
+                activityLicense: "",
+                memberId: "",
+                memberIdLable: ""),
+          ),
         );
-    // case Routes.editMyRealEstateScreen:
-    //   return MaterialPageRoute(
-    //     builder: (_) => EditMyRealEstateScreen(
-    //       realEstate: RealEstateItemModel(id: , propertySubject: propertySubject, propertyType: propertyType, propertyTypeLabel: propertyTypeLabel, operationType: operationType, operationTypeLabel: operationTypeLabel, advertiserRole: advertiserRole, advertiserRoleLabel: advertiserRoleLabel, saleType: saleType, saleTypeLabel: saleTypeLabel, keywords: keywords, propertyOwnerId: propertyOwnerId, propertyOwnerIdLabel: propertyOwnerIdLabel, lat: lat, lng: lng, propertyDetailedAddress: propertyDetailedAddress, price: price, areaSqm: areaSqm, commissionPercentage: commissionPercentage, usageType: usageType, usageTypeLabel: usageTypeLabel, propertyDescription: propertyDescription, featureIds: featureIds, facilityIds: facilityIds, visitDays: visitDays, visitTimeFrom: visitTimeFrom, visitTimeTo: visitTimeTo, propertyImages: propertyImages, propertyVideos: propertyVideos, deedDocument: deedDocument),
-    //     ),
-    //   );
+      // case Routes.editMyRealEstateScreen:
+      //   return MaterialPageRoute(
+      //     builder: (_) => EditMyRealEstateScreen(
+      //       realEstate: RealEstateItemModel(id: , propertySubject: propertySubject, propertyType: propertyType, propertyTypeLabel: propertyTypeLabel, operationType: operationType, operationTypeLabel: operationTypeLabel, advertiserRole: advertiserRole, advertiserRoleLabel: advertiserRoleLabel, saleType: saleType, saleTypeLabel: saleTypeLabel, keywords: keywords, propertyOwnerId: propertyOwnerId, propertyOwnerIdLabel: propertyOwnerIdLabel, lat: lat, lng: lng, propertyDetailedAddress: propertyDetailedAddress, price: price, areaSqm: areaSqm, commissionPercentage: commissionPercentage, usageType: usageType, usageTypeLabel: usageTypeLabel, propertyDescription: propertyDescription, featureIds: featureIds, facilityIds: facilityIds, visitDays: visitDays, visitTimeFrom: visitTimeFrom, visitTimeTo: visitTimeTo, propertyImages: propertyImages, propertyVideos: propertyVideos, deedDocument: deedDocument),
+      //     ),
+      //   );
       default:
         return unDefinedRoute();
     }
@@ -345,19 +346,18 @@ class RouteGenerator {
   /// This Screen Will Tell The User This Page Is Not Exist
   static Route<dynamic> unDefinedRoute() {
     return MaterialPageRoute(
-      builder: (_) =>
-          Scaffold(
-            appBar: AppBar(
-              title: Text(
-                ManagerStrings.noRouteFound,
-              ),
-            ),
-            body: Center(
-              child: Text(
-                ManagerStrings.noRouteFound,
-              ),
-            ),
+      builder: (_) => Scaffold(
+        appBar: AppBar(
+          title: Text(
+            ManagerStrings.noRouteFound,
           ),
+        ),
+        body: Center(
+          child: Text(
+            ManagerStrings.noRouteFound,
+          ),
+        ),
+      ),
     );
   }
 }

@@ -43,11 +43,11 @@ class Constants {
       'title': ManagerStrings.addProduct,
       'subtitle': ManagerStrings.addProductDesc,
     },
-    {
-      'icon': ManagerIcons.offerManagerIcons2,
-      'title': ManagerStrings.manageProducts,
-      'subtitle': ManagerStrings.manageProductsDesc,
-    },
+    // {
+    //   'icon': ManagerIcons.offerManagerIcons2,
+    //   'title': ManagerStrings.manageProducts,
+    //   'subtitle': ManagerStrings.manageProductsDesc,
+    // },
     {
       'icon': ManagerIcons.offerManagerIcons3,
       'title': "شركاتي",

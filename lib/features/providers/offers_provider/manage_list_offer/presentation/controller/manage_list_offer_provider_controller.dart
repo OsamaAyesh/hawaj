@@ -1,42 +1,35 @@
 import 'package:app_mobile/core/error_handler/failure.dart';
-import 'package:app_mobile/core/model/offer_general_item_model.dart';
-import 'package:app_mobile/core/model/orgnization_company_daily_offer_item_model.dart';
+import 'package:app_mobile/features/users/offer_user/company_with_offer/data/request/get_company_request.dart';
+import 'package:app_mobile/features/users/offer_user/company_with_offer/domain/model/get_company_model.dart';
+import 'package:app_mobile/features/users/offer_user/company_with_offer/domain/use_case/get_company_use_case.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
-import '../../../add_offer/data/request/get_my_company_set_offer_request.dart';
-import '../../../add_offer/domain/use_case/get_my_company_set_offer_use_case.dart';
+import '../../../../../../core/model/offer_new_item_model.dart';
 
 class ManageListOfferProviderController extends GetxController {
-  final GetMyCompanySetOfferUseCase _getMyCompanySetOfferUseCase;
+  final GetCompanyUseCase _getCompanyUseCase;
 
-  ManageListOfferProviderController(this._getMyCompanySetOfferUseCase);
+  ManageListOfferProviderController(this._getCompanyUseCase);
 
-  // ========== State ==========
-  var isLoading = false.obs;
-  var isRefreshing = false.obs;
-  var errorMessage = ''.obs;
+  /// الحالة
+  final isLoading = false.obs;
+  final isRefreshing = false.obs;
+  final errorMessage = ''.obs;
 
-  // ========== Data ==========
-  Rxn<OrganizationCompanyDailyOfferItemModel> myCompany =
-      Rxn<OrganizationCompanyDailyOfferItemModel>();
+  /// البيانات
+  final company = Rxn<GetCompanyModel>();
 
-  // ========== Getters ==========
-  List<OfferGeneralItemModel> get offers => myCompany.value?.offers ?? [];
+  /// العروض
+  List<OfferNewItemModel> get offers =>
+      company.value?.data.offers ?? <OfferNewItemModel>[];
 
   bool get hasOffers => offers.isNotEmpty;
 
-  bool get hasCompany => myCompany.value != null;
-
-  // ========== Statistics ==========
-  int get publishedCount => offers.where((o) => o.offerStatus == 1).length;
-
-  int get unpublishedCount => offers.where((o) => o.offerStatus == 2).length;
-
-  int get expiredCount => offers.where((o) => o.offerStatus == 3).length;
-
-  // ========== API Call ==========
-  Future<void> fetchOffers({bool isRefresh = false}) async {
+  /// تحميل العروض عبر ID الشركة
+  Future<void> fetchOffersByCompanyId(String companyId,
+      {bool isRefresh = false}) async {
     try {
       if (isRefresh) {
         isRefreshing.value = true;
@@ -45,36 +38,33 @@ class ManageListOfferProviderController extends GetxController {
       }
       errorMessage.value = '';
 
-      final request = GetMyOrganizationSetOfferRequest(my: true);
-      final result = await _getMyCompanySetOfferUseCase.execute(request);
+      final Either<Failure, GetCompanyModel> result =
+          await _getCompanyUseCase.execute(GetCompanyRequest(id: companyId));
 
       result.fold(
-        (Failure failure) {
-          errorMessage.value = failure.message;
-          if (!isRefresh) myCompany.value = null;
-          if (kDebugMode) print('❌ Error: ${failure.message}');
+        (failure) {
+          errorMessage.value =
+              failure.message ?? "حدث خطأ أثناء تحميل البيانات";
+          company.value = null;
+          if (kDebugMode) print("❌ Fetch Offers Error: ${failure.message}");
         },
         (success) {
-          myCompany.value = success.data;
-          errorMessage.value = '';
-          if (kDebugMode) {
-            print('✅ Success: ${offers.length} offers loaded');
-          }
+          company.value = success;
+          if (kDebugMode) print("✅ Offers Loaded: ${offers.length}");
         },
       );
     } catch (e) {
       errorMessage.value = 'حدث خطأ غير متوقع';
-      if (kDebugMode) print('💥 Exception: $e');
+      if (kDebugMode) print("💥 Exception: $e");
     } finally {
       isLoading.value = false;
       isRefreshing.value = false;
     }
   }
 
-  // ========== Lifecycle ==========
   @override
-  void onInit() {
-    super.onInit();
-    fetchOffers();
+  void onClose() {
+    company.value = null;
+    super.onClose();
   }
 }

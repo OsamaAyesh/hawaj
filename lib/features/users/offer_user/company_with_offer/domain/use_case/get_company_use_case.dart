@@ -17,8 +17,8 @@ import '../../../../../../core/error_handler/failure.dart';
 import '../../../../../../core/usecase/base_usecase.dart';
 import '../../data/request/get_company_request.dart';
 
-class GetCompanyUseCase implements
-    BaseUseCase<GetCompanyRequest, GetCompanyModel> {
+class GetCompanyUseCase
+    implements BaseUseCase<GetCompanyRequest, GetCompanyModel> {
   final GetCompanyRepository _repository;
 
   GetCompanyUseCase(this._repository);
@@ -26,7 +26,7 @@ class GetCompanyUseCase implements
   @override
   Future<Either<Failure, GetCompanyModel>> execute(
       GetCompanyRequest request) async {
-    return await _repository.getCompany(
+    return await _repository.getOrganizationById(
       request,
     );
   }
