@@ -3,11 +3,15 @@ import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/util/empty_state_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
+import '../../../../../../core/widgets/loading_widget.dart';
+import '../../../../offers_provider/register_company_offer_provider/domain/di/di.dart';
+import '../../../../offers_provider/register_company_offer_provider/presentation/pages/register_company_offer_provider_screen.dart';
 import '../controller/get_my_organization_offer_controller.dart';
 
 class GetMyOrganizationOfferScreen extends StatelessWidget {
@@ -19,13 +23,25 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
 
     return ScaffoldWithBackButton(
       title: "إدارة مؤسساتي",
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          initRegisterMyCompanyOfferProvider();
+          Get.to(RegisterCompanyOfferProviderScreen());
+        },
+        backgroundColor: ManagerColors.primaryColor,
+        child: const Icon(Icons.add, color: ManagerColors.white),
+      ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
+          return const LoadingWidget();
         }
 
         if (controller.companies.isEmpty) {
-          return const Center(child: Text("لا توجد مؤسسات حالياً"));
+          return const Center(
+            child: EmptyStateWidget(
+              messageAr: "لا توجد مؤسسات حالياً",
+            ),
+          );
         }
 
         return RefreshIndicator(
@@ -62,7 +78,6 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 🔹 اسم المؤسسة + الحالة
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -92,10 +107,7 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
               ),
             ],
           ),
-
           SizedBox(height: ManagerHeight.h8),
-
-          // 🔸 وصف المؤسسة
           Text(
             company.organizationServices,
             style: getRegularTextStyle(
@@ -103,10 +115,7 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
               color: Colors.grey[700]!,
             ),
           ),
-
           SizedBox(height: ManagerHeight.h16),
-
-          // 🔸 الإحصائيات
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -120,10 +129,7 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
                   ManagerColors.primaryColor),
             ],
           ),
-
           SizedBox(height: ManagerHeight.h16),
-
-          // 🟣 زر إدارة العروض
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
@@ -140,8 +146,6 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
               ),
             ),
           ),
-
-          // 🔻 ملاحظة في حال وجود عروض منتهية
           if (company.offers.any((offer) => offer.offerStatusLabel == "منتهي"))
             Padding(
               padding: EdgeInsets.only(top: ManagerHeight.h12),

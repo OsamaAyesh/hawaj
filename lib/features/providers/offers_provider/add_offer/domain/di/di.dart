@@ -8,6 +8,9 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
+import '../../../../offer_provider_new/common/domain/di/di.dart'
+    show disposeGetMyCompanyNew, initGetMyCompanyNew;
+import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
 import '../../../manage_list_offer/presentation/controller/manage_list_offer_provider_controller.dart';
 import '../../presentation/controller/add_offer_controller.dart';
 import '../use_case/get_my_company_set_offer_use_case.dart';
@@ -45,16 +48,18 @@ disposeCreateOfferProviderRequest() {
 
 void initCreateOfferProvider() {
   initCreateOfferProviderRequest();
-  initGetMyCompanySetOfferRequest();
+  initGetMyCompanyNew();
+  // initGetMyCompanySetOfferRequest();
   Get.put(AddOfferController(
     instance<CreateOfferProviderUseCase>(),
-    instance<GetMyCompanySetOfferUseCase>(),
+    instance<GetMyCompanyUseCase>(),
   ));
 }
 
 void disposeCreateOfferProvider() {
   disposeCreateOfferProviderRequest();
-  disposeGetMyCompanySetOfferRequest();
+  disposeGetMyCompanyNew();
+  // disposeGetMyCompanySetOfferRequest();
   Get.delete<AddOfferController>();
 }
 

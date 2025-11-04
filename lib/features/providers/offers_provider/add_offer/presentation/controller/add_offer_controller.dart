@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:app_mobile/core/error_handler/failure.dart';
-import 'package:app_mobile/core/model/orgnization_company_daily_offer_item_model.dart';
 import 'package:app_mobile/core/model/with_out_data_model.dart';
 import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:dartz/dartz.dart';
@@ -9,20 +8,20 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
+import '../../../../offer_provider_new/common/domain/models/get_my_company_model.dart';
+import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
 import '../../../manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../data/request/create_offer_provider_request.dart';
-import '../../data/request/get_my_company_set_offer_request.dart';
-import '../../domain/model/get_my_company_set_offer_model.dart';
 import '../../domain/use_case/create_offer_provider_use_case.dart';
-import '../../domain/use_case/get_my_company_set_offer_use_case.dart';
 
 class AddOfferController extends GetxController {
   final CreateOfferProviderUseCase _createOfferProviderUseCase;
-  final GetMyCompanySetOfferUseCase _getMyCompanySetOfferUseCase;
+  final GetMyCompanyUseCase _getMyCompanyUseCase;
 
   AddOfferController(
     this._createOfferProviderUseCase,
-    this._getMyCompanySetOfferUseCase,
+    this._getMyCompanyUseCase,
   );
 
   // ===== Text Controllers =====
@@ -40,109 +39,63 @@ class AddOfferController extends GetxController {
   final pickedImage = Rx<File?>(null);
   final isLoading = false.obs;
   final isSubmitting = false.obs;
-  final company = Rxn<OrganizationCompanyDailyOfferItemModel>();
-  final hasCompany = false.obs;
   final errorMessage = ''.obs;
 
-  // ===== Lifecycle =====
+  // ===== Companies =====
+  final companiesList = <GetOrganizationItemWithOfferModel>[].obs;
+  final selectedCompany = Rxn<GetOrganizationItemWithOfferModel>();
+
   @override
   void onInit() {
     super.onInit();
-    if (kDebugMode) print('[AddOffer] 🎬 onInit() called');
+    fetchCompanies();
   }
 
-  @override
-  void onReady() {
-    super.onReady();
-    if (kDebugMode) print('[AddOffer] 🚀 onReady() called');
-  }
-
-  // يتم استدعاؤه في كل مرة يتم فيها إعادة بناء الشاشة
-  void onScreenEnter() {
-    if (kDebugMode) print('[AddOffer] 📍 Screen entered - fetching company...');
-    fetchCompany();
-  }
-
-  // ===== Fetch Company =====
-  Future<void> fetchCompany() async {
+  // ===== Fetch All Companies =====
+  Future<void> fetchCompanies() async {
     isLoading.value = true;
+    companiesList.clear();
+    selectedCompany.value = null;
     errorMessage.value = '';
-    hasCompany.value = false;
-    company.value = null;
 
-    if (kDebugMode) print('[AddOffer] 🔄 جاري جلب بيانات الشركة...');
+    if (kDebugMode) print('[AddOffer] Fetching companies...');
 
     try {
-      final request = GetMyOrganizationSetOfferRequest(my: true);
-      final Either<Failure, GetMyCompanySetOfferModel> result =
-          await _getMyCompanySetOfferUseCase.execute(request);
+      final Either<Failure, GetMyCompanyModel> result =
+          await _getMyCompanyUseCase.execute();
 
       result.fold(
         (failure) {
-          // التعامل مع الخطأ
           errorMessage.value = failure.message;
-          hasCompany.value = false;
-          company.value = null;
-
-          if (kDebugMode) {
-            print('[AddOffer] ❌ خطأ من السيرفر: ${failure.message}');
-          }
-
-          // التحقق من نوع الخطأ
-          if (failure.message.toLowerCase().contains('not found') ||
-              failure.message.toLowerCase().contains('لا توجد') ||
-              failure.message == 'Unknown') {
-            if (kDebugMode) print('[AddOffer] ⚠️ لم يتم العثور على شركة مسجلة');
-          }
+          AppSnackbar.error(failure.message);
+          if (kDebugMode) print('[AddOffer] ❌ Error: ${failure.message}');
         },
         (success) {
-          // التحقق من البيانات المرجعة
-          if (success.data != null && success.data!.id != null) {
-            company.value = success.data;
-            hasCompany.value = true;
-            errorMessage.value = '';
-
+          if (success.data.isNotEmpty) {
+            companiesList.assignAll(success.data);
+            selectedCompany.value = companiesList.first;
             if (kDebugMode) {
-              print('[AddOffer] ✅ تم تحميل الشركة بنجاح');
-              print('[AddOffer] 📋 ID: ${success.data!.id}');
-              print('[AddOffer] 🏢 الاسم: ${success.data!.organization}');
+              print('[AddOffer] ✅ Loaded ${companiesList.length} companies');
             }
           } else {
-            // البيانات فارغة أو null
-            hasCompany.value = false;
-            company.value = null;
-            errorMessage.value = 'لم يتم العثور على شركة مسجلة';
-
-            if (kDebugMode) {
-              print('[AddOffer] ⚠️ البيانات المرجعة فارغة (data is null)');
-            }
+            errorMessage.value = 'لا توجد شركات متاحة';
+            AppSnackbar.warning(errorMessage.value);
           }
         },
       );
     } catch (e) {
-      errorMessage.value = 'حدث خطأ غير متوقع';
-      hasCompany.value = false;
-      company.value = null;
-
-      if (kDebugMode) {
-        print('[AddOffer] 💥 Exception أثناء جلب البيانات: $e');
-      }
+      errorMessage.value = 'حدث خطأ أثناء تحميل الشركات';
+      AppSnackbar.error(errorMessage.value);
+      if (kDebugMode) print('[AddOffer] 💥 Exception: $e');
     } finally {
       isLoading.value = false;
-
-      if (kDebugMode) {
-        print('[AddOffer] 🏁 انتهى التحميل - hasCompany: ${hasCompany.value}');
-      }
     }
   }
 
   // ===== Submit Offer =====
   Future<void> submitOffer() async {
-    if (!hasCompany.value || company.value == null) {
-      AppSnackbar.error(
-        'لم يتم جلب بيانات الشركة',
-        englishMessage: 'Company information not loaded',
-      );
+    if (selectedCompany.value == null) {
+      AppSnackbar.warning('يرجى اختيار الشركة قبل إرسال العرض');
       return;
     }
 
@@ -161,38 +114,24 @@ class AddOfferController extends GetxController {
         offerStartDate: offerStartDateController.text.trim(),
         offerEndDate: offerEndDateController.text.trim(),
         offerDescription: offerDescriptionController.text.trim(),
-        organizationId: company.value!.id,
+        organizationId: int.parse(selectedCompany.value!.id),
+        // ✅ Fix: id is String → int
         offerStatus: offerStatus.value.isNotEmpty ? offerStatus.value : '5',
       );
-
-      if (kDebugMode) print('[AddOffer] 📤 جاري إرسال العرض...');
 
       final Either<Failure, WithOutDataModel> result =
           await _createOfferProviderUseCase.execute(request);
 
       result.fold(
-        (failure) {
-          AppSnackbar.error(
-            failure.message,
-            englishMessage: 'Server error: ${failure.message}',
-          );
-          if (kDebugMode) print('[AddOffer] ❌ فشل الإرسال: ${failure.message}');
-        },
+        (failure) => AppSnackbar.error(failure.message),
         (success) {
-          AppSnackbar.success(
-            'تمت إضافة العرض بنجاح',
-            englishMessage: 'Offer added successfully',
-          );
-          if (kDebugMode) print('[AddOffer] ✅ تم إضافة العرض بنجاح');
+          AppSnackbar.success('تمت إضافة العرض بنجاح');
           clearForm();
-          Get.offAll(ManagerProductsOfferProviderScreen());
+          Get.offAll(() => const ManagerProductsOfferProviderScreen());
         },
       );
     } catch (e) {
-      AppSnackbar.error(
-        'حدث خطأ غير متوقع',
-        englishMessage: 'Unexpected error: $e',
-      );
+      AppSnackbar.error('حدث خطأ غير متوقع أثناء الإرسال');
       if (kDebugMode) print('[AddOffer] 💥 Exception: $e');
     } finally {
       isSubmitting.value = false;
@@ -202,60 +141,33 @@ class AddOfferController extends GetxController {
   // ===== Validation =====
   bool _validateForm() {
     if (productNameController.text.trim().isEmpty) {
-      AppSnackbar.warning(
-        'يرجى إدخال اسم المنتج',
-        englishMessage: 'Please enter product name',
-      );
+      AppSnackbar.warning('يرجى إدخال اسم المنتج');
       return false;
     }
     if (productDescriptionController.text.trim().isEmpty) {
-      AppSnackbar.warning(
-        'يرجى إدخال وصف المنتج',
-        englishMessage: 'Please enter product description',
-      );
+      AppSnackbar.warning('يرجى إدخال وصف المنتج');
       return false;
     }
     if (pickedImage.value == null) {
-      AppSnackbar.warning(
-        'يرجى رفع صورة المنتج',
-        englishMessage: 'Please upload product image',
-      );
+      AppSnackbar.warning('يرجى رفع صورة المنتج');
       return false;
     }
     if (productPriceController.text.trim().isEmpty) {
-      AppSnackbar.warning(
-        'يرجى إدخال السعر',
-        englishMessage: 'Please enter product price',
-      );
+      AppSnackbar.warning('يرجى إدخال السعر');
       return false;
     }
     if (offerType.value.isEmpty) {
-      AppSnackbar.warning(
-        'اختر نوع العرض',
-        englishMessage: 'Please select offer type',
-      );
+      AppSnackbar.warning('يرجى اختيار نوع العرض');
       return false;
     }
     if (offerType.value == '1') {
       if (offerPriceController.text.trim().isEmpty) {
-        AppSnackbar.warning(
-          'يرجى إدخال نسبة الخصم',
-          englishMessage: 'Please enter discount percentage',
-        );
+        AppSnackbar.warning('يرجى إدخال نسبة الخصم');
         return false;
       }
-      if (offerStartDateController.text.trim().isEmpty) {
-        AppSnackbar.warning(
-          'يرجى اختيار تاريخ بداية العرض',
-          englishMessage: 'Please select offer start date',
-        );
-        return false;
-      }
-      if (offerEndDateController.text.trim().isEmpty) {
-        AppSnackbar.warning(
-          'يرجى اختيار تاريخ نهاية العرض',
-          englishMessage: 'Please select offer end date',
-        );
+      if (offerStartDateController.text.trim().isEmpty ||
+          offerEndDateController.text.trim().isEmpty) {
+        AppSnackbar.warning('يرجى تحديد تاريخ البداية والنهاية');
         return false;
       }
     }
@@ -276,7 +188,6 @@ class AddOfferController extends GetxController {
     offerStatus.value = '5';
   }
 
-  // ===== Cleanup =====
   @override
   void onClose() {
     productNameController.dispose();
