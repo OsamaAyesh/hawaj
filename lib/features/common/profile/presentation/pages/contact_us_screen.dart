@@ -1,14 +1,17 @@
-import 'package:app_mobile/core/resources/manager_radius.dart';
-import 'package:app_mobile/core/resources/manager_strings.dart';
-import 'package:flutter/material.dart';
-import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
-import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/resources/manager_radius.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
-import 'package:app_mobile/core/resources/manager_images.dart';
+import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
+import 'package:flutter/material.dart';
+
+import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 
 class ContactUsScreen extends StatefulWidget {
   const ContactUsScreen({super.key});
@@ -17,7 +20,8 @@ class ContactUsScreen extends StatefulWidget {
   State<ContactUsScreen> createState() => _ContactUsScreenState();
 }
 
-class _ContactUsScreenState extends State<ContactUsScreen> with TickerProviderStateMixin {
+class _ContactUsScreenState extends State<ContactUsScreen>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late List<Animation<double>> _fadeAnimations;
   late List<Animation<Offset>> _slideAnimations;
@@ -41,7 +45,8 @@ class _ContactUsScreenState extends State<ContactUsScreen> with TickerProviderSt
     });
 
     _slideAnimations = List.generate(5, (i) {
-      return Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+      return Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero)
+          .animate(
         CurvedAnimation(
           parent: _controller,
           curve: Interval(0.1 * i, 0.6 + 0.1 * i, curve: Curves.easeOut),
@@ -160,9 +165,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> with TickerProviderSt
                 index: 4,
                 child: ButtonApp(
                   title: ManagerStrings.sendMessageButton,
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                   paddingWidth: 0,
                 ),
               ),
@@ -171,6 +174,9 @@ class _ContactUsScreenState extends State<ContactUsScreen> with TickerProviderSt
           ),
         ),
       ),
+    ).withHawaj(
+      section: HawajSections.settingsSection,
+      screen: HawajScreens.editProfileScreen,
     );
   }
 }

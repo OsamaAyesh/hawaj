@@ -1,9 +1,12 @@
 import 'package:app_mobile/core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
+import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:app_mobile/features/common/profile/presentation/pages/edit_profile_screen.dart';
+import 'package:app_mobile/features/splash_and_boarding/presentation/pages/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/resources/manager_colors.dart';
 import '../../../../../core/resources/manager_font_size.dart';
@@ -13,6 +16,7 @@ import '../../../../../core/resources/manager_images.dart';
 import '../../../../../core/resources/manager_strings.dart';
 import '../../../../../core/resources/manager_styles.dart';
 import '../../../../../core/resources/manager_width.dart';
+import '../../../../../core/storage/local/app_settings_prefs.dart';
 import '../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../core/widgets/show_dialog_confirm_register_company_offer_widget.dart';
 import '../../domain/di/di.dart';
@@ -264,10 +268,44 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         ManagerStrings.buttonContinue,
                                     actionCancel: ManagerStrings.buttonCancel,
                                     context,
-                                    onConfirm: () {
-                                      // TODO: perform logout
+                                    onConfirm: () async {
+                                      Navigator.pop(
+                                          context); // إغلاق نافذة التأكيد
+
+                                      // ✅ عرض Loading أثناء تسجيل الخروج
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (_) => const Center(
+                                            child: LoadingWidget()),
+                                      );
+
+                                      try {
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
+                                        final appPrefs =
+                                            AppSettingsPrefs(prefs);
+
+                                        await appPrefs.clear();
+
+                                        await Future.delayed(
+                                            const Duration(milliseconds: 800));
+
+                                        // if (context.mounted)
+                                        //   Navigator.pop(context);
+                                        AppSnackbar.success("تم تسجيل الخروج");
+
+                                        if (context.mounted) {
+                                          Get.offAll(const SplashScreen());
+                                        }
+                                      } catch (e) {
+                                        if (context.mounted)
+                                          Navigator.pop(context);
+                                        AppSnackbar.error(
+                                            "حدث خطأ أثناء تسجيل الخروج: $e");
+                                      }
                                     },
-                                    onCancel: () {},
+                                    onCancel: () => Navigator.pop(context),
                                   );
                                 },
                               ),
@@ -292,6 +330,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         );
       }),
     ).withHawaj(
-        section: HawajSections.dailyOffers, screen: HawajScreens.profileScreen);
+      section: HawajSections.settingsSection,
+      screen: HawajScreens.profileScreen,
+    );
   }
 }

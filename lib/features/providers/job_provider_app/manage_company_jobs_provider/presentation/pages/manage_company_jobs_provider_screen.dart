@@ -16,6 +16,7 @@ import '../../../../../../core/storage/local/app_settings_prefs.dart';
 import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
+import '../../../../../common/map/presenation/controller/hawaj_map_data_controller.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
 import '../../../add_job_provider/domain/di/di.dart' show initAddJobsModule;
 import '../../../list_company_job/domain/di/di.dart'
@@ -101,6 +102,7 @@ class _ManageCompanyJobsProviderScreenState
       children: [
         ScaffoldWithBackButton(
           onBack: () {
+            Get.put(HawajMapDataController(), permanent: true);
             Get.to(
               () => const MapScreen(),
               binding: MapBindings(),

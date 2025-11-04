@@ -5,10 +5,12 @@ import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/util/empty_state_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
+import '../../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../../../../core/widgets/loading_widget.dart';
 import '../../../../offers_provider/add_offer/domain/di/di.dart';
 import '../../../../offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
@@ -59,6 +61,9 @@ class GetMyOrganizationOfferScreen extends StatelessWidget {
           ),
         );
       }),
+    ).withHawaj(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.myCompaniesDailyOffer,
     );
   }
 

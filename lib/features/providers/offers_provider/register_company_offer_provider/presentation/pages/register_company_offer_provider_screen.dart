@@ -1,3 +1,4 @@
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -6,6 +7,7 @@ import '../../../../../../core/resources/manager_height.dart';
 import '../../../../../../core/resources/manager_strings.dart';
 import '../../../../../../core/resources/manager_styles.dart';
 import '../../../../../../core/resources/manager_width.dart';
+import '../../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../../../../core/widgets/button_app.dart';
 import '../../../../../../core/widgets/labeled_text_field.dart';
 import '../../../../../../core/widgets/loading_widget.dart';
@@ -221,6 +223,9 @@ class _RegisterCompanyOfferProviderScreenState
           }),
         ],
       ),
+    ).withHawaj(
+      section: HawajSections.dailyOffers,
+      screen: HawajScreens.createCompanyDailyOffer,
     );
   }
 }

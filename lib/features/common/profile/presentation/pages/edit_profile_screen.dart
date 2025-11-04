@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -9,6 +9,7 @@ import '../../../../../core/resources/manager_height.dart';
 import '../../../../../core/resources/manager_icons.dart';
 import '../../../../../core/resources/manager_images.dart';
 import '../../../../../core/resources/manager_width.dart';
+import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../../../core/widgets/button_app.dart';
 import '../controller/update_profile_controller.dart';
 import '../widgets/custom_text_field.dart';
@@ -202,6 +203,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
           ],
         );
       }),
+    ).withHawaj(
+      section: HawajSections.settingsSection,
+      screen: HawajScreens.editProfileScreen,
     );
   }
 }

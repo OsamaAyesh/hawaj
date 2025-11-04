@@ -1,4 +1,5 @@
 import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/util/empty_state_widget.dart';
 import 'package:app_mobile/core/widgets/custom_confirm_dialog.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/model/real_estate_item_model.dart';
+import '../../../add_real_estate/domain/di/di.dart';
+import '../../../add_real_estate/presentation/pages/add_real_estate_screen.dart';
 import '../../domain/di/di.dart';
 import '../controller/delete_my_real_estate_controller.dart';
 import '../controller/get_my_real_estates_controller.dart';
@@ -36,6 +39,17 @@ class _ManagerMyRealEstateProviderScreenState
   @override
   Widget build(BuildContext context) {
     return ScaffoldWithBackButton(
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: ManagerColors.primaryColor,
+        onPressed: () {
+          initAddRealEstateModule();
+          Get.to(AddRealEstateScreen());
+        },
+        child: const Icon(
+          Icons.add,
+          color: ManagerColors.white,
+        ),
+      ),
       title: "عقاراتي",
       body: Stack(
         children: [
@@ -51,7 +65,11 @@ class _ManagerMyRealEstateProviderScreenState
 
             if (getController.realEstates.isEmpty &&
                 !getController.isLoading.value) {
-              return const Center(child: Text("لا يوجد عقارات حالياً"));
+              return Center(
+                child: const EmptyStateWidget(
+                  messageAr: "لا يوجد عقارات حاليا",
+                ),
+              );
             }
 
             return RefreshIndicator(
@@ -59,21 +77,16 @@ class _ManagerMyRealEstateProviderScreenState
               onRefresh: () async => await getController.refreshEstates(),
               child: RealEstateListWidget(
                 realEstates: getController.realEstates,
-
-                /// ✅ onEdit الآن يأخذ Model مباشرة
                 onEdit: (RealEstateItemModel estate) {
                   initEditMyRealEstate();
                   Get.to(() => EditMyRealEstateScreen(realEstate: estate));
                 },
-
                 onDelete: (id) async {
                   await _showDeleteDialog(context, id);
                 },
               ),
             );
           }),
-
-          /// ✅ Loading Overlay
           Obx(() {
             if (getController.isLoading.value ||
                 deleteController.isLoading.value) {

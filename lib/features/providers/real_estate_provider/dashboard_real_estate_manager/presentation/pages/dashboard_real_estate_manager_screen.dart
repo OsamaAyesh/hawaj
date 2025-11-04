@@ -15,6 +15,7 @@ import '../../../../../../core/storage/local/app_settings_prefs.dart';
 import '../../../../../../core/widgets/quick_access_widget.dart';
 import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
+import '../../../../../common/map/presenation/controller/hawaj_map_data_controller.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
 import '../../../add_real_estate/domain/di/di.dart';
 import '../../../add_real_estate/presentation/pages/add_real_estate_screen.dart';
@@ -63,8 +64,6 @@ class _DashboardRealEstateManagerScreenState
         }
         initGetPropertyOwnersModule();
         Get.to(GetRealEstateMyOwnersScreen());
-        // initAddMyPropertyOwners();
-        // Get.to(RegisterToRealEstateProviderServiceScreen());
       },
       () {
         if (kDebugMode) {
@@ -73,22 +72,13 @@ class _DashboardRealEstateManagerScreenState
         initGetMyRealEstates();
         initDeleteMyRealEstate();
         Get.to(ManagerMyRealEstateProviderScreen());
-        // initAddMyPropertyOwners();
-        // Get.to(RegisterToRealEstateProviderServiceScreen());
       },
       () {
         if (kDebugMode) {
-          initAddRealEstateModule();
-          Get.to(AddRealEstateScreen());
           print("إضافة عقار");
         }
-      },
-      () {
-        if (kDebugMode) {
-          // initEditProfileMyPropertyOwnerModule();
-          // Get.to(EditProfileRealStateOwnerScreen());
-          print("تعديل بياناتي");
-        }
+        initAddRealEstateModule();
+        Get.to(AddRealEstateScreen());
       },
     ];
 
@@ -107,6 +97,7 @@ class _DashboardRealEstateManagerScreenState
       children: [
         ScaffoldWithBackButton(
           onBack: () {
+            Get.put(HawajMapDataController(), permanent: true);
             Get.to(
               () => const MapScreen(),
               binding: MapBindings(),

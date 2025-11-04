@@ -4,11 +4,13 @@ import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../edit_profile_real_state_owner/presentation/pages/edit_profile_real_state_owner_screen.dart';
 import '../../../register_to_real_estate_provider_service/domain/di/di.dart';
 import '../controller/get_my_real_estate_my_owner_controller.dart';
@@ -159,6 +161,9 @@ class _GetRealEstateMyOwnersScreenState
           ),
         );
       }),
+    ).withHawaj(
+      section: HawajSections.realEstates,
+      screen: HawajScreens.myOwnerPropertys,
     );
   }
 

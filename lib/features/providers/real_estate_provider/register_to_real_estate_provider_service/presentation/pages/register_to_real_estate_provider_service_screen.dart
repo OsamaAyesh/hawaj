@@ -11,9 +11,11 @@ import 'package:app_mobile/core/widgets/sized_box_between_feilads_widgets.dart';
 import 'package:app_mobile/core/widgets/sub_title_text_screen_widget.dart';
 import 'package:app_mobile/core/widgets/title_text_screen_widget.dart';
 import 'package:app_mobile/core/widgets/upload_media_widget.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../../../../core/widgets/custom_confirm_dialog.dart';
 import '../../../../../common/map_ticker/domain/di/di.dart';
 import '../../../../../common/map_ticker/presenation/pages/map_ticker_screen.dart';
@@ -221,6 +223,9 @@ class RegisterToRealEstateProviderServiceScreen extends StatelessWidget {
           ],
         );
       }),
+    ).withHawaj(
+      section: HawajSections.realEstates,
+      screen: HawajScreens.myOwnerPropertys,
     );
   }
 }

@@ -22,7 +22,7 @@
     <application
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:label="app_mobile"
+        android:label="Hawaj-حواج"
         android:usesCleartextTraffic="true">
 
         <activity

@@ -115,11 +115,11 @@ class Constants {
       'title': ManagerStrings.addPropertyTitle,
       'subtitle': ManagerStrings.addPropertySubtitle,
     },
-    {
-      'icon': ManagerIcons.providerRealStateManager3,
-      'title': ManagerStrings.editMyDataTitle,
-      'subtitle': ManagerStrings.editMyDataSubtitle,
-    },
+    // {
+    //   'icon': ManagerIcons.providerRealStateManager3,
+    //   'title': ManagerStrings.editMyDataTitle,
+    //   'subtitle': ManagerStrings.editMyDataSubtitle,
+    // },
   ];
 
   ///===== Manager Provider Jobs App Features.

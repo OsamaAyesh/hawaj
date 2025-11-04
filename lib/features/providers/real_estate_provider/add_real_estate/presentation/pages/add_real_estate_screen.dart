@@ -8,6 +8,7 @@ import '../../../../../../core/resources/manager_strings.dart';
 import '../../../../../../core/resources/manager_styles.dart';
 import '../../../../../../core/resources/manager_width.dart';
 import '../../../../../../core/widgets/button_app.dart';
+import '../../../../../../core/widgets/custom_confirm_dialog.dart';
 import '../../../../../../core/widgets/labeled_text_field.dart';
 import '../../../../../../core/widgets/lable_drop_down_button.dart';
 import '../../../../../../core/widgets/loading_widget.dart';
@@ -64,6 +65,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
             ),
           );
         }
+
         return Stack(
           children: [
             SingleChildScrollView(
@@ -81,6 +83,27 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     subTitle: ManagerStrings.addRealEstateSubtitle,
                   ),
                   SizedBox(height: ManagerHeight.h20),
+
+                  /// 🔹 اختيار المالك
+                  if (controller.hasOwner.value &&
+                      controller.propertyOwners.isNotEmpty)
+                    LabeledDropdownField<String>(
+                      label: "اختر المالك",
+                      hint: "حدد المالك المرتبط بهذا العقار",
+                      value: controller.propertyOwnerId,
+                      items: controller.propertyOwners
+                          .map((owner) => DropdownMenuItem(
+                                value: owner.id,
+                                child: Text(owner.ownerName),
+                              ))
+                          .toList(),
+                      onChanged: (value) {
+                        controller.propertyOwnerId = value;
+                      },
+                    ),
+                  if (controller.hasOwner.value &&
+                      controller.propertyOwners.isNotEmpty)
+                    const SizedBoxBetweenFieldWidgets(),
 
                   /// نوع العقار
                   LabeledDropdownField<String>(
@@ -149,7 +172,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// الموقع الجغرافي
+                  /// 📍 الموقع الجغرافي
                   LabeledTextField(
                     widthButton: ManagerWidth.w130,
                     label: "الموقع الجغرافي",
@@ -185,9 +208,9 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// العنوان
+                  /// 🏷️ العنوان
                   LabeledTextField(
-                    widthButton: ManagerWidth.w12,
+                    widthButton: ManagerWidth.w140,
                     label: "عنوان الإعلان",
                     hintText: "اكتب عنوان الإعلان هنا",
                     onChanged: (v) => controller.propertySubject = v,
@@ -196,19 +219,19 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
 
                   /// العنوان التفصيلي
                   LabeledTextField(
-                    widthButton: ManagerWidth.w12,
+                    widthButton: ManagerWidth.w140,
                     label: "العنوان التفصيلي",
                     hintText: "ادخل العنوان التفصيلي للعقار",
                     onChanged: (v) => controller.detailedAddress = v,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// السعر و المساحة
+                  /// السعر والمساحة
                   Row(
                     children: [
                       Expanded(
                         child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
+                          widthButton: ManagerWidth.w140,
                           label: "السعر المطلوب",
                           hintText: "أدخل السعر",
                           keyboardType: TextInputType.number,
@@ -218,7 +241,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                       SizedBox(width: ManagerWidth.w8),
                       Expanded(
                         child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
+                          widthButton: ManagerWidth.w140,
                           label: "المساحة (م²)",
                           hintText: "ادخل المساحة",
                           keyboardType: TextInputType.number,
@@ -229,12 +252,12 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// العمولة ونسبة أخرى
+                  /// العمولة والكلمات المفتاحية
                   Row(
                     children: [
                       Expanded(
                         child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
+                          widthButton: ManagerWidth.w140,
                           label: "نسبة العمولة %",
                           hintText: "ادخل النسبة",
                           keyboardType: TextInputType.number,
@@ -244,7 +267,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                       SizedBox(width: ManagerWidth.w8),
                       Expanded(
                         child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
+                          widthButton: ManagerWidth.w140,
                           label: "الكلمات المفتاحية",
                           hintText: "مثلاً: فيلا، شقة، جدة",
                           onChanged: (v) => controller.keywords = v,
@@ -254,105 +277,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// الحقول الإضافية
-                  Row(
-                    children: [
-                      Expanded(
-                        child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
-                          label: "عدد الغرف",
-                          hintText: "ادخل عدد الغرف",
-                          keyboardType: TextInputType.number,
-                          onChanged: (v) => controller.roomCount = v,
-                        ),
-                      ),
-                      SizedBox(width: ManagerWidth.w8),
-                      Expanded(
-                        child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
-                          label: "عدد دورات المياه",
-                          hintText: "ادخل عددها",
-                          keyboardType: TextInputType.number,
-                          onChanged: (v) => controller.bathroomCount = v,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBoxBetweenFieldWidgets(),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
-                          label: "عمر العقار",
-                          hintText: "بالسنوات",
-                          keyboardType: TextInputType.number,
-                          onChanged: (v) => controller.buildingAge = v,
-                        ),
-                      ),
-                      SizedBox(width: ManagerWidth.w8),
-                      Expanded(
-                        child: LabeledTextField(
-                          widthButton: ManagerWidth.w12,
-                          label: "عدد الأدوار",
-                          hintText: "ادخل العدد",
-                          keyboardType: TextInputType.number,
-                          onChanged: (v) => controller.floorCount = v,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBoxBetweenFieldWidgets(),
-
-                  // Row(
-                  //   children: [
-                  //     // Expanded(
-                  //     //   child: LabeledDropdownField<String>(
-                  //     //     label: "نوع الواجهة",
-                  //     //     hint: "اختر الواجهة",
-                  //     //     items: const [
-                  //     //       DropdownMenuItem(value: "1", child: Text("شمالية")),
-                  //     //       DropdownMenuItem(value: "2", child: Text("جنوبية")),
-                  //     //       DropdownMenuItem(value: "3", child: Text("شرقية")),
-                  //     //       DropdownMenuItem(value: "4", child: Text("غربية")),
-                  //     //     ],
-                  //     //     onChanged: (v) => c.facadeType = v,
-                  //     //   ),
-                  //     // ),
-                  //     SizedBox(width: ManagerWidth.w8),
-                  //     Expanded(
-                  //       child: LabeledTextField(
-                  //         widthButton: ManagerWidth.w130,
-                  //         label: "عرض الشارع (م)",
-                  //         hintText: "ادخل عرض الشارع",
-                  //         keyboardType: TextInputType.number,
-                  //         onChanged: (v) => controller.streetWidth = v,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-                  LabeledTextField(
-                    widthButton: ManagerWidth.w130,
-                    label: "عرض الشارع (م)",
-                    hintText: "ادخل عرض الشارع",
-                    keyboardType: TextInputType.number,
-                    onChanged: (v) => controller.streetWidth = v,
-                  ),
-                  const SizedBoxBetweenFieldWidgets(),
-
-                  /// وصف العقار
-                  LabeledTextField(
-                    widthButton: ManagerWidth.w12,
-                    label: "وصف العقار",
-                    hintText: "أدخل وصفًا واضحًا للعقار",
-                    minLines: 3,
-                    maxLines: 5,
-                    onChanged: (v) => controller.propertyDescription = v,
-                  ),
-                  const SizedBoxBetweenFieldWidgets(),
-
-                  /// المميزات / المرافق / الأيام
+                  /// ✳️ الحقول متعددة الاختيار (المميزات، المرافق، الأيام)
                   _MultiSelectPicker(
                     title: "المميزات",
                     placeholder: "اختر المميزات الخاصة بالعقار",
@@ -373,14 +298,25 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
 
                   _MultiSelectPicker(
                     title: "الأيام المتاحة للزيارة",
-                    placeholder: "اختر الأيام من الأسبوع",
+                    placeholder: "اختر الأيام المناسبة للزيارة",
                     allItems: controller.weekDays,
                     selectedIds: controller.selectedVisitDayIds,
                     onToggleId: controller.toggleVisitDay,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
-                  /// رفع الملفات
+                  /// وصف العقار
+                  LabeledTextField(
+                    widthButton: ManagerWidth.w140,
+                    label: "وصف العقار",
+                    hintText: "أدخل وصفًا واضحًا للعقار",
+                    minLines: 3,
+                    maxLines: 5,
+                    onChanged: (v) => controller.propertyDescription = v,
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// 📸 رفع الملفات
                   UploadMediaField(
                     label: "صور العقار",
                     hint: "رفع الصور",
@@ -413,10 +349,31 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                   ),
                   SizedBox(height: ManagerHeight.h36),
 
-                  /// زر الإرسال
+                  /// 🔘 زر الإرسال مع تأكيد
                   ButtonApp(
                     title: "استمرار بالإضافة",
-                    onPressed: () => controller.addRealEstate(),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (_) {
+                          return CustomConfirmDialog(
+                            title: "تأكيد الإضافة",
+                            subtitle:
+                                "هل أنت متأكد من إضافة هذا العقار؟\nتحقق من صحة جميع التفاصيل قبل المتابعة.",
+                            confirmText: "تأكيد",
+                            cancelText: "إلغاء",
+                            onConfirm: () {
+                              Navigator.of(context).pop();
+                              controller.addRealEstate();
+                            },
+                            onCancel: () {
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        },
+                      );
+                    },
                     paddingWidth: 0,
                   ),
                   SizedBox(height: ManagerHeight.h32),
@@ -431,6 +388,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
   }
 }
 
+/// 🔹 Widget للمميزات / المرافق / الأيام
 class _MultiSelectPicker extends StatelessWidget {
   final String title;
   final String placeholder;
@@ -456,7 +414,7 @@ class _MultiSelectPicker extends StatelessWidget {
             label: title,
             hintText: selectedIds.isEmpty
                 ? placeholder
-                : "تم اختيار ${selectedIds.length}",
+                : "تم اختيار ${selectedIds.length} عنصر",
             widthButton: ManagerWidth.w44,
             onButtonTap: () => _openBottomSheet(context),
             buttonWidget: Container(
@@ -498,17 +456,10 @@ class _MultiSelectPicker extends StatelessWidget {
       ),
       builder: (_) {
         return SafeArea(
-          top: false,
-          bottom: true,
           child: StatefulBuilder(
             builder: (context, setState) {
               return Padding(
-                padding: EdgeInsets.fromLTRB(
-                  20,
-                  20,
-                  20,
-                  MediaQuery.of(context).viewInsets.bottom + 24,
-                ),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -520,13 +471,15 @@ class _MultiSelectPicker extends StatelessWidget {
                         final lbl = item['label'] ?? '';
                         final isSel = tempSelected.contains(id);
                         return ChoiceChip(
-                          label: Text(lbl,
-                              style: getRegularTextStyle(
-                                fontSize: ManagerFontSize.s12,
-                                color: isSel
-                                    ? Colors.white
-                                    : ManagerColors.primaryColor,
-                              )),
+                          label: Text(
+                            lbl,
+                            style: getRegularTextStyle(
+                              fontSize: ManagerFontSize.s12,
+                              color: isSel
+                                  ? Colors.white
+                                  : ManagerColors.primaryColor,
+                            ),
+                          ),
                           selected: isSel,
                           selectedColor: ManagerColors.primaryColor,
                           backgroundColor:
@@ -552,10 +505,12 @@ class _MultiSelectPicker extends StatelessWidget {
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: ManagerColors.primaryColor),
-                            child: Text('تم',
-                                style: getBoldTextStyle(
-                                    fontSize: ManagerFontSize.s12,
-                                    color: Colors.white)),
+                            child: Text(
+                              'تم',
+                              style: getBoldTextStyle(
+                                  fontSize: ManagerFontSize.s12,
+                                  color: Colors.white),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 10),
@@ -565,10 +520,13 @@ class _MultiSelectPicker extends StatelessWidget {
                             style: OutlinedButton.styleFrom(
                                 side: BorderSide(
                                     color: ManagerColors.primaryColor)),
-                            child: Text('إلغاء',
-                                style: getRegularTextStyle(
-                                    fontSize: ManagerFontSize.s12,
-                                    color: ManagerColors.primaryColor)),
+                            child: Text(
+                              'إلغاء',
+                              style: getRegularTextStyle(
+                                fontSize: ManagerFontSize.s12,
+                                color: ManagerColors.primaryColor,
+                              ),
+                            ),
                           ),
                         ),
                       ],
@@ -584,6 +542,7 @@ class _MultiSelectPicker extends StatelessWidget {
   }
 }
 
+/// 🔹 شكل العناصر المختارة
 class _TagPill extends StatelessWidget {
   final String label;
   final VoidCallback onRemove;

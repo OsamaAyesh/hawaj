@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:app_mobile/core/util/get_app_langauge.dart';
+import 'package:app_mobile/features/providers/real_estate_provider/dashboard_real_estate_manager/presentation/pages/dashboard_real_estate_manager_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/model/property_item_owner_model.dart';
 import '../../../../../../core/util/snack_bar.dart';
 import '../../../../../common/lists/data/request/get_lists_request.dart';
 import '../../../../../common/lists/domain/use_cases/get_lists_use_case.dart';
@@ -32,6 +34,8 @@ class AddRealEstateController extends GetxController {
 
   final isListsLoaded = false.obs;
   final hasOwner = false.obs; // ✅ هل يوجد مؤسسة
+  final propertyOwners = <PropertyItemOwnerModel>[].obs;
+
   String? propertyOwnerId; // ✅ لتخزين أول ID
 
   // ===== Lists from API =====
@@ -113,6 +117,9 @@ class AddRealEstateController extends GetxController {
           hasOwner.value = false;
         } else {
           hasOwner.value = true;
+          // نحفظ القائمة كاملة في observable
+          propertyOwners.assignAll(response.data);
+          // نختار أول مالك كقيمة افتراضية
           propertyOwnerId = response.data.first.id;
         }
       },
@@ -288,6 +295,7 @@ class AddRealEstateController extends GetxController {
       (_) {
         AppSnackbar.success('تمت إضافة العقار بنجاح');
         disposeAddRealEstateModule();
+        Get.off(DashboardRealEstateManagerScreen());
       },
     );
 
