@@ -15,6 +15,7 @@ import '../../core/network/dio_factory.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
 import '../../features/common/auth/domain/di/di.dart';
 import '../../features/common/hawaj_voice/domain/di/di.dart';
+import '../../features/providers/offer_provider_new_api/add_offer_new/domain/di/di.dart';
 import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/domain/di/di.dart';
 import '../../features/providers/offers_provider/add_offer/domain/di/di.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/domain/di/di.dart';
@@ -75,4 +76,5 @@ initModule() async {
 
   ///New Inits
   initRegisterOrganizationOfferProvider();
+  initAddOfferNew();
 }

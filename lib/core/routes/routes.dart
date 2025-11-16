@@ -32,9 +32,10 @@ import '../../features/providers/job_provider_app/company_jobs_provider_details/
 import '../../features/providers/job_provider_app/list_company_job/presentation/list_company_jobs_screen.dart';
 import '../../features/providers/job_provider_app/manage_company_jobs_provider/presentation/pages/manage_company_jobs_provider_screen.dart';
 import '../../features/providers/job_provider_app/manager_jobs_provider/presentation/presentation/pages/manager_jobs_provider_screen.dart';
+import '../../features/providers/offer_provider_new_api/add_offer_new/presentaion/pages/add_offer_new_screen.dart';
+import '../../features/providers/offer_provider_new_api/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/presentation/pages/register_organization_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
-import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/presentation/pages/subscription_offer_provider_screen.dart';
 import '../../features/providers/real_estate_provider/add_real_estate/presentation/pages/add_real_estate_screen.dart';
@@ -68,6 +69,7 @@ class Routes {
   ///Daily Offers Providers New Screens
   static const String registerOrganizationOfferProviderScreen =
       '/register_organization_offer_provider_screen';
+  static const String addOfferNewScreen = '/AddOfferNewScreen';
 
   ///Test Hawaj Screen
   static const String testHawajScreen = '/test_hawaj_screen';
@@ -180,9 +182,13 @@ class RouteGenerator {
       case Routes.completeInformationScreen:
         return MaterialPageRoute(
             builder: (_) => const CompleteInformationScreen());
+      // case Routes.managerProductsOfferProviderScreen:
+      //   return MaterialPageRoute(
+      //       builder: (_) => const ManagerProductsOfferProviderScreen());
       case Routes.managerProductsOfferProviderScreen:
         return MaterialPageRoute(
-            builder: (_) => const ManagerProductsOfferProviderScreen());
+            builder: (_) => const ManagerProductsOfferProviderNewScreen());
+
       case Routes.subscriptionOfferProviderScreen:
         return MaterialPageRoute(
             builder: (_) => const SubscriptionOfferProviderScreen());
@@ -342,7 +348,10 @@ class RouteGenerator {
         return MaterialPageRoute(
           builder: (_) => RegisterOrganizationOfferProviderScreen(),
         );
-
+      case Routes.addOfferNewScreen:
+        return MaterialPageRoute(
+          builder: (_) => AddOfferNewNewNewScreen(),
+        );
       // case Routes.editMyRealEstateScreen:
       //   return MaterialPageRoute(
       //     builder: (_) => EditMyRealEstateScreen(

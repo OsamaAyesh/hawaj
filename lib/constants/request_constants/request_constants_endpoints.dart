@@ -39,7 +39,6 @@ class RequestConstantsEndpoints {
   static const String getMyCompany = '$apiUrlBase/getmyorganizations';
   static const String getJobApplications =
       '$apiUrlBase/jobs/{jobId}/applications';
-  static const String addOfferNewRequest = '$apiUrlBase/setoffer';
   static const String getOrganizationById = '$apiUrlBase/getorganization';
   static const String addVisitRealEstate = '$apiUrlBase/addmyvisitrequests';
 
@@ -50,4 +49,5 @@ class RequestConstantsEndpoints {
   static const String getPlansOfferProviderRegister = "$apiUrlBase/getplans";
   static const String getOfferProviderPlans = "$apiUrlBase/getplans";
   static const String getMyOrganizationsNew = "$apiUrlBase/getmyorganizations";
+  static const String addOfferNewRequest = '$apiUrlBase/addoffer';
 }
