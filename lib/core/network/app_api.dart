@@ -19,6 +19,7 @@ import '../../features/providers/job_provider_app/list_company_job/data/response
 import '../../features/providers/job_provider_app/manager_jobs_provider/data/response/get_list_jobs_response.dart';
 import '../../features/providers/offer_provider_new/common/data/response/get_my_company_response.dart';
 import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/data/response/get_organization_types_response.dart';
+import '../../features/providers/offer_provider_new_api/subscription_plans_register_offer_provider/data/response/get_offer_plans_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
@@ -26,6 +27,7 @@ import '../../features/providers/real_estate_provider/edit_profile_real_state_ow
 import '../../features/providers/real_estate_provider/manager_my_real_estate_provider/data/response/get_my_real_estates_response.dart';
 import '../../features/users/offer_user/list_offers/data/response/get_organizations_response.dart';
 import '../../features/users/real_estate_user/data/response/get_real_estate_user_response.dart';
+import '../response/get_my_organization_response.dart';
 import '../service/env_service.dart';
 
 part 'app_api.g.dart';
@@ -328,6 +330,18 @@ abstract class AppService {
   /// Get Organization Types Request
   @GET(RequestConstantsEndpoints.getOrganizationTypes)
   Future<GetOrganizationTypesResponse> getOrganizationTypes(
+    @Query(RequestConstants.language) String? language,
+  );
+
+  ///Get Offer Plans Request
+  @GET(RequestConstantsEndpoints.getOfferProviderPlans)
+  Future<GetOfferPlansResponse> getOfferProviderPlans(
+    @Query(RequestConstants.language) String? language,
+  );
+
+  ///Get My Companies Request
+  @GET(RequestConstantsEndpoints.getMyOrganizationsNew)
+  Future<GetMyOrganizationResponse> getMyOrganizationsNew(
     @Query(RequestConstants.language) String? language,
   );
 }
