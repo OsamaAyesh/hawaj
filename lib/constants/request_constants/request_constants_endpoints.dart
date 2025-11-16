@@ -42,4 +42,9 @@ class RequestConstantsEndpoints {
   static const String addOfferNewRequest = '$apiUrlBase/setoffer';
   static const String getOrganizationById = '$apiUrlBase/getorganization';
   static const String addVisitRealEstate = '$apiUrlBase/addmyvisitrequests';
+
+  ////////////////New Api Requests//////
+  static const String registerOrganizationOfferProvider =
+      '$apiUrlBase/addmyorganization';
+  static const String getOrganizationTypes = "$apiUrlBase/getlists";
 }

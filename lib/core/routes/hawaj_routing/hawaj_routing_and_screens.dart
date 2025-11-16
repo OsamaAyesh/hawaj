@@ -27,6 +27,8 @@ import '../../../features/providers/real_estate_provider/manager_my_real_estate_
 import '../../../features/providers/real_estate_provider/register_to_real_estate_provider_service/domain/di/di.dart';
 import '../../../features/providers/real_estate_provider/register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
 
+///Screens In System
+///
 /// ═══════════════════════════════════════════════════════════
 /// Main Sections In Hawaj
 /// ═══════════════════════════════════════════════════════════

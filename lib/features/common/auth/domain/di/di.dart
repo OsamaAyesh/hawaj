@@ -5,8 +5,10 @@ import 'package:app_mobile/features/common/auth/data/repository/completed_profil
 import 'package:app_mobile/features/common/auth/data/repository/send_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/data/repository/verfiy_otp_repository.dart';
 import 'package:app_mobile/features/common/auth/domain/use_case/send_otp_use_case.dart';
+import 'package:app_mobile/features/common/profile/data/data_source/update_avatar_data_source.dart';
+import 'package:app_mobile/features/common/profile/data/repository/update_avatar_repository.dart';
+import 'package:app_mobile/features/common/profile/domain/use_case/update_avatar_use_case.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../constants/di/dependency_injection.dart';
@@ -16,20 +18,21 @@ import '../../presentation/controller/send_otp_controller.dart';
 import '../use_case/completed_profile_use_case.dart';
 import '../use_case/verfiy_otp_use_case.dart';
 
+// ==================== Send OTP ====================
 initSendOtpRequest() {
   if (!GetIt.I.isRegistered<SendOtpDataSource>()) {
     instance.registerLazySingleton<SendOtpDataSource>(
-            () => SendOtpDataSourceImplement(instance<AppService>()));
+        () => SendOtpDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<SendOtpRepository>()) {
     instance.registerLazySingleton<SendOtpRepository>(
-            () => SendOtpRepositoryImplement(instance(), instance()));
+        () => SendOtpRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<SendOtpUseCase>()) {
     instance.registerFactory<SendOtpUseCase>(
-            () => SendOtpUseCase(instance<SendOtpRepository>()));
+        () => SendOtpUseCase(instance<SendOtpRepository>()));
   }
 }
 
@@ -61,20 +64,21 @@ void disposeSendOtp() {
   Get.delete<SendOtpController>();
 }
 
+// ==================== Verify OTP ====================
 initVerfiyOtpRequest() {
   if (!GetIt.I.isRegistered<VerfiyOtpDataSource>()) {
     instance.registerLazySingleton<VerfiyOtpDataSource>(
-            () => VerfiyOtpDataSourceImplement(instance<AppService>()));
+        () => VerfiyOtpDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<VerfiyOtpRepository>()) {
     instance.registerLazySingleton<VerfiyOtpRepository>(
-            () => VerfiyOtpRepositoryImplement(instance(), instance()));
+        () => VerfiyOtpRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<VerfiyOtpUseCase>()) {
     instance.registerFactory<VerfiyOtpUseCase>(
-            () => VerfiyOtpUseCase(instance<VerfiyOtpRepository>()));
+        () => VerfiyOtpUseCase(instance<VerfiyOtpRepository>()));
   }
 }
 
@@ -94,33 +98,27 @@ disposeVerfiyOtpRRequest() {
 
 void initVerfiyOtp() {
   initVerfiyOtpRequest();
-
-  // Get.put(LoginController(
-  //   instance<LoginUseCase>(),
-  //   instance<AppSettingsPrefs>(),
-  // ));
 }
 
 void disposeVerfiyOtp() {
   disposeVerfiyOtpRRequest();
-  // Get.delete<LoginController>();
 }
 
-
+// ==================== Complete Profile ====================
 initCompletedProfileRequest() {
   if (!GetIt.I.isRegistered<CompletedProfileDataSource>()) {
     instance.registerLazySingleton<CompletedProfileDataSource>(
-            () => CompletedProfileDataSourceImplement(instance<AppService>()));
+        () => CompletedProfileDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<CompletedProfileRepository>()) {
     instance.registerLazySingleton<CompletedProfileRepository>(
-            () => CompletedProfileRepositoryImplement(instance(), instance()));
+        () => CompletedProfileRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<CompletedProfileUseCase>()) {
     instance.registerFactory<CompletedProfileUseCase>(
-            () => CompletedProfileUseCase(instance<CompletedProfileRepository>()));
+        () => CompletedProfileUseCase(instance<CompletedProfileRepository>()));
   }
 }
 
@@ -133,20 +131,56 @@ disposeCompletedProfileRequest() {
     instance.unregister<CompletedProfileRepository>();
   }
 
-  if (GetIt.I.isRegistered<CompletedProfileRepository>()) {
-    instance.unregister<CompletedProfileRepository>();
+  if (GetIt.I.isRegistered<CompletedProfileUseCase>()) {
+    instance.unregister<CompletedProfileUseCase>();
   }
 }
 
+// ==================== Update Avatar ====================
+initUpdateAvatarRequest() {
+  if (!GetIt.I.isRegistered<UpdateAvatarDataSource>()) {
+    instance.registerLazySingleton<UpdateAvatarDataSource>(
+        () => UpdateAvatarDataSourceImplement(instance<AppService>()));
+  }
+
+  if (!GetIt.I.isRegistered<UpdateAvatarRepository>()) {
+    instance.registerLazySingleton<UpdateAvatarRepository>(
+        () => UpdateAvatarRepositoryImplement(instance(), instance()));
+  }
+
+  if (!GetIt.I.isRegistered<UpdateAvatarUseCase>()) {
+    instance.registerFactory<UpdateAvatarUseCase>(
+        () => UpdateAvatarUseCase(instance<UpdateAvatarRepository>()));
+  }
+}
+
+disposeUpdateAvatarRequest() {
+  if (GetIt.I.isRegistered<UpdateAvatarDataSource>()) {
+    instance.unregister<UpdateAvatarDataSource>();
+  }
+
+  if (GetIt.I.isRegistered<UpdateAvatarRepository>()) {
+    instance.unregister<UpdateAvatarRepository>();
+  }
+
+  if (GetIt.I.isRegistered<UpdateAvatarUseCase>()) {
+    instance.unregister<UpdateAvatarUseCase>();
+  }
+}
+
+// ==================== Initialize Complete Profile Module ====================
 void initCompletedProfile() {
   initCompletedProfileRequest();
+  initUpdateAvatarRequest();
 
   Get.put(CompletedProfileController(
     instance<CompletedProfileUseCase>(),
+    instance<UpdateAvatarUseCase>(),
   ));
 }
 
 void disposeCompletedProfile() {
   disposeCompletedProfileRequest();
+  disposeUpdateAvatarRequest();
   Get.delete<CompletedProfileController>();
 }

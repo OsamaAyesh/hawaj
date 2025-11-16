@@ -18,6 +18,7 @@ import '../../features/providers/job_provider_app/add_job_provider/data/response
 import '../../features/providers/job_provider_app/list_company_job/data/response/get_list_company_jobs_response.dart';
 import '../../features/providers/job_provider_app/manager_jobs_provider/data/response/get_list_jobs_response.dart';
 import '../../features/providers/offer_provider_new/common/data/response/get_my_company_response.dart';
+import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/data/response/get_organization_types_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
 import '../../features/providers/offers_provider/details_my_company/data/response/get_my_company_details_response.dart';
 import '../../features/providers/offers_provider/subscription_offer_provider/data/response/get_my_organization_offer_provider_response.dart';
@@ -288,6 +289,7 @@ abstract class AppService {
   );
 
   ////====== New Offers
+  ///Get My Company
   @GET(RequestConstantsEndpoints.getMyCompany)
   Future<GetMyCompanyResponse> getMyCompany();
 
@@ -314,5 +316,18 @@ abstract class AppService {
     @Field(RequestConstants.visitorMemberId) String visitorMemberId,
     @Field(RequestConstants.propertyId) String propertyId,
     @Field(RequestConstants.visitStatus) String visitStatus,
+  );
+
+/////////////////New Api Requests//////////////////////////
+  /// Register Organization  Offer Provider Request
+  @POST(RequestConstantsEndpoints.registerOrganizationOfferProvider)
+  @MultiPart()
+  Future<WithOutDataResponse> registerOrganizationOfferProvider(
+      @Body() FormData formData);
+
+  /// Get Organization Types Request
+  @GET(RequestConstantsEndpoints.getOrganizationTypes)
+  Future<GetOrganizationTypesResponse> getOrganizationTypes(
+    @Query(RequestConstants.language) String? language,
   );
 }
