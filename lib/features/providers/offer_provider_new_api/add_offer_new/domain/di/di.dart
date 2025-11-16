@@ -1,15 +1,16 @@
-import 'package:app_mobile/features/providers/offer_provider_new/add_offer_new/data/data_source/add_offer_new_data_source.dart';
-import 'package:app_mobile/features/providers/offer_provider_new/add_offer_new/data/repository/add_offer_new_repository.dart';
-import 'package:app_mobile/features/providers/offer_provider_new/add_offer_new/domain/use_cases/add_offer_new_use_case.dart';
 import 'package:get/get.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
-import '../../../common/domain/di/di.dart'
+import '../../../../offer_provider_new/common/domain/di/di.dart'
     show disposeGetMyCompanyNew, initGetMyCompanyNew;
-import '../../../common/domain/use_cases/get_my_company_use_case.dart';
+import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart'
+    show GetMyCompanyUseCase;
+import '../../data/data_source/add_offer_new_data_source.dart';
+import '../../data/repository/add_offer_new_repository.dart';
 import '../../presentaion/controller/add_offer_new_controller.dart';
+import '../use_cases/add_offer_new_use_case.dart';
 
 initAddOfferNewRequest() {
   if (!GetIt.I.isRegistered<AddOfferNewDataSource>()) {

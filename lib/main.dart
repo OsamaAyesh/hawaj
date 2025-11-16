@@ -13,6 +13,7 @@ import 'core/locale/locales.dart';
 import 'core/resources/manager_translation.dart';
 import 'core/routes/routes.dart';
 import 'core/util/size_util.dart';
+import 'features/providers/offer_provider_new_api/register_organization_offer_provider/presentation/pages/register_organization_offer_provider_screen.dart';
 
 void main() async {
   await initModule();
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
       // Use builder only if you need to use library outside ScreenUtilInit context
       builder: (_, child) {
         return GetMaterialApp(
+          home: RegisterOrganizationOfferProviderScreen(),
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           defaultGlobalState: dotenv.env[EnvConstants.debug].onNullBool(),
