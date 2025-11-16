@@ -32,6 +32,7 @@ import '../../features/providers/job_provider_app/company_jobs_provider_details/
 import '../../features/providers/job_provider_app/list_company_job/presentation/list_company_jobs_screen.dart';
 import '../../features/providers/job_provider_app/manage_company_jobs_provider/presentation/pages/manage_company_jobs_provider_screen.dart';
 import '../../features/providers/job_provider_app/manager_jobs_provider/presentation/presentation/pages/manager_jobs_provider_screen.dart';
+import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/presentation/pages/register_organization_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manage_list_offer/presentation/pages/manage_list_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../features/providers/offers_provider/register_company_offer_provider/presentation/pages/success_register_company_offer_provider_screen.dart';
@@ -63,6 +64,10 @@ class Routes {
   static const String successLoginScreen = '/success_login_screen';
   static const String completeInformationScreen =
       '/complete_information_screen';
+
+  ///Daily Offers Providers New Screens
+  static const String registerOrganizationOfferProviderScreen =
+      '/register_organization_offer_provider_screen';
 
   ///Test Hawaj Screen
   static const String testHawajScreen = '/test_hawaj_screen';
@@ -333,6 +338,11 @@ class RouteGenerator {
                 memberIdLable: ""),
           ),
         );
+      case Routes.registerOrganizationOfferProviderScreen:
+        return MaterialPageRoute(
+          builder: (_) => RegisterOrganizationOfferProviderScreen(),
+        );
+
       // case Routes.editMyRealEstateScreen:
       //   return MaterialPageRoute(
       //     builder: (_) => EditMyRealEstateScreen(
