@@ -1052,4 +1052,105 @@ class ManagerStrings {
 
 // Offer statuses
   static const String statusCancelled = 'ملغي';
+
+  // Company Details
+  // static const String companyDetailsTitle = 'تفاصيل الشركة';
+  static const String verifiedCompany = 'شركة موثقة';
+  static const String totalOffers = 'إجمالي العروض';
+
+// Tabs
+  static const String offers = 'العروض';
+  static const String settings = 'الإعدادات';
+
+// Offers
+  static const String noOffersAvailable = 'لا توجد عروض متاحة';
+  static const String addFirstOffer = 'أضف أول عرض لك الآن';
+  static const String addOffer = 'إضافة عرض';
+  static const String editOffer = 'تعديل العرض';
+  static const String viewOffer = 'عرض التفاصيل';
+  static const String deleteOffer = 'حذف العرض';
+  static const String description = 'الوصف';
+
+// Delete Dialog
+  static const String deleteOfferTitle = 'حذف العرض';
+  static const String deleteOfferConfirmation =
+      'هل أنت متأكد من حذف هذا العرض؟';
+
+  // static const String cancel = 'إلغاء';
+  static const String delete = 'حذف';
+
+  // static const String success = 'نجح';
+  static const String offerDeletedSuccessfully = 'تم حذف العرض بنجاح';
+
+// Status
+  static const String statusUnknown = 'غير معروف';
+
+// Settings Sections
+  static const String companyManagement = 'إدارة الشركة';
+  static const String updateCompanyInfo = 'تحديث معلومات الشركة والخدمات';
+  static const String changeLogo = 'تغيير الشعار';
+  static const String updateCompanyLogo = 'تحديث شعار الشركة';
+
+  static const String subscriptionAndPayment = 'الاشتراك والدفع';
+  static const String viewSubscriptionDetails = 'عرض تفاصيل الاشتراك الحالي';
+  static const String paymentHistory = 'سجل المدفوعات';
+  static const String viewPaymentHistory = 'عرض سجل المدفوعات السابقة';
+
+  static const String supportAndHelp = 'الدعم والمساعدة';
+  static const String getTechnicalSupport = 'الحصول على الدعم الفني';
+  static const String helpCenter = 'مركز المساعدة';
+  static const String viewGuides = 'عرض الأدلة الإرشادية';
+
+  // Additional strings
+  static const String notAvailable = 'غير متاح';
+
+  // Update Offer
+  static const String updateOfferTitle = 'تعديل العرض';
+  static const String updateOfferDetails = 'تعديل تفاصيل العرض';
+  static const String updateOfferSubtitle = 'قم بتحديث تفاصيل العرض المنشور';
+  static const String updateOffer = 'تحديث العرض';
+
+// Current Image
+  static const String currentImage = 'الصورة الحالية';
+  static const String uploadNewImageOptional =
+      'اختياري: قم برفع صورة جديدة للتحديث';
+  static const String productImageOptional = 'صورة المنتج (اختياري)';
+  static const String uploadNewImageHint = 'قم برفع صورة جديدة للتحديث';
+
+// Form Labels
+  static const String selectOrganization = 'اختر المؤسسة';
+  static const String selectOrganizationHint = 'حدد المؤسسة المرتبطة بالعرض';
+  static const String productName = 'اسم المنتج';
+  static const String enterProductName = 'أدخل اسم المنتج...';
+  static const String productDescription = 'وصف المنتج';
+  static const String enterProductDescription = 'اكتب وصفاً مفصلاً للمنتج...';
+  static const String price = 'السعر';
+  static const String enterPrice = 'أدخل سعر المنتج';
+  static const String allowedFormats = 'الصيغ المسموحة: JPG, PNG';
+
+// Offer Type
+  static const String selectOfferType = 'اختر نوع العرض';
+  static const String regularOffer = 'عرض عادي';
+  static const String discountPercentage = 'خصم بنسبة';
+  static const String enterDiscountPercentage = 'أدخل نسبة الخصم (1-100)';
+
+// Dates
+  static const String startDate = 'تاريخ البداية';
+  static const String selectStartDate = 'اختر تاريخ البداية';
+  static const String endDate = 'تاريخ النهاية';
+  static const String selectEndDate = 'اختر تاريخ النهاية';
+  static const String offerStartDate = 'تاريخ بداية العرض';
+  static const String offerEndDate = 'تاريخ نهاية العرض';
+
+// Offer Description
+  static const String enterOfferDescription =
+      'اكتب تفاصيل العرض الخاصة بالخصم...';
+
+// Offer Status
+  static const String selectOfferStatus = 'اختر حالة العرض';
+
+// Common
+  static const String noOrganizationsAvailable = 'لا توجد مؤسسات متاحة';
+  static const String registerOrganizationFirst =
+      'يرجى تسجيل مؤسسة أولاً لتتمكن من تعديل العروض';
 }

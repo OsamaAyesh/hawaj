@@ -357,4 +357,11 @@ abstract class AppService {
     @Query(RequestConstants.id) String? id,
     @Query(RequestConstants.with1) String? with1,
   );
+
+  ///Update Offer Request
+  @POST(RequestConstantsEndpoints.updateOfferRequest)
+  @MultiPart()
+  Future<WithOutDataResponse> updateOfferRequest(
+    @Body() FormData formData,
+  );
 }
