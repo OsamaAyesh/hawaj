@@ -1148,6 +1148,7 @@ class ManagerStrings {
 
 // Offer Status
   static const String selectOfferStatus = 'اختر حالة العرض';
+  static const String deletingOffer = 'حذف العرض';
 
 // Common
   static const String noOrganizationsAvailable = 'لا توجد مؤسسات متاحة';

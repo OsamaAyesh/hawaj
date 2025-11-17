@@ -1,3 +1,4 @@
+// details_my_organization_screen.dart
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
@@ -5,14 +6,17 @@ import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/widgets/custom_confirm_dialog.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../../../../core/model/offer_new_item_model.dart';
 import '../../../update_offer/domain/di/di.dart' show initUpdateOffer;
 import '../../../update_offer/presentation/pages/update_offer_screen.dart';
+import '../../domain/di/di.dart' show disposeGetMyOrganizationDetails;
 import '../controller/details_my_organization_controller.dart';
 
 class DetailsMyOrganizationScreen extends StatefulWidget {
@@ -55,6 +59,7 @@ class _DetailsMyOrganizationScreenState
   @override
   void dispose() {
     _headerAnimationController.dispose();
+    disposeGetMyOrganizationDetails();
     super.dispose();
   }
 
@@ -72,45 +77,52 @@ class _DetailsMyOrganizationScreenState
             return _buildEmptyState();
           }
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              await ctrl.onRefresh();
-              _headerAnimationController.reset();
-              _headerAnimationController.forward();
-            },
-            color: ManagerColors.primaryColor,
-            child: CustomScrollView(
-              slivers: [
-                // Header
-                SliverToBoxAdapter(
-                  child: FadeTransition(
-                    opacity: _headerAnimation,
-                    child: SlideTransition(
-                      position: Tween<Offset>(
-                        begin: const Offset(0, -0.2),
-                        end: Offset.zero,
-                      ).animate(_headerAnimation),
-                      child: _buildModernHeader(),
+          return Stack(
+            children: [
+              RefreshIndicator(
+                onRefresh: () async {
+                  await ctrl.onRefresh();
+                  _headerAnimationController.reset();
+                  _headerAnimationController.forward();
+                },
+                color: ManagerColors.primaryColor,
+                child: CustomScrollView(
+                  slivers: [
+                    // Header
+                    SliverToBoxAdapter(
+                      child: FadeTransition(
+                        opacity: _headerAnimation,
+                        child: SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(0, -0.2),
+                            end: Offset.zero,
+                          ).animate(_headerAnimation),
+                          child: _buildModernHeader(),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
 
-                // Company Info Section
-                SliverToBoxAdapter(
-                  child: _buildCompanyInfoSection(),
-                ),
+                    // Company Info Section
+                    SliverToBoxAdapter(
+                      child: _buildCompanyInfoSection(),
+                    ),
 
-                // Tab bar
-                SliverToBoxAdapter(
-                  child: _buildCustomTabBar(),
-                ),
+                    // Tab bar
+                    SliverToBoxAdapter(
+                      child: _buildCustomTabBar(),
+                    ),
 
-                // Tab content based on selected index
-                SliverFillRemaining(
-                  child: _buildTabContent(),
+                    // Tab content based on selected index
+                    SliverFillRemaining(
+                      child: _buildTabContent(),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              // Delete Loading Overlay
+              if (ctrl.isDeleting) const LoadingWidget(),
+            ],
           );
         },
       ),
@@ -435,7 +447,7 @@ class _DetailsMyOrganizationScreenState
           _buildInfoCard(
             icon: Icons.local_offer_rounded,
             title: ManagerStrings.totalOffers,
-            value: '$offersCount ${ManagerStrings.offers}', // 'عرض'
+            value: '$offersCount ${ManagerStrings.offers}',
             color: const Color(0xFF10B981),
           ),
           SizedBox(height: ManagerHeight.h12),
@@ -829,8 +841,7 @@ class _DetailsMyOrganizationScreenState
                         ],
                       ),
                       onTap: () {
-                        // TODO: Navigate to edit offer
-                        initUpdateOffer(offer); // Pass the offer model
+                        initUpdateOffer(offer);
                         Get.to(const UpdateOfferScreen());
                       },
                     ),
@@ -1021,81 +1032,22 @@ class _DetailsMyOrganizationScreenState
     }
   }
 
-  /// Delete confirmation dialog
-  void _showDeleteConfirmation(dynamic offer) {
+  /// Delete confirmation dialog using CustomConfirmDialog
+  void _showDeleteConfirmation(OfferNewItemModel offer) {
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(ManagerRadius.r16),
-        ),
-        title: Row(
-          children: [
-            Icon(
-              Icons.warning_rounded,
-              color: Colors.red[600],
-              size: 28,
-            ),
-            SizedBox(width: ManagerWidth.w12),
-            Flexible(
-              child: Text(
-                ManagerStrings.deleteOfferTitle,
-                style: getBoldTextStyle(
-                    fontSize: ManagerFontSize.s18, color: ManagerColors.black),
-              ),
-            ),
-          ],
-        ),
-        content: Text(
-          ManagerStrings.deleteOfferConfirmation,
-          style: getRegularTextStyle(
-              fontSize: ManagerFontSize.s15, color: ManagerColors.black),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              ManagerStrings.cancel,
-              style: getMediumTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: Colors.grey[600]!,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-              _deleteOffer(offer.id ?? '');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(ManagerRadius.r8),
-              ),
-            ),
-            child: Text(
-              ManagerStrings.delete,
-              style: getBoldTextStyle(
-                fontSize: ManagerFontSize.s14,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
+      CustomConfirmDialog(
+        title: ManagerStrings.deleteOfferTitle,
+        subtitle: ManagerStrings.deleteOfferConfirmation,
+        confirmText: ManagerStrings.delete,
+        cancelText: ManagerStrings.cancel,
+        onConfirm: () {
+          Get.back(); // Close dialog
+          controller.deleteOffer(offer.id);
+        },
+        onCancel: () {
+          Get.back(); // Close dialog
+        },
       ),
-    );
-  }
-
-  /// Delete offer method
-  void _deleteOffer(String offerId) {
-    // TODO: Implement delete offer logic
-    Get.snackbar(
-      ManagerStrings.success,
-      ManagerStrings.offerDeletedSuccessfully,
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: Colors.green,
-      colorText: Colors.white,
-      margin: EdgeInsets.all(ManagerWidth.w16),
-      borderRadius: ManagerRadius.r10,
     );
   }
 
@@ -1115,38 +1067,8 @@ class _DetailsMyOrganizationScreenState
                 // TODO: Navigate to edit company
               },
             ),
-            // _buildSettingTile(
-            //   icon: Icons.image_outlined,
-            //   title: ManagerStrings.changeLogo,
-            //   subtitle: ManagerStrings.updateCompanyLogo,
-            //   onTap: () {
-            //     // TODO: Change logo
-            //   },
-            // ),
           ],
         ),
-        // SizedBox(height: ManagerHeight.h20),
-        // _buildSettingSection(
-        //   title: ManagerStrings.subscriptionAndPayment,
-        //   items: [
-        //     _buildSettingTile(
-        //       icon: Icons.card_membership_outlined,
-        //       title: ManagerStrings.subscriptionInfo,
-        //       subtitle: ManagerStrings.viewSubscriptionDetails,
-        //       onTap: () {
-        //         // TODO: View subscription
-        //       },
-        //     ),
-        //     _buildSettingTile(
-        //       icon: Icons.history_outlined,
-        //       title: ManagerStrings.paymentHistory,
-        //       subtitle: ManagerStrings.viewPaymentHistory,
-        //       onTap: () {
-        //         // TODO: View payment history
-        //       },
-        //     ),
-        //   ],
-        // ),
         SizedBox(height: ManagerHeight.h20),
         _buildSettingSection(
           title: ManagerStrings.supportAndHelp,

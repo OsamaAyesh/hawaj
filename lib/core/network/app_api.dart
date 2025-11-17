@@ -364,4 +364,11 @@ abstract class AppService {
   Future<WithOutDataResponse> updateOfferRequest(
     @Body() FormData formData,
   );
+
+  ///Delete My Offer Request
+  ///
+  @POST(RequestConstantsEndpoints.deleteMyOfferRequest)
+  Future<WithOutDataResponse> deleteMyOfferRequest(
+    @Field(RequestConstants.id) String id,
+  );
 }
