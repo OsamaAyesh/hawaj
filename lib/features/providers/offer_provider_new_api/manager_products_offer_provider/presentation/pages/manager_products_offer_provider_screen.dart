@@ -64,7 +64,7 @@ class _ManagerProductsOfferProviderScreenState
           print("إضافة منتج");
         }
         initAddOfferNew();
-        Get.to(AddOfferNewNewNewScreen());
+        Get.to(AddOfferNewScreen());
       },
       // () {
       //   if (kDebugMode) {
