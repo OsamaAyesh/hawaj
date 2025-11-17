@@ -1041,4 +1041,15 @@ class ManagerStrings {
   static String get expiredOffersWarning => tr('expired_offers_warning');
 
   static String get statusExpired => tr('status_expired');
+
+  // Add these to ManagerStrings class:
+
+// Button text
+  static const String addNewCompany = 'إضافة شركة جديدة';
+
+// Statistics section
+  static const String offersStatistics = 'إحصائيات العروض';
+
+// Offer statuses
+  static const String statusCancelled = 'ملغي';
 }

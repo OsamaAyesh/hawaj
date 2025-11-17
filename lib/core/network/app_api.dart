@@ -18,6 +18,7 @@ import '../../features/providers/job_provider_app/add_job_provider/data/response
 import '../../features/providers/job_provider_app/list_company_job/data/response/get_list_company_jobs_response.dart';
 import '../../features/providers/job_provider_app/manager_jobs_provider/data/response/get_list_jobs_response.dart';
 import '../../features/providers/offer_provider_new_api/common/data/response/get_my_company_response.dart';
+import '../../features/providers/offer_provider_new_api/details_my_organization/data/response/get_my_organization_details_response.dart';
 import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/data/response/get_organization_types_response.dart';
 import '../../features/providers/offer_provider_new_api/subscription_plans_register_offer_provider/data/response/get_offer_plans_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
@@ -346,6 +347,14 @@ abstract class AppService {
   @GET(RequestConstantsEndpoints.getMyCompany)
   Future<GetMyCompanyResponse> getMyCompany(
     @Query(RequestConstants.language) String? language,
+    @Query(RequestConstants.with1) String? with1,
+  );
+
+  ///Get My Company
+  @GET(RequestConstantsEndpoints.getMyOrganizationWithId)
+  Future<GetMyOrganizationDetailsResponse> getMyOrganizationWithId(
+    @Query(RequestConstants.language) String? language,
+    @Query(RequestConstants.id) String? id,
     @Query(RequestConstants.with1) String? with1,
   );
 }

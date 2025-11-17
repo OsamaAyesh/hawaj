@@ -50,4 +50,5 @@ class RequestConstantsEndpoints {
   static const String getOfferProviderPlans = "$apiUrlBase/getplans";
   static const String getMyOrganizationsNew = "$apiUrlBase/getmyorganizations";
   static const String addOfferNewRequest = '$apiUrlBase/addoffer';
+  static const String getMyOrganizationWithId = '$apiUrlBase/getmyorganization';
 }
