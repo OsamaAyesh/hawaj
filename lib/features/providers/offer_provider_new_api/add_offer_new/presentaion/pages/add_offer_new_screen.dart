@@ -33,6 +33,8 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
 
+  // add_offer_new_screen.dart
+
   @override
   void initState() {
     super.initState();
@@ -54,9 +56,18 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
       CurvedAnimation(parent: _animationController, curve: Curves.easeOutCubic),
     );
 
+    // ✅ Fetch companies after frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _animationController.forward();
+      _fetchData();
     });
+  }
+
+// ✅ Add fetch method
+  Future<void> _fetchData() async {
+    await controller.fetchCompanies();
+    if (mounted && controller.companies.isNotEmpty) {
+      _animationController.forward();
+    }
   }
 
   @override
@@ -71,11 +82,14 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
     return ScaffoldWithBackButton(
       title: ManagerStrings.addOfferTitle,
       body: Obx(() {
+        // Show loading while fetching
         if (controller.isLoading.value) {
           return const Center(child: LoadingWidget());
         }
 
-        if (controller.companies.isEmpty) {
+        // ✅ Show empty state only if fetch was attempted and no companies
+        if (controller.hasAttemptedFetch.value &&
+            controller.companies.isEmpty) {
           return _buildEmptyState();
         }
 
@@ -90,21 +104,32 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
             ),
             if (controller.isSubmitting.value)
               Container(
-                color: Colors.black45,
+                color: Colors.black.withOpacity(0.5),
                 child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const LoadingWidget(),
-                      SizedBox(height: ManagerHeight.h16),
-                      Text(
-                        ManagerStrings.submittingOfferLoading,
-                        style: getBoldTextStyle(
-                          fontSize: ManagerFontSize.s15,
-                          color: ManagerColors.white,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: ManagerWidth.w32,
+                      vertical: ManagerHeight.h24,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const LoadingWidget(),
+                        SizedBox(height: ManagerHeight.h16),
+                        Text(
+                          ManagerStrings.submittingOfferLoading,
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s15,
+                            color: ManagerColors.black,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
-                      )
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

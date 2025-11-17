@@ -14,6 +14,8 @@ import '../../../common/domain/use_cases/get_my_company_use_case.dart';
 import '../../data/request/add_offer_new_request.dart';
 import '../../domain/use_cases/add_offer_new_use_case.dart';
 
+// add_offer_new_controller.dart
+
 class AddOfferNewController extends GetxController {
   final AddOfferNewUseCase _addOfferUseCase;
   final GetMyCompanyUseCase _getMyCompanyUseCase;
@@ -35,28 +37,31 @@ class AddOfferNewController extends GetxController {
   // ==================== Reactive State ====================
   final pickedImage = Rx<File?>(null);
 
-  // ✅ قيم افتراضية صحيحة
-  final offerType = "2".obs; // Default: عرض عادي
-  final offerStatus = "5".obs; // Default: قيد المراجعة
+  final offerType = "2".obs;
+  final offerStatus = "5".obs;
 
-  final isLoading = false.obs; // Loading for fetching companies
-  final isSubmitting = false.obs; // Loading for submitting offer
+  final isLoading = true.obs; // ✅ Start with true
+  final isSubmitting = false.obs;
 
   final companies = <GetOrganizationItemWithOfferModel>[].obs;
   final selectedCompany = Rxn<GetOrganizationItemWithOfferModel>();
+
+  // ✅ Add flag to track if data was fetched
+  final hasAttemptedFetch = false.obs;
 
   // ==================== Lifecycle ====================
   @override
   void onInit() {
     super.onInit();
-    _fetchCompanies();
+    // Don't fetch here - fetch in screen's initState
   }
 
   // ==================== Get Companies ====================
   /// Fetch user's companies/organizations
-  Future<void> _fetchCompanies() async {
+  Future<void> fetchCompanies() async {
     try {
       isLoading.value = true;
+      hasAttemptedFetch.value = true;
 
       final Either<Failure, GetMyCompanyModel> result =
           await _getMyCompanyUseCase.execute();
@@ -76,18 +81,18 @@ class AddOfferNewController extends GetxController {
         (data) {
           companies.value = data.data;
 
-          if (companies.isEmpty) {
-            AppSnackbar.warning(
-              'لا توجد مؤسسات متاحة',
-              englishMessage: 'No organizations available',
-            );
-          } else {
+          if (companies.isNotEmpty) {
             // Auto-select first company
             selectedCompany.value = companies.first;
-          }
 
-          if (kDebugMode) {
-            debugPrint('✅ [AddOfferNew] Loaded ${companies.length} companies');
+            if (kDebugMode) {
+              debugPrint(
+                  '✅ [AddOfferNew] Loaded ${companies.length} companies');
+            }
+          } else {
+            if (kDebugMode) {
+              debugPrint('⚠️ [AddOfferNew] No companies found');
+            }
           }
         },
       );
@@ -107,13 +112,11 @@ class AddOfferNewController extends GetxController {
 
   /// Retry fetching companies
   void retryFetchCompanies() {
-    _fetchCompanies();
+    fetchCompanies();
   }
 
   // ==================== Submit Offer ====================
-  /// Submit new offer
   Future<void> submitOffer() async {
-    // Check if company is selected
     if (selectedCompany.value == null) {
       AppSnackbar.warning(
         'يرجى اختيار مؤسسة قبل المتابعة',
@@ -122,13 +125,11 @@ class AddOfferNewController extends GetxController {
       return;
     }
 
-    // Validate form
     if (!_validateForm()) return;
 
     try {
       isSubmitting.value = true;
 
-      // Create request
       final request = AddOfferNewRequest(
         productName: productNameController.text.trim(),
         productDescription: productDescriptionController.text.trim(),
@@ -143,11 +144,9 @@ class AddOfferNewController extends GetxController {
         offerStatus: offerStatus.value,
       );
 
-      // Execute request
       final Either<Failure, WithOutDataModel> result =
           await _addOfferUseCase.execute(request);
 
-      // Handle result
       result.fold(
         (failure) {
           AppSnackbar.error(
@@ -166,8 +165,10 @@ class AddOfferNewController extends GetxController {
               englishMessage: 'Offer added successfully',
             );
 
-            // Clear form after success
             _clearForm();
+
+            // Navigate back after success
+            Get.back(result: true);
 
             if (kDebugMode) {
               debugPrint('✅ [AddOfferNew] Offer added successfully');
@@ -192,9 +193,7 @@ class AddOfferNewController extends GetxController {
   }
 
   // ==================== Validation ====================
-  /// Validate form fields
   bool _validateForm() {
-    // Product Name
     if (productNameController.text.trim().isEmpty) {
       AppSnackbar.warning(
         'يرجى إدخال اسم المنتج',
@@ -203,7 +202,6 @@ class AddOfferNewController extends GetxController {
       return false;
     }
 
-    // Product Description
     if (productDescriptionController.text.trim().isEmpty) {
       AppSnackbar.warning(
         'يرجى إدخال وصف المنتج',
@@ -212,7 +210,6 @@ class AddOfferNewController extends GetxController {
       return false;
     }
 
-    // Product Image
     if (pickedImage.value == null) {
       AppSnackbar.warning(
         'يرجى رفع صورة المنتج',
@@ -221,7 +218,6 @@ class AddOfferNewController extends GetxController {
       return false;
     }
 
-    // Product Price
     if (productPriceController.text.trim().isEmpty) {
       AppSnackbar.warning(
         'يرجى إدخال السعر',
@@ -230,7 +226,6 @@ class AddOfferNewController extends GetxController {
       return false;
     }
 
-    // Validate price is a number
     if (double.tryParse(productPriceController.text.trim()) == null) {
       AppSnackbar.warning(
         'يرجى إدخال سعر صحيح',
@@ -239,7 +234,6 @@ class AddOfferNewController extends GetxController {
       return false;
     }
 
-    // Offer Type
     if (offerType.value.isEmpty) {
       AppSnackbar.warning(
         'اختر نوع العرض',
@@ -248,9 +242,7 @@ class AddOfferNewController extends GetxController {
       return false;
     }
 
-    // Discount-specific validation
     if (offerType.value == "1") {
-      // Discount percentage
       if (offerPriceController.text.trim().isEmpty) {
         AppSnackbar.warning(
           'يرجى إدخال نسبة الخصم',
@@ -259,7 +251,6 @@ class AddOfferNewController extends GetxController {
         return false;
       }
 
-      // Validate discount is a number
       final discount = double.tryParse(offerPriceController.text.trim());
       if (discount == null || discount <= 0 || discount > 100) {
         AppSnackbar.warning(
@@ -269,7 +260,6 @@ class AddOfferNewController extends GetxController {
         return false;
       }
 
-      // Start Date
       if (offerStartDateController.text.trim().isEmpty) {
         AppSnackbar.warning(
           'يرجى اختيار تاريخ بداية العرض',
@@ -278,7 +268,6 @@ class AddOfferNewController extends GetxController {
         return false;
       }
 
-      // End Date
       if (offerEndDateController.text.trim().isEmpty) {
         AppSnackbar.warning(
           'يرجى اختيار تاريخ نهاية العرض',
@@ -287,7 +276,6 @@ class AddOfferNewController extends GetxController {
         return false;
       }
 
-      // Offer Description
       if (offerDescriptionController.text.trim().isEmpty) {
         AppSnackbar.warning(
           'يرجى إدخال وصف العرض',
@@ -301,7 +289,6 @@ class AddOfferNewController extends GetxController {
   }
 
   // ==================== Clear Form ====================
-  /// Clear all form fields
   void _clearForm() {
     productNameController.clear();
     productDescriptionController.clear();
@@ -312,13 +299,10 @@ class AddOfferNewController extends GetxController {
     offerDescriptionController.clear();
 
     pickedImage.value = null;
-    offerType.value = '2'; // Reset to default
-    offerStatus.value = '5'; // Reset to default
-
-    // Keep selected company
+    offerType.value = '2';
+    offerStatus.value = '5';
   }
 
-  /// Manually clear form (public method)
   void clearForm() {
     _clearForm();
   }
@@ -326,7 +310,6 @@ class AddOfferNewController extends GetxController {
   // ==================== Cleanup ====================
   @override
   void onClose() {
-    // Dispose text controllers
     productNameController.dispose();
     productDescriptionController.dispose();
     productPriceController.dispose();

@@ -431,13 +431,11 @@ class UpdateOfferScreen extends StatelessWidget {
       lastDate: DateTime(2100),
       helpText: title,
       cancelText: ManagerStrings.cancel,
-      // 'إلغاء'
       confirmText: ManagerStrings.confirm,
-      // 'تأكيد'
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: ManagerColors.primaryColor,
               onPrimary: Colors.white,
               onSurface: ManagerColors.black,
