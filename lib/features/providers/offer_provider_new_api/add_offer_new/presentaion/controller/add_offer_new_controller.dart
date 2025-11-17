@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:app_mobile/core/model/with_out_data_model.dart';
 import 'package:app_mobile/core/util/snack_bar.dart';
-import 'package:app_mobile/features/providers/offer_provider_new/common/domain/models/get_my_company_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +9,8 @@ import 'package:get/get.dart';
 
 import '../../../../../../core/error_handler/failure.dart';
 import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
-import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
+import '../../../common/domain/models/get_my_company_model.dart';
+import '../../../common/domain/use_cases/get_my_company_use_case.dart';
 import '../../data/request/add_offer_new_request.dart';
 import '../../domain/use_cases/add_offer_new_use_case.dart';
 

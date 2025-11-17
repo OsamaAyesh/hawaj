@@ -10,9 +10,9 @@ import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
 import '../../../../../users/offer_user/company_with_offer/domain/di/di.dart';
 import '../../../../../users/offer_user/company_with_offer/domain/use_case/get_company_use_case.dart';
-import '../../../../offer_provider_new/common/domain/di/di.dart'
+import '../../../../offer_provider_new_api/common/domain/di/di.dart'
     show disposeGetMyCompanyNew, initGetMyCompanyNew;
-import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
+import '../../../../offer_provider_new_api/common/domain/use_cases/get_my_company_use_case.dart';
 import '../../../manage_list_offer/presentation/controller/manage_list_offer_provider_controller.dart';
 import '../../presentation/controller/add_offer_controller.dart';
 import '../use_case/get_my_company_set_offer_use_case.dart';
@@ -20,14 +20,12 @@ import '../use_case/get_my_company_set_offer_use_case.dart';
 initCreateOfferProviderRequest() {
   if (!GetIt.I.isRegistered<CreateOfferProviderDataSource>()) {
     instance.registerLazySingleton<CreateOfferProviderDataSource>(
-            () =>
-            CreateOfferProviderDataSourceImplement(instance<AppService>()));
+        () => CreateOfferProviderDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<CreateOfferProviderRepository>()) {
     instance.registerLazySingleton<CreateOfferProviderRepository>(
-            () =>
-            CreateOfferProviderRepositoryImplement(instance(), instance()));
+        () => CreateOfferProviderRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<CreateOfferProviderUseCase>()) {
@@ -70,14 +68,12 @@ void disposeCreateOfferProvider() {
 initGetMyCompanySetOfferRequest() {
   if (!GetIt.I.isRegistered<GetMyCompanySetOfferDataSource>()) {
     instance.registerLazySingleton<GetMyCompanySetOfferDataSource>(
-            () =>
-            GetMyCompanySetOfferDataSourceImplement(instance<AppService>()));
+        () => GetMyCompanySetOfferDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<GetMyCompanySetOfferRepository>()) {
     instance.registerLazySingleton<GetMyCompanySetOfferRepository>(
-            () =>
-            GetMyCompanySetOfferRepositoryImplement(instance(), instance()));
+        () => GetMyCompanySetOfferRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<GetMyCompanySetOfferUseCase>()) {

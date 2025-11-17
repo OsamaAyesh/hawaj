@@ -1,11 +1,11 @@
-import 'package:app_mobile/features/providers/offer_provider_new/common/data/data_source/get_my_company_data_source.dart';
-import 'package:app_mobile/features/providers/offer_provider_new/common/data/mapper/get_my_company_mapper.dart';
+import 'package:app_mobile/features/providers/offer_provider_new_api/common/data/mapper/get_my_company_mapper.dart';
 import 'package:dartz/dartz.dart';
 
 import '../../../../../../core/error_handler/error_handler.dart';
 import '../../../../../../core/error_handler/failure.dart';
 import '../../../../../../core/internet_checker/interent_checker.dart';
 import '../../domain/models/get_my_company_model.dart';
+import '../data_source/get_my_company_data_source.dart';
 
 abstract class GetMyCompanyRepository {
   Future<Either<Failure, GetMyCompanyModel>> getMyCompany();

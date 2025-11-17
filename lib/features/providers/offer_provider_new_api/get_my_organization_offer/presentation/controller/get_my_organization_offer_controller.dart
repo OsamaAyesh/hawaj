@@ -2,7 +2,7 @@ import 'package:app_mobile/core/util/snack_bar.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
-import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
+import '../../../common/domain/use_cases/get_my_company_use_case.dart';
 
 class GetMyCompanyController extends GetxController {
   final GetMyCompanyUseCase _useCase;

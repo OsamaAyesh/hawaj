@@ -18,9 +18,11 @@ import '../../../../../../core/widgets/scaffold_with_back_button.dart';
 import '../../../../../common/map/domain/di/di.dart';
 import '../../../../../common/map/presenation/controller/hawaj_map_data_controller.dart';
 import '../../../../../common/map/presenation/pages/map_screen.dart';
-import '../../../../offer_provider_new/get_my_organization_offer/domain/di/di.dart';
-import '../../../../offer_provider_new/get_my_organization_offer/presentation/pages/get_my_organization_offer_screen.dart';
 import '../../../add_offer_new/domain/di/di.dart';
+import '../../../get_my_organization_offer/domain/di/di.dart'
+    show initGetMyOrganizationOffer;
+import '../../../get_my_organization_offer/presentation/pages/get_my_organization_offer_screen.dart'
+    show GetMyOrganizationOfferScreen;
 
 class ManagerProductsOfferProviderNewScreen extends StatefulWidget {
   const ManagerProductsOfferProviderNewScreen({super.key});

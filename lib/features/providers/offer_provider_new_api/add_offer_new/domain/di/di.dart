@@ -3,10 +3,9 @@ import 'package:get_it/get_it.dart';
 
 import '../../../../../../constants/di/dependency_injection.dart';
 import '../../../../../../core/network/app_api.dart';
-import '../../../../offer_provider_new/common/domain/di/di.dart'
+import '../../../common/domain/di/di.dart'
     show disposeGetMyCompanyNew, initGetMyCompanyNew;
-import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart'
-    show GetMyCompanyUseCase;
+import '../../../common/domain/use_cases/get_my_company_use_case.dart';
 import '../../data/data_source/add_offer_new_data_source.dart';
 import '../../data/repository/add_offer_new_repository.dart';
 import '../../presentaion/controller/add_offer_new_controller.dart';

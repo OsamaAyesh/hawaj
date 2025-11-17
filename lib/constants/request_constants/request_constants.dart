@@ -13,6 +13,7 @@ class RequestConstants {
   static const String dateOfBirth = 'dob';
   static const String gender = 'gender';
   static const String language = 'language';
+  static const String with1 = 'with';
   static const String lat = 'lat';
   static const String lng = 'lng';
   static const String stringUser = 'stri';

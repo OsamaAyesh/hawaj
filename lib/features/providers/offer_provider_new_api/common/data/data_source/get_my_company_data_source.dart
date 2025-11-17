@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/core/resources/manager_mockup.dart';
+import 'package:app_mobile/core/util/get_app_langauge.dart';
 import 'package:flutter/services.dart' as rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -29,6 +30,7 @@ class GetMyCompanyDataSourceImplement implements GetMyCompanyDataSource {
         ),
       );
     }
-    return await _appService.getMyCompany();
+    return await _appService.getMyCompany(
+        AppLanguage().getCurrentLocale(), "offers");
   }
 }

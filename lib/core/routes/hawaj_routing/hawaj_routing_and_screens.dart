@@ -14,8 +14,9 @@ import '../../../features/common/map/presenation/controller/map_controller.dart'
 import '../../../features/common/profile/domain/di/di.dart';
 import '../../../features/common/profile/presentation/pages/contact_us_screen.dart';
 import '../../../features/common/under_development/presentation/pages/under_development_screen.dart';
-import '../../../features/providers/offer_provider_new/get_my_organization_offer/domain/di/di.dart';
-import '../../../features/providers/offer_provider_new/get_my_organization_offer/presentation/pages/get_my_organization_offer_screen.dart';
+import '../../../features/providers/offer_provider_new_api/get_my_organization_offer/domain/di/di.dart'
+    show initGetMyOrganizationOffer;
+import '../../../features/providers/offer_provider_new_api/get_my_organization_offer/presentation/pages/get_my_organization_offer_screen.dart';
 import '../../../features/providers/offers_provider/add_offer/domain/di/di.dart';
 import '../../../features/providers/offers_provider/register_company_offer_provider/domain/di/di.dart';
 import '../../../features/providers/real_estate_provider/add_real_estate/domain/di/di.dart';

@@ -1,9 +1,9 @@
-import 'package:app_mobile/features/providers/offer_provider_new/common/data/data_source/get_my_company_data_source.dart';
-import 'package:app_mobile/features/providers/offer_provider_new/common/data/repository/get_my_company_repository.dart';
-import 'package:app_mobile/features/providers/offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../../../../../core/network/app_api.dart';
+import '../../data/data_source/get_my_company_data_source.dart';
+import '../../data/repository/get_my_company_repository.dart';
+import '../use_cases/get_my_company_use_case.dart';
 
 final instance = GetIt.instance;
 

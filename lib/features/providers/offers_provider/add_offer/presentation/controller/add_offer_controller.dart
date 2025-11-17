@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/model/get_organization_item_with_offer_model.dart';
-import '../../../../offer_provider_new/common/domain/models/get_my_company_model.dart';
-import '../../../../offer_provider_new/common/domain/use_cases/get_my_company_use_case.dart';
+import '../../../../offer_provider_new_api/common/domain/models/get_my_company_model.dart';
+import '../../../../offer_provider_new_api/common/domain/use_cases/get_my_company_use_case.dart';
 import '../../../manager_products_offer_provider/presentation/pages/manager_products_offer_provider_screen.dart';
 import '../../data/request/create_offer_provider_request.dart';
 import '../../domain/use_case/create_offer_provider_use_case.dart';

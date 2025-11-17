@@ -17,7 +17,7 @@ import '../../features/common/lists/data/response/get_lists_response.dart';
 import '../../features/providers/job_provider_app/add_job_provider/data/response/get_settings_base_response.dart';
 import '../../features/providers/job_provider_app/list_company_job/data/response/get_list_company_jobs_response.dart';
 import '../../features/providers/job_provider_app/manager_jobs_provider/data/response/get_list_jobs_response.dart';
-import '../../features/providers/offer_provider_new/common/data/response/get_my_company_response.dart';
+import '../../features/providers/offer_provider_new_api/common/data/response/get_my_company_response.dart';
 import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/data/response/get_organization_types_response.dart';
 import '../../features/providers/offer_provider_new_api/subscription_plans_register_offer_provider/data/response/get_offer_plans_response.dart';
 import '../../features/providers/offers_provider/add_offer/data/response/get_my_company_set_offer_response.dart';
@@ -291,9 +291,6 @@ abstract class AppService {
   );
 
   ////====== New Offers
-  ///Get My Company
-  @GET(RequestConstantsEndpoints.getMyCompany)
-  Future<GetMyCompanyResponse> getMyCompany();
 
   ///Add Offer New Reqyest
   @POST(RequestConstantsEndpoints.addOfferNewRequest)
@@ -343,5 +340,12 @@ abstract class AppService {
   @GET(RequestConstantsEndpoints.getMyOrganizationsNew)
   Future<GetMyOrganizationResponse> getMyOrganizationsNew(
     @Query(RequestConstants.language) String? language,
+  );
+
+  ///Get My Company
+  @GET(RequestConstantsEndpoints.getMyCompany)
+  Future<GetMyCompanyResponse> getMyCompany(
+    @Query(RequestConstants.language) String? language,
+    @Query(RequestConstants.with1) String? with1,
   );
 }
