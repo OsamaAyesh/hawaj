@@ -1154,4 +1154,64 @@ class ManagerStrings {
   static const String noOrganizationsAvailable = 'لا توجد مؤسسات متاحة';
   static const String registerOrganizationFirst =
       'يرجى تسجيل مؤسسة أولاً لتتمكن من تعديل العروض';
+
+  static String get addOfferTitle => tr('add_offer_title');
+
+  static String get addOfferDetailsTitle => tr('add_offer_details_title');
+
+  static String get addOfferDetailsSubtitle => tr('add_offer_details_subtitle');
+
+  static String get noCompaniesAvailable => tr('no_companies_available');
+
+  static String get registerCompanyFirst => tr('register_company_first');
+
+  static String get selectCompanyLabel => tr('select_company_label');
+
+  static String get selectCompanyHint => tr('select_company_hint');
+
+  static String get productNameLabel => tr('product_name_label');
+
+  static String get productNameHint => tr('product_name_hint');
+
+  static String get productDescriptionLabel => tr('product_description_label');
+
+  static String get productDescriptionHint => tr('product_description_hint');
+
+  static String get productImageLabel => tr('product_image_label');
+
+  static String get productImageHint => tr('product_image_hint');
+
+  static String get productImageNote => tr('product_image_note');
+
+  static String get productPriceLabel => tr('product_price_label');
+
+  static String get productPriceHint => tr('product_price_hint');
+
+  static String get offerTypeLabel => tr('offer_type_label');
+
+  static String get discountPercentageLabel => tr('discount_percentage_label');
+
+  static String get discountPercentageHint => tr('discount_percentage_hint');
+
+  static String get startDateLabel => tr('start_date_label');
+
+  static String get startDateHint => tr('start_date_hint');
+
+  static String get endDateLabel => tr('end_date_label');
+
+  static String get endDateHint => tr('end_date_hint');
+
+  static String get offerDescriptionLabel => tr('offer_description_label');
+
+  static String get offerDescriptionHint => tr('offer_description_hint');
+
+  static String get offerStatusLabel => tr('offer_status_label');
+
+  static String get offerStatusReview => tr('offer_status_review');
+
+  static String get offerStatusExpired => tr('offer_status_expired');
+
+  static String get submitOffer => tr('submit_offer');
+
+  static String get submittingOfferLoading => tr('submitting_offer_loading');
 }
