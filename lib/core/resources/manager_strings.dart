@@ -1019,4 +1019,26 @@ class ManagerStrings {
   static String get uploadPropertyImages => tr('upload_property_images');
 
   static String get submitProperty => tr('submit_property');
+
+  // Get My Companies Screen
+  static String get myCompaniesTitle => tr('my_companies_title');
+
+  static String get noCompanies => tr('no_companies');
+
+  // Status labels
+  static String get statusPending => tr('status_pending');
+
+  static String get statusDraft => tr('status_draft');
+
+  static String get statusPublished => tr('status_published');
+
+  static String get statusTotal => tr('status_total');
+
+  // Offers
+  static String get manageOffers => tr('manage_offers');
+
+  // Warnings
+  static String get expiredOffersWarning => tr('expired_offers_warning');
+
+  static String get statusExpired => tr('status_expired');
 }

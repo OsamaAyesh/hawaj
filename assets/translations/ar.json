@@ -447,5 +447,14 @@
   "select_visit_days": "اختر الأيام المتاحة لزيارة العقار",
   "property_images": "صور العقار",
   "upload_property_images": "قم برفع صور العقار (بحد أقصى 6 صور)",
-  "submit_property": "استمرار وإضافة"
+  "submit_property": "استمرار وإضافة",
+  "my_companies_title": "إدارة مؤسساتي",
+  "no_companies": "لا توجد مؤسسات حالياً",
+  "status_pending": "معلق",
+  "status_draft": "مسودة",
+  "status_published": "منشور",
+  "status_total": "إجمالي",
+  "manage_offers": "إدارة العروض",
+  "expired_offers_warning": "هناك عروض منتهية تحتاج إلى تحديث",
+  "status_expired": "منتهي"
 }

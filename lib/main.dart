@@ -22,9 +22,7 @@ void main() async {
       supportedLocales: localeSettings.locales,
       path: translationPath,
       fallbackLocale: Locale("ar"),
-      // fallbackLocale: localeSettings.defaultLocale,
       startLocale: Locale("ar"),
-      // startLocale: localeSettings.defaultLocale,
       child: const MyApp(),
     ),
   );
@@ -51,7 +49,7 @@ class MyApp extends StatelessWidget {
           // locale: const Locale("ar"),
           locale: localeSettings.defaultLocale,
           debugShowCheckedModeBanner:
-          dotenv.env[EnvConstants.debug].onNullBool(),
+              dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
           initialRoute: Routes.managerProductsOfferProviderScreen,
           // initialRoute: Routes.getRealEstateMyOwnersScreen,

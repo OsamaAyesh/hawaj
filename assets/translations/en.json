@@ -448,5 +448,14 @@
   "select_visit_days": "Select days when visits are allowed",
   "property_images": "Property Images",
   "upload_property_images": "Upload property images (max 6)",
-  "submit_property": "Continue & Add"
+  "submit_property": "Continue & Add",
+  "my_companies_title": "Manage My Companies",
+  "no_companies": "No companies available at the moment",
+  "status_pending": "Pending",
+  "status_draft": "Draft",
+  "status_published": "Published",
+  "status_total": "Total",
+  "manage_offers": "Manage Offers",
+  "expired_offers_warning": "Some offers have expired and need to be updated",
+  "status_expired": "Expired"
 }
