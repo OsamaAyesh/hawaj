@@ -102,37 +102,7 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
             ),
 
             // Submitting overlay
-            if (controller.isSubmitting.value)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ManagerWidth.w32,
-                      vertical: ManagerHeight.h24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const LoadingWidget(),
-                        SizedBox(height: ManagerHeight.h16),
-                        Text(
-                          'جاري إضافة العرض...',
-                          style: getBoldTextStyle(
-                            fontSize: ManagerFontSize.s15,
-                            color: ManagerColors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            if (controller.isSubmitting.value) LoadingWidget(),
           ],
         );
       }),

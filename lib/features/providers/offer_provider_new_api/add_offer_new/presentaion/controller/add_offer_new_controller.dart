@@ -169,9 +169,6 @@ class AddOfferNewController extends GetxController {
             // Clear form after success
             _clearForm();
 
-            // Navigate back or to success screen
-            Get.back();
-
             if (kDebugMode) {
               debugPrint('✅ [AddOfferNew] Offer added successfully');
             }
