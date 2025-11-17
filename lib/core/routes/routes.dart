@@ -350,14 +350,8 @@ class RouteGenerator {
         );
       case Routes.addOfferNewScreen:
         return MaterialPageRoute(
-          builder: (_) => AddOfferNewNewNewScreen(),
+          builder: (_) => AddOfferNewScreen(),
         );
-      // case Routes.editMyRealEstateScreen:
-      //   return MaterialPageRoute(
-      //     builder: (_) => EditMyRealEstateScreen(
-      //       realEstate: RealEstateItemModel(id: , propertySubject: propertySubject, propertyType: propertyType, propertyTypeLabel: propertyTypeLabel, operationType: operationType, operationTypeLabel: operationTypeLabel, advertiserRole: advertiserRole, advertiserRoleLabel: advertiserRoleLabel, saleType: saleType, saleTypeLabel: saleTypeLabel, keywords: keywords, propertyOwnerId: propertyOwnerId, propertyOwnerIdLabel: propertyOwnerIdLabel, lat: lat, lng: lng, propertyDetailedAddress: propertyDetailedAddress, price: price, areaSqm: areaSqm, commissionPercentage: commissionPercentage, usageType: usageType, usageTypeLabel: usageTypeLabel, propertyDescription: propertyDescription, featureIds: featureIds, facilityIds: facilityIds, visitDays: visitDays, visitTimeFrom: visitTimeFrom, visitTimeTo: visitTimeTo, propertyImages: propertyImages, propertyVideos: propertyVideos, deedDocument: deedDocument),
-      //     ),
-      //   );
       default:
         return unDefinedRoute();
     }
