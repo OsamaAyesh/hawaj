@@ -210,13 +210,6 @@ abstract class AppService {
     @Body() FormData formData,
   );
 
-  ///Add Real Estate Request =>addmypropertys
-  @POST(RequestConstantsEndpoints.addRalEstate)
-  @MultiPart()
-  Future<WithOutDataResponse> addRalEstate(
-    @Body() FormData formData,
-  );
-
   /// Get My Real Estates Request => getmypropertys
   @GET(RequestConstantsEndpoints.getMyRealEstate)
   Future<GetMyRealEstatesResponse> getMyRealEstate(
@@ -370,5 +363,12 @@ abstract class AppService {
   @POST(RequestConstantsEndpoints.deleteMyOfferRequest)
   Future<WithOutDataResponse> deleteMyOfferRequest(
     @Field(RequestConstants.id) String id,
+  );
+
+  ///Add Real Estate Request =>addproperty
+  @POST(RequestConstantsEndpoints.addRalEstate)
+  @MultiPart()
+  Future<WithOutDataResponse> addRalEstate(
+    @Body() FormData formData,
   );
 }

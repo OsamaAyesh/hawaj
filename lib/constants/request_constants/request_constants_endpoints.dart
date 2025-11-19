@@ -24,7 +24,6 @@ class RequestConstantsEndpoints {
   static const String addMyPropertyOwners = '$apiUrlBase/addmypropertyowners';
   static const String getMyPropertyOwners = '$apiUrlBase/getmypropertyowners';
   static const String getMyRealEstate = '$apiUrlBase/getmypropertys';
-  static const String addRalEstate = '$apiUrlBase/addmypropertys';
   static const String editRealEstate = '$apiUrlBase/setmyproperty';
   static const String deleteMyRealEstate = '$apiUrlBase/deletemyproperty';
   static const String editProfileMyPropertyOwner =
@@ -53,4 +52,5 @@ class RequestConstantsEndpoints {
   static const String getMyOrganizationWithId = '$apiUrlBase/getmyorganization';
   static const String updateOfferRequest = '$apiUrlBase/setmyoffer';
   static const String deleteMyOfferRequest = '$apiUrlBase/deletemyoffer';
+  static const String addRalEstate = '$apiUrlBase/addproperty';
 }
