@@ -87,7 +87,7 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
           return const Center(child: LoadingWidget());
         }
 
-        // ✅ Show empty state only if fetch was attempted and no companies
+        //  Show empty state only if fetch was attempted and no companies
         if (controller.hasAttemptedFetch.value &&
             controller.companies.isEmpty) {
           return _buildEmptyState();
@@ -102,37 +102,7 @@ class _AddOfferNewScreenState extends State<AddOfferNewScreen>
                 child: _buildForm(context),
               ),
             ),
-            if (controller.isSubmitting.value)
-              Container(
-                color: Colors.black.withOpacity(0.5),
-                child: Center(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: ManagerWidth.w32,
-                      vertical: ManagerHeight.h24,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const LoadingWidget(),
-                        SizedBox(height: ManagerHeight.h16),
-                        Text(
-                          ManagerStrings.submittingOfferLoading,
-                          style: getBoldTextStyle(
-                            fontSize: ManagerFontSize.s15,
-                            color: ManagerColors.black,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+            if (controller.isSubmitting.value) const LoadingWidget(),
           ],
         );
       }),

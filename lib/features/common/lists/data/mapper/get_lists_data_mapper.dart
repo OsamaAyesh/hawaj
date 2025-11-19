@@ -1,6 +1,6 @@
 import 'package:app_mobile/features/common/lists/data/mapper/facility_item_mapper.dart';
 import 'package:app_mobile/features/common/lists/data/mapper/feature_item_mapper.dart';
-import 'package:app_mobile/features/common/lists/data/mapper/field_choice_item_mapper.dart';
+import 'package:app_mobile/features/common/lists/data/mapper/field_choices_mapper.dart';
 import 'package:app_mobile/features/common/lists/data/mapper/offer_plan_item_mapper.dart';
 import 'package:app_mobile/features/common/lists/data/mapper/organization_type_item_mapper.dart';
 import 'package:app_mobile/features/common/lists/data/mapper/property_plan_item_mapper.dart';
@@ -16,7 +16,7 @@ extension GetListsDataMapper on GetListsDataResponse {
       offerPlans: offerPlans?.map((e) => e.toDomain()).toList() ?? [],
       organizationTypes:
           organizationTypes?.map((e) => e.toDomain()).toList() ?? [],
-      fieldChoices: fieldChoices?.map((e) => e.toDomain()).toList() ?? [],
+      fieldChoices: fieldChoices!.toDomain(),
     );
   }
 }

@@ -1,9 +1,10 @@
 import 'package:app_mobile/features/common/lists/domain/models/facility_item_model.dart';
 import 'package:app_mobile/features/common/lists/domain/models/feature_item_model.dart';
-import 'package:app_mobile/features/common/lists/domain/models/field_choice_item_model.dart';
 import 'package:app_mobile/features/common/lists/domain/models/offer_plan_item_model.dart';
 import 'package:app_mobile/features/common/lists/domain/models/organization_type_item_model.dart';
 import 'package:app_mobile/features/common/lists/domain/models/property_plan_item_model.dart';
+
+import 'field_choices_model.dart';
 
 class GetListsDataModel {
   List<FeatureItemModel> features;
@@ -16,7 +17,7 @@ class GetListsDataModel {
 
   List<OrganizationTypeItemModel> organizationTypes;
 
-  List<FieldChoiceItemModel> fieldChoices;
+  FieldChoicesModel fieldChoices;
 
   GetListsDataModel({
     required this.features,

@@ -112,7 +112,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     value: controller.selectedPropertyType.value,
                     items: controller.propertyTypes
                         .map((e) => DropdownMenuItem(
-                            value: e['id'], child: Text(e['label'] ?? '')))
+                            value: e.name, child: Text(e.label ?? '')))
                         .toList(),
                     onChanged: (v) => controller.selectedPropertyType.value = v,
                   ),
@@ -125,7 +125,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     value: controller.selectedOperationType.value,
                     items: controller.operationTypes
                         .map((e) => DropdownMenuItem(
-                            value: e['id'], child: Text(e['label'] ?? '')))
+                            value: e.name, child: Text(e.label ?? '')))
                         .toList(),
                     onChanged: (v) =>
                         controller.selectedOperationType.value = v,
@@ -139,7 +139,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     value: controller.selectedAdvertiserRole.value,
                     items: controller.advertiserRoles
                         .map((e) => DropdownMenuItem(
-                            value: e['id'], child: Text(e['label'] ?? '')))
+                            value: e.name, child: Text(e.label ?? '')))
                         .toList(),
                     onChanged: (v) =>
                         controller.selectedAdvertiserRole.value = v,
@@ -153,7 +153,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     value: controller.selectedSaleType.value,
                     items: controller.saleTypes
                         .map((e) => DropdownMenuItem(
-                            value: e['id'], child: Text(e['label'] ?? '')))
+                            value: e.name, child: Text(e.label ?? '')))
                         .toList(),
                     onChanged: (v) => controller.selectedSaleType.value = v,
                   ),
@@ -166,7 +166,7 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     value: controller.selectedUsageType.value,
                     items: controller.usageTypes
                         .map((e) => DropdownMenuItem(
-                            value: e['id'], child: Text(e['label'] ?? '')))
+                            value: e.name, child: Text(e.label ?? '')))
                         .toList(),
                     onChanged: (v) => controller.selectedUsageType.value = v,
                   ),
@@ -284,6 +284,8 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     allItems: controller.features,
                     selectedIds: controller.selectedFeatureIds,
                     onToggleId: controller.toggleFeature,
+                    idExtractor: (item) => item.id ?? '',
+                    labelExtractor: (item) => item.featureName ?? '',
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
@@ -293,6 +295,8 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     allItems: controller.facilities,
                     selectedIds: controller.selectedFacilityIds,
                     onToggleId: controller.toggleFacility,
+                    idExtractor: (item) => item.id ?? '',
+                    labelExtractor: (item) => item.facilityName ?? '',
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
@@ -302,6 +306,8 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
                     allItems: controller.weekDays,
                     selectedIds: controller.selectedVisitDayIds,
                     onToggleId: controller.toggleVisitDay,
+                    idExtractor: (item) => item.name ?? '',
+                    labelExtractor: (item) => item.label ?? '',
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
@@ -388,13 +394,15 @@ class _AddRealEstateScreenState extends State<AddRealEstateScreen> {
   }
 }
 
-/// 🔹 Widget للمميزات / المرافق / الأيام
-class _MultiSelectPicker extends StatelessWidget {
+/// 🔹 Widget للمميزات / المرافق / الأيام - Generic Version
+class _MultiSelectPicker<T> extends StatelessWidget {
   final String title;
   final String placeholder;
-  final List<Map<String, String>> allItems;
+  final List<T> allItems;
   final RxList<String> selectedIds;
   final void Function(String id) onToggleId;
+  final String Function(T item) idExtractor;
+  final String Function(T item) labelExtractor;
 
   const _MultiSelectPicker({
     required this.title,
@@ -402,6 +410,8 @@ class _MultiSelectPicker extends StatelessWidget {
     required this.allItems,
     required this.selectedIds,
     required this.onToggleId,
+    required this.idExtractor,
+    required this.labelExtractor,
   });
 
   @override
@@ -433,9 +443,10 @@ class _MultiSelectPicker extends StatelessWidget {
               spacing: 8,
               runSpacing: 8,
               children: selectedIds.map((id) {
-                final label =
-                    allItems.firstWhereOrNull((e) => e['id'] == id)?['label'] ??
-                        id;
+                final item = allItems.firstWhereOrNull(
+                  (e) => idExtractor(e) == id,
+                );
+                final label = item != null ? labelExtractor(item) : id;
                 return _TagPill(label: label, onRemove: () => onToggleId(id));
               }).toList(),
             ),
@@ -467,8 +478,8 @@ class _MultiSelectPicker extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: allItems.map((item) {
-                        final id = item['id']!;
-                        final lbl = item['label'] ?? '';
+                        final id = idExtractor(item);
+                        final lbl = labelExtractor(item);
                         final isSel = tempSelected.contains(id);
                         return ChoiceChip(
                           label: Text(

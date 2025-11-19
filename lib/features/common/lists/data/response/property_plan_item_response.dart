@@ -10,12 +10,12 @@ class PropertyPlanItemResponse {
   String? planName;
   @JsonKey(name: 'plan_price')
   String? planPrice;
-  @JsonKey(name: 'plan_description')
-  String? planDescription;
   @JsonKey(name: 'plan_duration_days')
   String? planDurationDays;
   @JsonKey(name: 'plan_properties_limit')
   String? planPropertiesLimit;
+  @JsonKey(name: 'plan_description')
+  String? planDescription;
   @JsonKey(name: 'plan_status')
   String? planStatus;
   @JsonKey(name: 'plan_status_lable')

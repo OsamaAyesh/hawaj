@@ -4,6 +4,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'facility_item_response.dart';
 import 'feature_item_response.dart';
 import 'field_choice_item_response.dart';
+import 'field_choices_response.dart';
 import 'offer_plan_item_response.dart';
 import 'organization_type_item_response.dart';
 
@@ -27,7 +28,7 @@ class GetListsDataResponse {
   List<OrganizationTypeItemResponse>? organizationTypes;
 
   @JsonKey(name: 'field_choices')
-  List<FieldChoiceItemResponse>? fieldChoices;
+  FieldChoicesResponse? fieldChoices;
 
   GetListsDataResponse({
     this.features,
