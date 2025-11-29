@@ -53,4 +53,5 @@ class RequestConstantsEndpoints {
   static const String updateOfferRequest = '$apiUrlBase/setmyoffer';
   static const String deleteMyOfferRequest = '$apiUrlBase/deletemyoffer';
   static const String addRalEstate = '$apiUrlBase/addproperty';
+  static const String getDrawerMenu = '$apiUrlBase/getmenu';
 }

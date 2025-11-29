@@ -15,6 +15,9 @@ import '../../core/network/dio_factory.dart';
 import '../../core/storage/local/app_settings_prefs.dart';
 import '../../features/common/auth/domain/di/di.dart';
 import '../../features/common/hawaj_voice/domain/di/di.dart';
+import '../../features/common/map/domain/di/di.dart';
+import '../../features/common/map/presenation/controller/hawaj_map_data_controller.dart';
+import '../../features/common/map/presenation/controller/map_controller.dart';
 import '../../features/providers/offer_provider_new_api/add_offer_new/domain/di/di.dart';
 import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/domain/di/di.dart';
 import '../../features/providers/offers_provider/add_offer/domain/di/di.dart';
@@ -77,4 +80,10 @@ initModule() async {
   ///New Inits
   initRegisterOrganizationOfferProvider();
   initAddOfferNew();
+
+  Get.put(HawajMapDataController(), permanent: true);
+  if (!Get.isRegistered<MapController>()) {
+    MapBindings().dependencies();
+    debugPrint('[HawajRouting] ✅ MapBindings initialized inside init()');
+  }
 }

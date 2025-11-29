@@ -25,12 +25,13 @@ import '../../../hawaj_voice/domain/models/job_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/domain/models/property_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/presentation/controller/hawaj_ai_controller.dart';
 import '../controller/drawer_controller.dart';
+import '../controller/drawer_menu_controller.dart';
 import '../controller/hawaj_map_data_controller.dart';
 import '../controller/map_controller.dart';
 import '../controller/map_sections_controller.dart';
 import '../managers/marker_icon_manager.dart';
 import '../managers/permission_manager.dart';
-import '../widgets/improved_drawer_widget.dart';
+import '../widgets/dynamic_drawer_widget.dart';
 import '../widgets/map_top_bar_widget.dart';
 import '../widgets/map_view_widget.dart';
 
@@ -76,7 +77,9 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _setupListeners();
     _handleHawajAutoRefresh();
     _isRefreshing.value = false;
-
+    if (!Get.isRegistered<DrawerMenuController>()) {
+      Get.put(DrawerMenuController(Get.find()));
+    }
     final hawajC = Get.find<HawajController>();
 
     hawajC.onDataClear = _onHawajDataClear;
@@ -765,7 +768,8 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
             isDraggable: false,
             slider: Obx(() {
               final userData = drawerC.userData.value;
-              return AppDrawer(
+              return DynamicDrawerWidget(
+                // return AppDrawer(
                 sliderKey: _sliderKey,
                 userName: userData?.name ?? 'مستخدم',
                 role: userData?.role ?? 'جديد',

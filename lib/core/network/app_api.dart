@@ -14,6 +14,7 @@ import '../../constants/request_constants/request_constants_endpoints.dart';
 import '../../features/common/auth/data/response/verfiy_otp_response.dart';
 import '../../features/common/hawaj_voice/data/response/send_data_response.dart';
 import '../../features/common/lists/data/response/get_lists_response.dart';
+import '../../features/common/map/data/response/drawer_menu_response.dart';
 import '../../features/providers/job_provider_app/add_job_provider/data/response/get_settings_base_response.dart';
 import '../../features/providers/job_provider_app/list_company_job/data/response/get_list_company_jobs_response.dart';
 import '../../features/providers/job_provider_app/manager_jobs_provider/data/response/get_list_jobs_response.dart';
@@ -370,5 +371,11 @@ abstract class AppService {
   @MultiPart()
   Future<WithOutDataResponse> addRalEstate(
     @Body() FormData formData,
+  );
+
+  ///Get Data Drawer Menu
+  @GET(RequestConstantsEndpoints.getDrawerMenu)
+  Future<DrawerMenuResponse> getDrawerMenu(
+    @Query(RequestConstants.language) String? language,
   );
 }
