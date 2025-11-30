@@ -24,6 +24,7 @@ import '../../../../users/real_estate_user/show_real_state_details_user/presenta
 import '../../../hawaj_voice/domain/models/job_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/domain/models/property_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/presentation/controller/hawaj_ai_controller.dart';
+import '../../domain/di/di.dart';
 import '../controller/drawer_controller.dart';
 import '../controller/drawer_menu_controller.dart';
 import '../controller/hawaj_map_data_controller.dart';
@@ -77,15 +78,38 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _setupListeners();
     _handleHawajAutoRefresh();
     _isRefreshing.value = false;
+
+    // ✅ تهيئة Drawer Menu قبل استخدام Controller
+    initDrawerMenu();
+
     if (!Get.isRegistered<DrawerMenuController>()) {
       Get.put(DrawerMenuController(Get.find()));
     }
-    final hawajC = Get.find<HawajController>();
 
+    final hawajC = Get.find<HawajController>();
     hawajC.onDataClear = _onHawajDataClear;
     hawajC.onDataReady = _onHawajDataReady;
     hawajC.onAnimateCamera = _onHawajAnimateCamera;
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _initAnimations();
+  //   _setupSystemUI();
+  //   _initializeMap();
+  //   _setupListeners();
+  //   _handleHawajAutoRefresh();
+  //   _isRefreshing.value = false;
+  //   if (!Get.isRegistered<DrawerMenuController>()) {
+  //     Get.put(DrawerMenuController(Get.find()));
+  //   }
+  //   final hawajC = Get.find<HawajController>();
+  //
+  //   hawajC.onDataClear = _onHawajDataClear;
+  //   hawajC.onDataReady = _onHawajDataReady;
+  //   hawajC.onAnimateCamera = _onHawajAnimateCamera;
+  // }
 
   void _onHawajDataClear() {
     debugPrint(' Map: Clearing old markers');

@@ -15,14 +15,27 @@ import '../../../../../core/widgets/lable_drop_down_button.dart';
 import '../../../../../core/widgets/upload_media_widget.dart';
 import '../controller/completed_profile_controller.dart';
 
-class CompleteInformationScreen extends StatelessWidget {
+class CompleteInformationScreen extends StatefulWidget {
   const CompleteInformationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // استخدام Find بدلاً من Get.put
-    final controller = Get.find<CompletedProfileController>();
+  State<CompleteInformationScreen> createState() =>
+      _CompleteInformationScreenState();
+}
 
+class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
+  // احتفظ بـ reference للـ controller
+  late final CompletedProfileController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    // استخدم Get.find() مرة واحدة فقط في initState
+    controller = Get.find<CompletedProfileController>();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ManagerColors.white,
       body: Obx(() {
@@ -53,7 +66,6 @@ class CompleteInformationScreen extends StatelessWidget {
                           .fadeIn(duration: 500.ms)
                           .slideY(begin: -0.2, end: 0, duration: 500.ms),
                     ),
-
                     SizedBox(height: ManagerHeight.h8),
 
                     /// Subtitle
@@ -72,7 +84,6 @@ class CompleteInformationScreen extends StatelessWidget {
                           .fadeIn(duration: 600.ms, delay: 150.ms)
                           .slideY(begin: -0.1, end: 0, duration: 600.ms),
                     ),
-
                     SizedBox(height: ManagerHeight.h32),
 
                     /// صورة الملف الشخصي
@@ -125,8 +136,7 @@ class CompleteInformationScreen extends StatelessWidget {
                             right: 0,
                             child: InkWell(
                               onTap: () {
-                                _showImagePickerBottomSheet(
-                                    context, controller);
+                                _showImagePickerBottomSheet(context);
                               },
                               child: Container(
                                 padding: EdgeInsets.all(8),
@@ -152,7 +162,6 @@ class CompleteInformationScreen extends StatelessWidget {
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 100.ms)
                         .scale(begin: Offset(0.8, 0.8), end: Offset(1, 1)),
-
                     SizedBox(height: ManagerHeight.h32),
 
                     /// First Name
@@ -170,7 +179,6 @@ class CompleteInformationScreen extends StatelessWidget {
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 200.ms)
                         .slideX(begin: -0.3, end: 0, duration: 400.ms),
-
                     SizedBox(height: ManagerHeight.h14),
 
                     /// Last Name
@@ -188,11 +196,10 @@ class CompleteInformationScreen extends StatelessWidget {
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 350.ms)
                         .slideX(begin: 0.3, end: 0, duration: 400.ms),
-
                     SizedBox(height: ManagerHeight.h14),
 
                     /// Gender (Dropdown)
-                    LabeledDropdownField<int>(
+                    LabeledDropdownField(
                       label: ManagerStrings.gender,
                       hint: ManagerStrings.gender,
                       value: controller.gender.value == 0
@@ -215,7 +222,6 @@ class CompleteInformationScreen extends StatelessWidget {
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 500.ms)
                         .slideX(begin: -0.2, end: 0, duration: 400.ms),
-
                     SizedBox(height: ManagerHeight.h14),
 
                     /// Date of Birth
@@ -252,7 +258,6 @@ class CompleteInformationScreen extends StatelessWidget {
                         .animate()
                         .fadeIn(duration: 400.ms, delay: 650.ms)
                         .slideX(begin: 0.3, end: 0, duration: 400.ms),
-
                     SizedBox(height: ManagerHeight.h32),
 
                     /// Continue Button
@@ -292,10 +297,7 @@ class CompleteInformationScreen extends StatelessWidget {
   }
 
   /// Bottom Sheet لاختيار الصورة
-  void _showImagePickerBottomSheet(
-    BuildContext context,
-    CompletedProfileController controller,
-  ) {
+  void _showImagePickerBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
         padding: EdgeInsets.all(ManagerWidth.w20),

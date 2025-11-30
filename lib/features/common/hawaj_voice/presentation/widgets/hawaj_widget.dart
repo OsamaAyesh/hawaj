@@ -32,7 +32,6 @@ class HawajConfig {
   });
 }
 
-// ============ عناصر القائمة ============
 class HawajMenuItem {
   final String label;
   final IconData icon;

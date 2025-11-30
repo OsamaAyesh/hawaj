@@ -525,15 +525,128 @@ class HawajController extends GetxController {
   //     debugPrint('ℹ️ [Hawaj] البقاء في نفس الشاشة الحالية.');
   //   }
   // }
+  // void _handleSuccessResponse(SendDataModel response) async {
+  //   final data = response.data;
+  //   final destination = data.aiResponse;
+  //   final results = data.d;
+  //
+  //   final currentSection = data.q;
+  //   final currentScreen = data.s;
+  //   final nextSection = destination.section;
+  //   final nextScreen = destination.screen;
+  //
+  //   debugPrint(
+  //       '🧭 [AI Routing] from $currentSection-$currentScreen → $nextSection-$nextScreen');
+  //
+  //   bool _isMapDestination(String section, String screen) {
+  //     const mapScreens = [
+  //       {'section': '1', 'screen': '1'}, // Daily Offers Map
+  //       {'section': '3', 'screen': '1'}, // Real Estates Map
+  //       {'section': '5', 'screen': '1'}, // Jobs Map
+  //     ];
+  //     return mapScreens
+  //         .any((e) => e['section'] == section && e['screen'] == screen);
+  //   }
+  //
+  //   final isMapDestination = _isMapDestination(nextSection, nextScreen);
+  //   final isCurrentlyMap = _isMapDestination(currentSection, currentScreen);
+  //
+  //   final payload = {
+  //     'offers': results.offers ?? [],
+  //     'jobs': results.jobs ?? [],
+  //     'properties': results.properties ?? [],
+  //     'hawajData': true,
+  //   };
+  //
+  //   // ════════════════════════════════════════════════
+  //   // 🎧 تشغيل الصوت أولًا (وانتظار انتهائه)
+  //   // ════════════════════════════════════════════════
+  //   Future<void> _playAndWait() async {
+  //     try {
+  //       if (destination.mp3.isNotEmpty) {
+  //         _isLoadingAudio.value = true;
+  //         _currentMessage.value = '🎧 جاري تشغيل الرد الصوتي...';
+  //         debugPrint('🎧 [Hawaj] تشغيل الصوت من URL: ${destination.mp3}');
+  //         await _playAudioFromUrl(destination.mp3);
+  //
+  //         // ⏳ انتظار انتهاء الصوت بالكامل
+  //         await _audioPlayer.onPlayerComplete.first;
+  //         debugPrint('✅ [Hawaj] انتهى الصوت بنجاح');
+  //       } else if (destination.message.isNotEmpty) {
+  //         _isLoadingAudio.value = true;
+  //         _currentMessage.value = '🗣️ جاري تحضير الرد...';
+  //         await speak(destination.message);
+  //
+  //         await Future.delayed(const Duration(seconds: 2)); // انتظار بعد النطق
+  //       } else {
+  //         debugPrint('ℹ️ [Hawaj] لا يوجد صوت أو نص للنطق');
+  //       }
+  //     } catch (e) {
+  //       debugPrint('❌ [Hawaj] فشل في تشغيل الصوت أو الانتظار: $e');
+  //     }
+  //   }
+  //
+  //   await _playAndWait(); // ← يشغل الصوت وينتظر الانتهاء فعليًا قبل التنقل
+  //
+  //   // ════════════════════════════════════════════════
+  //   // 🧠 منطق التوجيه بعد انتهاء الصوت
+  //   // ════════════════════════════════════════════════
+  //   if (isMapDestination) {
+  //     debugPrint('🗺️ [Routing] الوجهة خريطة → تجهيز البيانات');
+  //
+  //     onDataClear?.call();
+  //     _currentMessage.value = destination.message;
+  //
+  //     if (results.jobs?.isNotEmpty == true) {
+  //       _hawajJobs.value = results.jobs!;
+  //       _currentDataType.value = 'jobs';
+  //     } else if (results.offers?.isNotEmpty == true) {
+  //       _hawajOffers.value = results.offers!;
+  //       _currentDataType.value = 'offers';
+  //     } else if (results.properties?.isNotEmpty == true) {
+  //       _hawajProperties.value = results.properties!;
+  //       _currentDataType.value = 'properties';
+  //     }
+  //
+  //     if (isCurrentlyMap) {
+  //       debugPrint('🧩 [Routing] المستخدم داخل الخريطة → تحديث النتائج فقط');
+  //       Future.delayed(
+  //           const Duration(milliseconds: 600), () => onDataReady?.call());
+  //       Future.delayed(
+  //           const Duration(milliseconds: 1500), () => onAnimateCamera?.call());
+  //     } else {
+  //       debugPrint(
+  //           '🚀 [Routing] الانتقال الآن إلى الخريطة Section=$nextSection, Screen=$nextScreen بعد انتهاء الصوت');
+  //       await Future.delayed(const Duration(milliseconds: 300));
+  //       await HawajRoutes.navigateTo(
+  //         section: nextSection,
+  //         screen: nextScreen,
+  //         parameters: payload,
+  //       );
+  //     }
+  //   } else {
+  //     debugPrint('📦 [Routing] الوجهة ليست خريطة → الانتقال بعد انتهاء الصوت');
+  //     await Future.delayed(const Duration(milliseconds: 300));
+  //     await HawajRoutes.navigateTo(
+  //       section: nextSection,
+  //       screen: nextScreen,
+  //       parameters: payload,
+  //     );
+  //   }
+  //
+  //   _isExpanded.value = true;
+  //   _isLoadingAudio.value = false;
+  //   _isSpeaking.value = false;
+  //   debugPrint('✅ [Hawaj] الرد الصوتي اكتمل، وتم التوجيه بنجاح');
+  // }
   void _handleSuccessResponse(SendDataModel response) async {
     final data = response.data;
-    final destination = data.aiResponse;
-    final results = data.d;
+    final results = data.d; // ✅ الآن d يحتوي على message و mp3 و screen مباشرة
 
     final currentSection = data.q;
     final currentScreen = data.s;
-    final nextSection = destination.section;
-    final nextScreen = destination.screen;
+    final nextSection = results.screen; // ✅ تغيير: screen موجود في d
+    final nextScreen = results.screen; // ✅ نفس القيمة
 
     debugPrint(
         '🧭 [AI Routing] from $currentSection-$currentScreen → $nextSection-$nextScreen');
@@ -563,21 +676,22 @@ class HawajController extends GetxController {
     // ════════════════════════════════════════════════
     Future<void> _playAndWait() async {
       try {
-        if (destination.mp3.isNotEmpty) {
+        if (results.mp3.isNotEmpty) {
+          // ✅ تغيير: mp3 موجود في d
           _isLoadingAudio.value = true;
           _currentMessage.value = '🎧 جاري تشغيل الرد الصوتي...';
-          debugPrint('🎧 [Hawaj] تشغيل الصوت من URL: ${destination.mp3}');
-          await _playAudioFromUrl(destination.mp3);
+          debugPrint('🎧 [Hawaj] تشغيل الصوت من URL: ${results.mp3}');
+          await _playAudioFromUrl(results.mp3);
 
-          // ⏳ انتظار انتهاء الصوت بالكامل
           await _audioPlayer.onPlayerComplete.first;
           debugPrint('✅ [Hawaj] انتهى الصوت بنجاح');
-        } else if (destination.message.isNotEmpty) {
+        } else if (results.message.isNotEmpty) {
+          // ✅ تغيير: message موجود في d
           _isLoadingAudio.value = true;
           _currentMessage.value = '🗣️ جاري تحضير الرد...';
-          await speak(destination.message);
+          await speak(results.message);
 
-          await Future.delayed(const Duration(seconds: 2)); // انتظار بعد النطق
+          await Future.delayed(const Duration(seconds: 2));
         } else {
           debugPrint('ℹ️ [Hawaj] لا يوجد صوت أو نص للنطق');
         }
@@ -586,7 +700,7 @@ class HawajController extends GetxController {
       }
     }
 
-    await _playAndWait(); // ← يشغل الصوت وينتظر الانتهاء فعليًا قبل التنقل
+    await _playAndWait();
 
     // ════════════════════════════════════════════════
     // 🧠 منطق التوجيه بعد انتهاء الصوت
@@ -595,7 +709,7 @@ class HawajController extends GetxController {
       debugPrint('🗺️ [Routing] الوجهة خريطة → تجهيز البيانات');
 
       onDataClear?.call();
-      _currentMessage.value = destination.message;
+      _currentMessage.value = results.message; // ✅ تغيير
 
       if (results.jobs?.isNotEmpty == true) {
         _hawajJobs.value = results.jobs!;

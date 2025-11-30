@@ -23,9 +23,9 @@ class CompletedProfileController extends GetxController {
   );
 
   /// --- Text Controllers ---
-  final firstNameController = TextEditingController();
-  final lastNameController = TextEditingController();
-  final dateOfBirthController = TextEditingController();
+  late final TextEditingController firstNameController;
+  late final TextEditingController lastNameController;
+  late final TextEditingController dateOfBirthController;
 
   /// --- States ---
   var isLoading = false.obs;
@@ -38,6 +38,15 @@ class CompletedProfileController extends GetxController {
   /// --- Avatar Image ---
   var avatarImage = Rx<File?>(null);
   var isUploadingAvatar = false.obs;
+
+  @override
+  void onInit() {
+    super.onInit();
+    // تهيئة الـ Controllers في onInit
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    dateOfBirthController = TextEditingController();
+  }
 
   /// --- Submit Profile ---
   Future<void> submitProfile() async {

@@ -14,6 +14,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/model/offer_new_item_model.dart';
+import '../../../add_offer_new/domain/di/di.dart';
+import '../../../add_offer_new/presentaion/pages/add_offer_new_screen.dart';
+import '../../../update_my_organization_profile/domain/di/di.dart';
+import '../../../update_my_organization_profile/presentation/pages/update_organization_offer_provider_screen.dart';
 import '../../../update_offer/domain/di/di.dart' show initUpdateOffer;
 import '../../../update_offer/presentation/pages/update_offer_screen.dart';
 import '../../domain/di/di.dart' show disposeGetMyOrganizationDetails;
@@ -689,6 +693,8 @@ class _DetailsMyOrganizationScreenState
               ElevatedButton.icon(
                 onPressed: () {
                   // TODO: Navigate to add offer
+                  initAddOfferNew();
+                  Get.to(const AddOfferNewScreen());
                 },
                 icon: const Icon(Icons.add, color: Colors.white),
                 label: Text(
@@ -1063,8 +1069,29 @@ class _DetailsMyOrganizationScreenState
               icon: Icons.edit_outlined,
               title: ManagerStrings.editCompanyData,
               subtitle: ManagerStrings.updateCompanyInfo,
-              onTap: () {
+              onTap: () async {
                 // TODO: Navigate to edit company
+
+                // 1. Initialize
+                initUpdateOrganizationOfferProvider(
+                    controller.companyDetailsData!.data);
+
+                // 2. Navigate
+                final result = await Get.to(
+                  () => UpdateOrganizationOfferProviderScreen(),
+                );
+
+                // 3. Dispose
+                disposeUpdateOrganizationOfferProvider();
+
+                // 4. Handle
+                if (result == true) {
+                  print('✅ تم التحديث');
+                }
+                // print("slkdsflksd");
+                // initUpdateOrganizationOfferProvider(
+                //     controller.companyDetailsData!.data);
+                // Get.to(UpdateOrganizationOfferProviderScreen());
               },
             ),
           ],
