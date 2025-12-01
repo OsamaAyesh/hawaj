@@ -14,6 +14,7 @@ import 'package:flutter_slider_drawer/flutter_slider_drawer.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import '../../../../../constants/di/dependency_injection.dart' show instance;
 import '../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../../../users/offer_user/common_widgets_offer_user/organization_sheet_details.dart';
 import '../../../../users/offer_user/company_with_offer/domain/di/di.dart';
@@ -25,6 +26,7 @@ import '../../../hawaj_voice/domain/models/job_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/domain/models/property_item_hawaj_details_model.dart';
 import '../../../hawaj_voice/presentation/controller/hawaj_ai_controller.dart';
 import '../../domain/di/di.dart';
+import '../../domain/usecases/drawer_menu_use_case.dart';
 import '../controller/drawer_controller.dart';
 import '../controller/drawer_menu_controller.dart';
 import '../controller/hawaj_map_data_controller.dart';
@@ -79,11 +81,10 @@ class _MapScreenState extends State<MapScreen> with TickerProviderStateMixin {
     _handleHawajAutoRefresh();
     _isRefreshing.value = false;
 
-    // ✅ تهيئة Drawer Menu قبل استخدام Controller
     initDrawerMenu();
 
     if (!Get.isRegistered<DrawerMenuController>()) {
-      Get.put(DrawerMenuController(Get.find()));
+      Get.put(DrawerMenuController(instance<DrawerMenuUseCase>()));
     }
 
     final hawajC = Get.find<HawajController>();

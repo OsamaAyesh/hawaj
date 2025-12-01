@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/core/resources/manager_mockup.dart';
+import 'package:app_mobile/core/util/get_app_langauge.dart';
 import 'package:app_mobile/features/users/offer_user/company_with_offer/data/request/get_company_request.dart';
 import 'package:app_mobile/features/users/offer_user/company_with_offer/data/response/get_company_response.dart';
 import 'package:flutter/services.dart' as rootBundle;
@@ -33,6 +34,8 @@ class GetCompanyDataSourceImplement implements GetCompanyDataSource {
     }
     return await _appService.getOrganizationById(
       request.id,
+      AppLanguage().getCurrentLocale(),
+      "offers",
     );
   }
 }

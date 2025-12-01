@@ -294,12 +294,6 @@ abstract class AppService {
     @Body() FormData formData,
   );
 
-  ///Get Orgnization By Org. Id
-  @GET(RequestConstantsEndpoints.getOrganizationById)
-  Future<GetCompanyResponse> getOrganizationById(
-    @Query(RequestConstants.id) String? id,
-  );
-
   /// Add Visit To Real Estate
   /// Endpoint: addmyvisitrequests
   @POST(RequestConstantsEndpoints.addVisitRealEstate)
@@ -377,5 +371,13 @@ abstract class AppService {
   @GET(RequestConstantsEndpoints.getDrawerMenu)
   Future<DrawerMenuResponse> getDrawerMenu(
     @Query(RequestConstants.language) String? language,
+  );
+
+  ///Get Orgnization By Org. Id
+  @GET(RequestConstantsEndpoints.getOrganizationById)
+  Future<GetCompanyResponse> getOrganizationById(
+    @Query(RequestConstants.id) String? id,
+    @Query(RequestConstants.language) String? language,
+    @Query(RequestConstants.with1) String? with1,
   );
 }

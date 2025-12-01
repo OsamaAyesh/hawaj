@@ -9,6 +9,7 @@ import 'package:app_mobile/core/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../domain/di/di.dart';
 import '../controller/get_company_with_offer_controller.dart';
 import '../widgets/circle_icon_widget.dart';
 import '../widgets/user_offer_card_widget.dart';
@@ -33,6 +34,12 @@ class _CompanyWithOfferScreenState extends State<CompanyWithOfferScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchCompany(widget.idOrganization);
     });
+  }
+
+  @override
+  void dispose() {
+    disposeGetCompany();
+    super.dispose();
   }
 
   @override

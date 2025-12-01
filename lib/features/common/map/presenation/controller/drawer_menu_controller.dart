@@ -38,11 +38,11 @@ class DrawerMenuController extends GetxController {
       final result = await _useCase.execute();
 
       result.fold(
-        (failure) {
+            (failure) {
           errorMessage.value = failure.message;
           isLoading.value = false;
         },
-        (menuModel) {
+            (menuModel) {
           // ✅ Filter: نعرض بس العناصر الموجودة في Registry
           menuItems.value = menuModel.items.where((item) {
             // H1 و HR نعرضهم دايماً
@@ -77,6 +77,7 @@ class DrawerMenuController extends GetxController {
 
     if (item.isInactive) {
       Get.snackbar('تنبيه', 'هذه الميزة غير متاحة حالياً');
+      print("in active");
       return;
     }
 
