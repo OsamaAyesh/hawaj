@@ -1,4 +1,3 @@
-
 import 'package:app_mobile/features/common/profile/data/data_source/get_profile_data_source.dart';
 import 'package:app_mobile/features/common/profile/data/data_source/update_avatar_data_source.dart';
 import 'package:app_mobile/features/common/profile/data/data_source/update_profile_data_source.dart';
@@ -20,17 +19,17 @@ import '../../presentation/controller/update_profile_controller.dart';
 initUpdateProfileRequest() {
   if (!GetIt.I.isRegistered<UpdateProfileDataSource>()) {
     instance.registerLazySingleton<UpdateProfileDataSource>(
-            () => UpdateProfileDataSourceImplement(instance<AppService>()));
+        () => UpdateProfileDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<UpdateProfileRepository>()) {
     instance.registerLazySingleton<UpdateProfileRepository>(
-            () => UpdateProfileRepositoryImplement(instance(), instance()));
+        () => UpdateProfileRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<UpdateProfileUseCase>()) {
     instance.registerFactory<UpdateProfileUseCase>(
-            () => UpdateProfileUseCase(instance<UpdateProfileRepository>()));
+        () => UpdateProfileUseCase(instance<UpdateProfileRepository>()));
   }
 }
 
@@ -60,20 +59,21 @@ void disposeUpdateProfile() {
   disposeUpdateProfileRequest();
   // Get.delete<SendOtpController>();
 }
+
 initUpdateAvatarRequest() {
   if (!GetIt.I.isRegistered<UpdateAvatarDataSource>()) {
     instance.registerLazySingleton<UpdateAvatarDataSource>(
-            () => UpdateAvatarDataSourceImplement(instance<AppService>()));
+        () => UpdateAvatarDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<UpdateAvatarRepository>()) {
     instance.registerLazySingleton<UpdateAvatarRepository>(
-            () => UpdateAvatarRepositoryImplement(instance(), instance()));
+        () => UpdateAvatarRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<UpdateAvatarUseCase>()) {
     instance.registerFactory<UpdateAvatarUseCase>(
-            () => UpdateAvatarUseCase(instance<UpdateAvatarRepository>()));
+        () => UpdateAvatarUseCase(instance<UpdateAvatarRepository>()));
   }
 }
 
@@ -91,14 +91,14 @@ disposeUpdateAvatarRequest() {
   }
 }
 
-void initUpdateAvatar(String name,String networkImage) {
+void initUpdateAvatar(String name, String networkImage) {
   initUpdateAvatarRequest();
   initUpdateProfile();
   Get.put(EditProfileController(
-    initialName: name,
-    networkAvatarUrl:networkImage ,
+    // initialName: name,
+    networkAvatarUrl: networkImage,
     instance<UpdateProfileUseCase>(),
-    instance<UpdateAvatarUseCase>(),
+    // instance<UpdateAvatarUseCase>(),
   ));
 }
 
@@ -108,21 +108,20 @@ void disposeUpdateAvatar() {
   Get.delete<UpdateAvatarUseCase>();
 }
 
-
 initGetProfileRequest() {
   if (!GetIt.I.isRegistered<GetProfileDataSource>()) {
     instance.registerLazySingleton<GetProfileDataSource>(
-            () => GetProfileDataSourceImplement(instance<AppService>()));
+        () => GetProfileDataSourceImplement(instance<AppService>()));
   }
 
   if (!GetIt.I.isRegistered<GetProfileRepository>()) {
     instance.registerLazySingleton<GetProfileRepository>(
-            () => GetProfileRepositoryImplement(instance(), instance()));
+        () => GetProfileRepositoryImplement(instance(), instance()));
   }
 
   if (!GetIt.I.isRegistered<GetProfileUseCase>()) {
     instance.registerFactory<GetProfileUseCase>(
-            () => GetProfileUseCase(instance<GetProfileRepository>()));
+        () => GetProfileUseCase(instance<GetProfileRepository>()));
   }
 }
 

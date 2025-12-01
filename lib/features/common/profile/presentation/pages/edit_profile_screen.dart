@@ -1,3 +1,4 @@
+// lib/features/.../presentation/pages/edit_profile_screen.dart
 import 'package:app_mobile/core/resources/manager_strings.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
@@ -33,7 +34,6 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   void initState() {
     super.initState();
 
-    /// 👇 ربط الـ Controller
     editController = Get.find<EditProfileController>();
 
     _controller = AnimationController(
@@ -41,7 +41,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       duration: const Duration(milliseconds: 900),
     );
 
-    _slideAnimations = List.generate(3, (index) {
+    _slideAnimations = List.generate(4, (index) {
       return Tween<Offset>(
         begin: const Offset(0, 0.2),
         end: Offset.zero,
@@ -54,7 +54,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       );
     });
 
-    _fadeAnimations = List.generate(3, (index) {
+    _fadeAnimations = List.generate(4, (index) {
       return Tween<double>(
         begin: 0,
         end: 1,
@@ -72,7 +72,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
   @override
   void dispose() {
     _controller.dispose();
-    editController.nameController.dispose();
+    // لا نعمل dispose للـ controllers هنا لأن GetX بيتكفّل فيهم داخل EditProfileController
     super.dispose();
   }
 
@@ -107,8 +107,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                                           .avatarFile.value !=
                                       null
                                   ? FileImage(editController.avatarFile.value!)
-                                  : AssetImage(ManagerImages.imageFoodOneRemove)
-                                      as ImageProvider,
+                                  : _buildAvatarFallback(),
                             ),
                             Positioned(
                               bottom: 4,
@@ -116,8 +115,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                               child: InkWell(
                                 onTap: () async {
                                   await editController.pickAvatar();
-                                  if (!mounted)
-                                    return; // ⬅️ يمنع استدعاء UI بعد dispose
+                                  if (!mounted) return;
                                 },
                                 borderRadius: BorderRadius.circular(14),
                                 child: Container(
@@ -146,7 +144,7 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
                   SizedBox(height: ManagerHeight.h32),
 
-                  /// ===== Name field =====
+                  /// ===== First & Last Name =====
                   FadeTransition(
                     opacity: _fadeAnimations[1],
                     child: SlideTransition(
@@ -155,11 +153,57 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomPasswordField(
-                            label: ManagerStrings.fullName,
-                            isRequired: false,
+                            label: ManagerStrings.firstName,
+                            isRequired: true,
                             iconPath: ManagerIcons.nameIcon,
                             isPasswordField: false,
-                            controller: editController.nameController,
+                            controller: editController.firstNameController,
+                          ),
+                          SizedBox(height: ManagerHeight.h16),
+                          CustomPasswordField(
+                            label: ManagerStrings.lastName,
+                            isRequired: true,
+                            iconPath: ManagerIcons.nameIcon,
+                            isPasswordField: false,
+                            controller: editController.lastNameController,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: ManagerHeight.h16),
+
+                  /// ===== Gender & DOB =====
+                  FadeTransition(
+                    opacity: _fadeAnimations[2],
+                    child: SlideTransition(
+                      position: _slideAnimations[2],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomPasswordField(
+                            label: ManagerStrings.gender,
+                            isRequired: false,
+                            iconPath: ManagerIcons.profileIcon3,
+                            isPasswordField: false,
+                            controller: editController.genderController,
+                          ),
+                          SizedBox(height: ManagerHeight.h16),
+                          GestureDetector(
+                            onTap: () async {
+                              await editController.pickDob(context);
+                              if (!mounted) return;
+                            },
+                            child: AbsorbPointer(
+                              child: CustomPasswordField(
+                                label: ManagerStrings.gender,
+                                isRequired: false,
+                                iconPath: ManagerIcons.profileIcon3,
+                                isPasswordField: false,
+                                controller: editController.dobController,
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -170,9 +214,9 @@ class _EditProfileScreenState extends State<EditProfileScreen>
 
                   /// ===== Save button =====
                   FadeTransition(
-                    opacity: _fadeAnimations[2],
+                    opacity: _fadeAnimations[3],
                     child: SlideTransition(
-                      position: _slideAnimations[2],
+                      position: _slideAnimations[3],
                       child: ButtonApp(
                         title: ManagerStrings.edit,
                         onPressed: () async {
@@ -207,5 +251,12 @@ class _EditProfileScreenState extends State<EditProfileScreen>
       section: HawajSections.settingsSection,
       screen: HawajScreens.editProfileScreen,
     );
+  }
+
+  ImageProvider _buildAvatarFallback() {
+    if (editController.networkAvatarUrl.isNotEmpty) {
+      return NetworkImage(editController.networkAvatarUrl);
+    }
+    return const AssetImage(ManagerImages.imageFoodOneRemove);
   }
 }

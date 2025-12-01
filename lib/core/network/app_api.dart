@@ -89,12 +89,6 @@ abstract class AppService {
   // @GET(RequestConstantsEndpoints.getMyOffer)
   // Future<OfferResponse> getMyOffer();
 
-  ///===== Update Profile Request .======
-  @PUT(RequestConstantsEndpoints.getMyOffer)
-  Future<WithOutDataResponse> updateProfile(
-    @Query(RequestConstants.name) String? name,
-  );
-
   ///====== Update Avatar =====
   @POST(RequestConstantsEndpoints.updateAvatar)
   @MultiPart()
@@ -379,5 +373,12 @@ abstract class AppService {
     @Query(RequestConstants.id) String? id,
     @Query(RequestConstants.language) String? language,
     @Query(RequestConstants.with1) String? with1,
+  );
+
+  ///===== Update Profile Request .======
+  @PUT(RequestConstantsEndpoints.updateProfile)
+  @MultiPart()
+  Future<WithOutDataResponse> updateProfile(
+    @Body() FormData formData,
   );
 }

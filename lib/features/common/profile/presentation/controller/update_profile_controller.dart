@@ -1,19 +1,22 @@
+// lib/features/.../presentation/controller/edit_profile_controller.dart
 import 'dart:io';
+
+import 'package:dio/dio.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:file_picker/file_picker.dart';
 
 import '../../../../../core/util/snack_bar.dart';
-import '../../domain/use_case/update_profile_use_case.dart';
-import '../../domain/use_case/update_avatar_use_case.dart';
 import '../../data/request/update_profile_request.dart';
-import '../../data/request/update_avatar_request.dart';
+import '../../domain/use_case/update_profile_use_case.dart';
 
 class EditProfileController extends GetxController {
   final UpdateProfileUseCase _updateProfileUseCase;
-  final UpdateAvatarUseCase _updateAvatarUseCase;
 
-  late final TextEditingController nameController;
+  late final TextEditingController firstNameController;
+  late final TextEditingController lastNameController;
+  late final TextEditingController genderController;
+  late final TextEditingController dobController;
 
   final avatarFile = Rxn<File>();
   final isLoading = false.obs;
@@ -22,12 +25,17 @@ class EditProfileController extends GetxController {
   final String networkAvatarUrl;
 
   EditProfileController(
-      this._updateProfileUseCase,
-      this._updateAvatarUseCase, {
-        required String? initialName,
-        required this.networkAvatarUrl,
-      }) {
-    nameController = TextEditingController(text: initialName ?? '');
+    this._updateProfileUseCase, {
+    String? initialFirstName,
+    String? initialLastName,
+    String? initialGender,
+    String? initialDob,
+    required this.networkAvatarUrl,
+  }) {
+    firstNameController = TextEditingController(text: initialFirstName ?? '');
+    lastNameController = TextEditingController(text: initialLastName ?? '');
+    genderController = TextEditingController(text: initialGender ?? '');
+    dobController = TextEditingController(text: initialDob ?? '');
   }
 
   /// Pick avatar using FilePicker
@@ -59,14 +67,35 @@ class EditProfileController extends GetxController {
     }
   }
 
-  /// Save profile (avatar + name) in one flow
-  Future<void> saveProfile(BuildContext context) async {
-    final name = nameController.text.trim();
+  /// اختيار تاريخ الميلاد - اختياري تستعمله من الشاشة
+  Future<void> pickDob(BuildContext context) async {
+    final now = DateTime.now();
+    final initial =
+        now.subtract(const Duration(days: 365 * 18)); // مثلاً 18 سنة
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(1900),
+      lastDate: now,
+    );
 
-    if (name.isEmpty) {
+    if (picked != null) {
+      dobController.text =
+          "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+    }
+  }
+
+  /// Save profile (avatar + profile data) in ONE request
+  Future<void> saveProfile(BuildContext context) async {
+    final firstName = firstNameController.text.trim();
+    final lastName = lastNameController.text.trim();
+    final gender = genderController.text.trim();
+    final dob = dobController.text.trim();
+
+    if (firstName.isEmpty || lastName.isEmpty) {
       _showLocalizedSnackbar(
-        ar: "يرجى إدخال الاسم",
-        en: "Please enter your name",
+        ar: "يرجى إدخال الاسم الأول واسم العائلة",
+        en: "Please enter first and last name",
         isError: true,
       );
       return;
@@ -75,36 +104,25 @@ class EditProfileController extends GetxController {
     isLoading.value = true;
 
     try {
-      // Step 1: Upload avatar if selected
-      if (avatarFile.value != null) {
-        final avatarRes = await _updateAvatarUseCase.execute(
-          UpdateAvatarRequest(avatar: avatarFile.value),
-        );
-
-        final avatarFailed = avatarRes.fold((f) => f, (_) => null);
-        if (avatarFailed != null) {
-          _showLocalizedSnackbar(
-            ar: avatarFailed.message ?? "فشل رفع الصورة",
-            en: avatarFailed.message ?? "Failed to upload avatar",
-            isError: true,
-          );
-          isLoading.value = false;
-          return;
-        }
-      }
-
-      // Step 2: Upload profile (name)
-      final profileRes = await _updateProfileUseCase.execute(
-        UpdateProfileRequest(name: name),
+      final request = UpdateProfileRequest(
+        firstName: firstName,
+        lastName: lastName,
+        gender: gender.isEmpty ? null : gender,
+        dob: dob.isEmpty ? null : dob,
+        avatar: avatarFile.value, // ممكن تكون null
       );
 
-      profileRes.fold(
-            (failure) => _showLocalizedSnackbar(
-          ar: failure.message,
-          en: failure.message,
-          isError: true,
-        ),
-            (_) async {
+      final result = await _updateProfileUseCase.execute(request);
+
+      result.fold(
+        (failure) {
+          _showLocalizedSnackbar(
+            ar: failure.message ?? "فشل تحديث الملف الشخصي",
+            en: failure.message ?? "Failed to update profile",
+            isError: true,
+          );
+        },
+        (_) async {
           _showLocalizedSnackbar(
             ar: "تم تحديث الملف الشخصي بنجاح",
             en: "Profile updated successfully",
@@ -112,8 +130,15 @@ class EditProfileController extends GetxController {
           );
 
           await Future.delayed(const Duration(milliseconds: 800));
-          // Get.offAll(() => const HomeScreen());
+          // هنا ترجع للشاشة السابقة أو الريفريش
+          Get.back();
         },
+      );
+    } on DioException {
+      _showLocalizedSnackbar(
+        ar: "فشل الاتصال بالخادم. حاول مرة أخرى.",
+        en: "Network error. Please try again.",
+        isError: true,
       );
     } catch (_) {
       _showLocalizedSnackbar(
@@ -143,7 +168,10 @@ class EditProfileController extends GetxController {
 
   @override
   void onClose() {
-    nameController.dispose();
+    firstNameController.dispose();
+    lastNameController.dispose();
+    genderController.dispose();
+    dobController.dispose();
     super.onClose();
   }
 }

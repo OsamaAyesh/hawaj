@@ -1,20 +1,17 @@
+import 'dart:convert';
 
 import 'package:app_mobile/core/extensions/extensions.dart';
 import 'package:app_mobile/core/resources/manager_mockup.dart';
 import 'package:app_mobile/core/response/with_out_data_response.dart';
-import 'package:app_mobile/features/common/auth/data/request/send_otp_request.dart';
-import 'package:app_mobile/features/common/auth/data/response/send_otp_response.dart';
 import 'package:app_mobile/features/common/profile/data/request/update_profile_request.dart';
+import 'package:flutter/services.dart' as rootBundle;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 import '../../../../../constants/env/env_constants.dart';
 import '../../../../../core/network/app_api.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart' as rootBundle;
 
 abstract class UpdateProfileDataSource {
-  Future<WithOutDataResponse> updateProfileData(
-      UpdateProfileRequest  request
-      );
+  Future<WithOutDataResponse> updateProfileData(UpdateProfileRequest request);
 }
 
 class UpdateProfileDataSourceImplement implements UpdateProfileDataSource {
@@ -24,11 +21,7 @@ class UpdateProfileDataSourceImplement implements UpdateProfileDataSource {
 
   @override
   Future<WithOutDataResponse> updateProfileData(
-      UpdateProfileRequest  request
-
-      ) async {
-
-
+      UpdateProfileRequest request) async {
     if (dotenv.env[EnvConstants.debug].onNullBool()) {
       return WithOutDataResponse.fromJson(
         json.decode(
@@ -38,6 +31,8 @@ class UpdateProfileDataSourceImplement implements UpdateProfileDataSource {
         ),
       );
     }
-    return await _appService.updateProfile(request.name,);
+    return await _appService.updateProfile(
+      await request.toFormData(),
+    );
   }
 }
