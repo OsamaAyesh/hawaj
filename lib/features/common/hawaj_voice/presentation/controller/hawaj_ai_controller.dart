@@ -284,23 +284,36 @@ class HawajController extends GetxController {
   /// ═══════════════════════════════════════════════════════════
   /// 📲 إرسال طلب مباشر من الـ Drawer (بدون صوت)
   /// ═══════════════════════════════════════════════════════════
+  /// ═══════════════════════════════════════════════════════════
+  /// 📲 إرسال طلب مباشر من الـ Drawer (بدون صوت)
+  /// ═══════════════════════════════════════════════════════════
   Future<void> sendDirectRequest({
     required String command,
     String? section,
     String? screen,
   }) async {
+    debugPrint('════════════════════════════════════════════════');
+    debugPrint('📲 [Hawaj] sendDirectRequest CALLED');
+    debugPrint('📲 [Hawaj] Command: "$command"');
+    debugPrint('════════════════════════════════════════════════');
+
     if (command.isEmpty) {
-      debugPrint('⚠️ [Hawaj] لا يمكن إرسال طلب فارغ');
+      debugPrint('⚠️ [Hawaj] Command is empty, aborting');
       return;
     }
 
-    // استخدام الـ section والـ screen الحاليين إذا لم يتم تمريرهم
-    final requestSection = section ?? _currentSection;
-    final requestScreen = screen ?? _currentScreen;
+    // استخدام قيم افتراضية
+    final requestSection = section != null
+        ? section
+        : (_currentSection.isNotEmpty ? _currentSection : "6");
 
-    debugPrint('📲 [Hawaj] إرسال طلب مباشر: "$command"');
-    debugPrint(
-        '📍 [Hawaj] Context: Section=$requestSection, Screen=$requestScreen');
+    final requestScreen = screen != null
+        ? screen
+        : (_currentScreen.isNotEmpty ? _currentScreen : "1");
+
+    debugPrint('📍 [Hawaj] Request Section: $requestSection');
+    debugPrint('📍 [Hawaj] Request Screen: $requestScreen');
+    debugPrint('📍 [Hawaj] User Location: ($_latitude, $_longitude)');
 
     _isProcessing.value = true;
     _currentMessage.value = 'جارٍ معالجة طلبك...';
@@ -316,16 +329,30 @@ class HawajController extends GetxController {
         s: requestScreen,
       );
 
+      debugPrint('📤 [Hawaj] Sending request to API...');
+      debugPrint(
+          '📤 [Hawaj] Body: {strl: $command, q: $requestSection, s: $requestScreen}');
+
       final result = await _sendDataUseCase.execute(request);
 
       result.fold(
-        (failure) => _setError(failure.message),
-        (response) => _handleSuccessResponse(response),
+        (failure) {
+          debugPrint('❌ [Hawaj] Request failed: ${failure.message}');
+          _setError(failure.message);
+        },
+        (response) {
+          debugPrint('✅ [Hawaj] Request successful!');
+          _handleSuccessResponse(response);
+        },
       );
-    } catch (e) {
+    } catch (e, stackTrace) {
+      debugPrint('❌ [Hawaj] Exception occurred: $e');
+      debugPrint('📚 [Hawaj] Stack trace: $stackTrace');
       _setError('فشل الطلب: $e');
     } finally {
       _isProcessing.value = false;
+      debugPrint('🏁 [Hawaj] Request completed');
+      debugPrint('════════════════════════════════════════════════');
     }
   }
 
@@ -375,6 +402,145 @@ class HawajController extends GetxController {
   /// ═══════════════════════════════════════════════════════════
   /// 🎯 التعامل مع الرد الكامل من السيرفر
   /// ═══════════════════════════════════════════════════════════
+  // void _handleSuccessResponse(SendDataModel response) async {
+  //   final data = response.data;
+  //   final results = data.d;
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 📊 استخراج البيانات من الـ Response
+  //   // ═══════════════════════════════════════════════════════════
+  //   final currentSection = data.q; // القسم الحالي (للاستخدام في التنقل فقط)
+  //   final currentScreen = data.s; // الشاشة الحالية (المرسلة) - s
+  //   final targetScreen = results.screen; // الشاشة المستهدفة من الـ Response
+  //
+  //   // ✅ تحديد الـ Section الصحيح بناءً على الـ targetScreen
+  //   String targetSection = currentSection; // افتراضياً نفس الـ section
+  //
+  //   // ✅ إذا الـ targetScreen هي شاشة خريطة، نحدد الـ section الصحيح
+  //   final correctMapSection = _getCorrectSectionForMapScreen(targetScreen);
+  //   if (correctMapSection != null) {
+  //     targetSection = correctMapSection;
+  //     debugPrint('🗺️ [Routing] تم تحديد Section الخريطة: $targetSection');
+  //   }
+  //
+  //   // ✅ المقارنة فقط بين s و screen
+  //   final needsNavigation = _shouldNavigateToNewScreen(
+  //     currentScreen: currentScreen,
+  //     targetScreen: targetScreen,
+  //   );
+  //
+  //   debugPrint('🧭 [AI Routing] Current Screen (s): $currentScreen');
+  //   debugPrint('🎯 [AI Routing] Target Screen: $targetScreen');
+  //   debugPrint('🎯 [AI Routing] Target Section: $targetSection');
+  //   debugPrint('🚦 [AI Routing] Needs Navigation: $needsNavigation');
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 📍 التعامل الذكي مع الإحداثيات
+  //   // ═══════════════════════════════════════════════════════════
+  //   final responseLat = double.tryParse(results.lat) ?? 0.0;
+  //   final responseLng = double.tryParse(results.lng) ?? 0.0;
+  //   final userLat = _latitude ?? 0.0;
+  //   final userLng = _longitude ?? 0.0;
+  //
+  //   // ✅ إذا الإحداثيات مختلفة، استخدم من الـ Response
+  //   final targetLat =
+  //       _isLocationDifferent(responseLat, userLat) ? responseLat : userLat;
+  //   final targetLng =
+  //       _isLocationDifferent(responseLng, userLng) ? responseLng : userLng;
+  //
+  //   debugPrint('📍 [Location] User: ($userLat, $userLng)');
+  //   debugPrint('📍 [Location] Response: ($responseLat, $responseLng)');
+  //   debugPrint('📍 [Location] Target: ($targetLat, $targetLng)');
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 🗺️ تحديد نوع الوجهة (باستخدام targetSection و targetScreen)
+  //   // ═══════════════════════════════════════════════════════════
+  //   final isMapDestination = _isMapScreen(targetSection, targetScreen);
+  //   final isCurrentlyMap = _isMapScreen(currentSection, currentScreen);
+  //
+  //   debugPrint('🗺️ [Routing] Is Map Destination: $isMapDestination');
+  //   debugPrint('🗺️ [Routing] Currently on Map: $isCurrentlyMap');
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 📦 تحضير البيانات للإرسال
+  //   // ═══════════════════════════════════════════════════════════
+  //   final payload = {
+  //     'offers': results.offers ?? [],
+  //     'jobs': results.jobs ?? [],
+  //     'properties': results.properties ?? [],
+  //     'hawajData': true,
+  //     'targetLat': targetLat,
+  //     'targetLng': targetLng,
+  //   };
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 🎧 تشغيل الصوت أولاً (وانتظار انتهائه)
+  //   // ═══════════════════════════════════════════════════════════
+  //   await _playResponseAudio(
+  //     mp3Url: results.mp3,
+  //     message: results.message,
+  //   );
+  //
+  //   // ═══════════════════════════════════════════════════════════
+  //   // 🧠 منطق التوجيه بعد انتهاء الصوت
+  //   // ═══════════════════════════════════════════════════════════
+  //   if (isMapDestination) {
+  //     debugPrint('🗺️ [Routing] الوجهة خريطة → تجهيز البيانات');
+  //
+  //     onDataClear?.call();
+  //     _currentMessage.value = results.message;
+  //
+  //     // تحميل البيانات حسب النوع
+  //     if (results.jobs?.isNotEmpty == true) {
+  //       _hawajJobs.value = results.jobs!;
+  //       _currentDataType.value = 'jobs';
+  //       debugPrint('✅ [Data] تم تحميل ${_hawajJobs.length} وظيفة');
+  //     } else if (results.offers?.isNotEmpty == true) {
+  //       _hawajOffers.value = results.offers!;
+  //       _currentDataType.value = 'offers';
+  //       debugPrint('✅ [Data] تم تحميل ${_hawajOffers.length} عرض');
+  //     } else if (results.properties?.isNotEmpty == true) {
+  //       _hawajProperties.value = results.properties!;
+  //       _currentDataType.value = 'properties';
+  //       debugPrint('✅ [Data] تم تحميل ${_hawajProperties.length} عقار');
+  //     }
+  //
+  //     if (isCurrentlyMap && !needsNavigation) {
+  //       // ✅ نفس الشاشة على الخريطة → تحديث النتائج فقط
+  //       debugPrint(
+  //           '🧩 [Routing] نفس الشاشة (s=$currentScreen) → تحديث النتائج فقط');
+  //       Future.delayed(
+  //           const Duration(milliseconds: 600), () => onDataReady?.call());
+  //       Future.delayed(
+  //           const Duration(milliseconds: 1500), () => onAnimateCamera?.call());
+  //     } else {
+  //       // ✅ الشاشة مختلفة → انتقل
+  //       debugPrint(
+  //           '🚀 [Routing] الانتقال لشاشة جديدة: Section=$targetSection, Screen=$targetScreen');
+  //       await Future.delayed(const Duration(milliseconds: 300));
+  //       await HawajRoutes.navigateTo(
+  //         section: targetSection, // ← استخدام targetSection المحدد
+  //         screen: targetScreen,
+  //         parameters: payload,
+  //       );
+  //     }
+  //   } else {
+  //     // ✅ الوجهة ليست خريطة
+  //     debugPrint('📦 [Routing] الوجهة شاشة عادية → الانتقال');
+  //     await Future.delayed(const Duration(milliseconds: 300));
+  //     await HawajRoutes.navigateTo(
+  //       section: targetSection, // ← استخدام targetSection المحدد
+  //       screen: targetScreen,
+  //       parameters: payload,
+  //     );
+  //   }
+  //
+  //   _isExpanded.value = true;
+  //   _isLoadingAudio.value = false;
+  //   _isSpeaking.value = false;
+  //   hasHawajDataRx.value = hasHawajData;
+  //   debugPrint('✅ [Hawaj] اكتمل التوجيه بنجاح');
+  // }
   void _handleSuccessResponse(SendDataModel response) async {
     final data = response.data;
     final results = data.d;
@@ -382,29 +548,14 @@ class HawajController extends GetxController {
     // ═══════════════════════════════════════════════════════════
     // 📊 استخراج البيانات من الـ Response
     // ═══════════════════════════════════════════════════════════
-    final currentSection = data.q; // القسم الحالي (للاستخدام في التنقل فقط)
     final currentScreen = data.s; // الشاشة الحالية (المرسلة) - s
     final targetScreen = results.screen; // الشاشة المستهدفة من الـ Response
 
-    // ✅ تحديد الـ Section الصحيح بناءً على الـ targetScreen
-    String targetSection = currentSection; // افتراضياً نفس الـ section
-
-    // ✅ إذا الـ targetScreen هي شاشة خريطة، نحدد الـ section الصحيح
-    final correctMapSection = _getCorrectSectionForMapScreen(targetScreen);
-    if (correctMapSection != null) {
-      targetSection = correctMapSection;
-      debugPrint('🗺️ [Routing] تم تحديد Section الخريطة: $targetSection');
-    }
-
     // ✅ المقارنة فقط بين s و screen
-    final needsNavigation = _shouldNavigateToNewScreen(
-      currentScreen: currentScreen,
-      targetScreen: targetScreen,
-    );
+    final needsNavigation = currentScreen != targetScreen;
 
     debugPrint('🧭 [AI Routing] Current Screen (s): $currentScreen');
     debugPrint('🎯 [AI Routing] Target Screen: $targetScreen');
-    debugPrint('🎯 [AI Routing] Target Section: $targetSection');
     debugPrint('🚦 [AI Routing] Needs Navigation: $needsNavigation');
 
     // ═══════════════════════════════════════════════════════════
@@ -426,10 +577,10 @@ class HawajController extends GetxController {
     debugPrint('📍 [Location] Target: ($targetLat, $targetLng)');
 
     // ═══════════════════════════════════════════════════════════
-    // 🗺️ تحديد نوع الوجهة (باستخدام targetSection و targetScreen)
+    // 🗺️ تحديد نوع الوجهة (باستخدام targetScreen فقط)
     // ═══════════════════════════════════════════════════════════
-    final isMapDestination = _isMapScreen(targetSection, targetScreen);
-    final isCurrentlyMap = _isMapScreen(currentSection, currentScreen);
+    final isMapDestination = _isMapScreen(targetScreen);
+    final isCurrentlyMap = _isMapScreen(currentScreen);
 
     debugPrint('🗺️ [Routing] Is Map Destination: $isMapDestination');
     debugPrint('🗺️ [Routing] Currently on Map: $isCurrentlyMap');
@@ -488,21 +639,24 @@ class HawajController extends GetxController {
             const Duration(milliseconds: 1500), () => onAnimateCamera?.call());
       } else {
         // ✅ الشاشة مختلفة → انتقل
+        final targetSection = _getSectionForScreen(targetScreen);
         debugPrint(
             '🚀 [Routing] الانتقال لشاشة جديدة: Section=$targetSection, Screen=$targetScreen');
         await Future.delayed(const Duration(milliseconds: 300));
         await HawajRoutes.navigateTo(
-          section: targetSection, // ← استخدام targetSection المحدد
+          section: targetSection,
           screen: targetScreen,
           parameters: payload,
         );
       }
     } else {
       // ✅ الوجهة ليست خريطة
-      debugPrint('📦 [Routing] الوجهة شاشة عادية → الانتقال');
+      final targetSection = _getSectionForScreen(targetScreen);
+      debugPrint(
+          '📦 [Routing] الوجهة شاشة عادية → الانتقال: Section=$targetSection, Screen=$targetScreen');
       await Future.delayed(const Duration(milliseconds: 300));
       await HawajRoutes.navigateTo(
-        section: targetSection, // ← استخدام targetSection المحدد
+        section: targetSection,
         screen: targetScreen,
         parameters: payload,
       );
@@ -513,6 +667,72 @@ class HawajController extends GetxController {
     _isSpeaking.value = false;
     hasHawajDataRx.value = hasHawajData;
     debugPrint('✅ [Hawaj] اكتمل التوجيه بنجاح');
+  }
+
+  /// ═══════════════════════════════════════════════════════════
+  /// 🔍 Helper Functions
+  /// ═══════════════════════════════════════════════════════════
+
+  /// ✅ تحديد ما إذا كانت الشاشة خريطة أم لا (بناءً على رقم الشاشة فقط)
+  bool _isMapScreen(String screen) {
+    const mapScreens = [
+      '1', // Daily Offers Map
+      '17', // Real Estates Map
+      '22', // Jobs Map
+    ];
+    return mapScreens.contains(screen);
+  }
+
+  /// ✅ الحصول على الـ Section بناءً على رقم الشاشة
+  String _getSectionForScreen(String screen) {
+    // 🗺️ الخرائط
+    if (screen == '1') return HawajSections.dailyOffers; // "1"
+    if (screen == '17') return HawajSections.realEstates; // "3"
+    if (screen == '22') return HawajSections.jobs; // "5"
+
+    // 🎁 العروض اليومية (1-11)
+    if (_isInRange(screen, 1, 11)) return HawajSections.dailyOffers; // "1"
+
+    // ⚙️ الإعدادات (12-16)
+    if (_isInRange(screen, 12, 16)) return HawajSections.settingsSection; // "6"
+
+    // 🏢 العقارات (17-21)
+    if (_isInRange(screen, 17, 21)) return HawajSections.realEstates; // "3"
+
+    // 💼 الوظائف (22-25)
+    if (_isInRange(screen, 22, 25)) return HawajSections.jobs; // "5"
+
+    // 📋 العقود التجارية (26-28)
+    if (_isInRange(screen, 26, 28))
+      return HawajSections.commercialContracts; // "2"
+
+    // 🔧 Legacy Screens (29-31)
+    if (_isInRange(screen, 29, 31)) return HawajSections.dailyOffers; // "1"
+
+    // ✅ افتراضياً نرجع Section 1
+    debugPrint('⚠️ [Routing] Screen $screen غير معروف، استخدام Section 1');
+    return HawajSections.dailyOffers;
+  }
+
+  /// ✅ Helper: تحقق إذا الرقم ضمن نطاق معين
+  bool _isInRange(String screen, int start, int end) {
+    final screenNum = int.tryParse(screen);
+    if (screenNum == null) return false;
+    return screenNum >= start && screenNum <= end;
+  }
+
+  /// ✅ تحديد ما إذا كانت الإحداثيات مختلفة بشكل معتبر
+  bool _isLocationDifferent(double loc1, double loc2,
+      {double threshold = 0.001}) {
+    final difference = (loc1 - loc2).abs();
+    final isDifferent = difference > threshold;
+
+    if (isDifferent) {
+      debugPrint(
+          '📍 [Location] اختلاف كبير في الإحداثيات: ${difference.toStringAsFixed(6)}');
+    }
+
+    return isDifferent;
   }
 
   /// ✅ الحصول على الـ Section الصحيح بناءً على الـ screen فقط
@@ -565,16 +785,16 @@ class HawajController extends GetxController {
   /// ═══════════════════════════════════════════════════════════
 
   /// ✅ تحديد ما إذا كانت الشاشة خريطة أم لا
-  bool _isMapScreen(String section, String screen) {
-    const mapScreens = [
-      {'section': '1', 'screen': '1'}, // Daily Offers Map
-      {'section': '3', 'screen': '1'}, // Real Estates Map
-      {'section': '5', 'screen': '1'}, // Jobs Map
-    ];
-    return mapScreens.any(
-      (e) => e['section'] == section && e['screen'] == screen,
-    );
-  }
+  // bool _isMapScreen(String section, String screen) {
+  //   const mapScreens = [
+  //     {'section': '1', 'screen': '1'}, // Daily Offers Map
+  //     {'section': '3', 'screen': '1'}, // Real Estates Map
+  //     {'section': '5', 'screen': '1'}, // Jobs Map
+  //   ];
+  //   return mapScreens.any(
+  //     (e) => e['section'] == section && e['screen'] == screen,
+  //   );
+  // }
 
   /// ✅ تحديد ما إذا كان يجب الانتقال لشاشة جديدة (بناءً على s و screen فقط)
   bool _shouldNavigateToNewScreen({
@@ -594,18 +814,18 @@ class HawajController extends GetxController {
   }
 
   /// ✅ تحديد ما إذا كانت الإحداثيات مختلفة بشكل معتبر
-  bool _isLocationDifferent(double loc1, double loc2,
-      {double threshold = 0.001}) {
-    final difference = (loc1 - loc2).abs();
-    final isDifferent = difference > threshold;
-
-    if (isDifferent) {
-      debugPrint(
-          '📍 [Location] اختلاف كبير في الإحداثيات: ${difference.toStringAsFixed(6)}');
-    }
-
-    return isDifferent;
-  }
+  // bool _isLocationDifferent(double loc1, double loc2,
+  //     {double threshold = 0.001}) {
+  //   final difference = (loc1 - loc2).abs();
+  //   final isDifferent = difference > threshold;
+  //
+  //   if (isDifferent) {
+  //     debugPrint(
+  //         '📍 [Location] اختلاف كبير في الإحداثيات: ${difference.toStringAsFixed(6)}');
+  //   }
+  //
+  //   return isDifferent;
+  // }
 
   /// ═══════════════════════════════════════════════════════════
   /// 🎵 Play Audio from URL

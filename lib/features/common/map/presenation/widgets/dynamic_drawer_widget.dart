@@ -218,9 +218,13 @@ class DynamicDrawerWidget extends StatelessWidget {
     return InkWell(
       onTap: isActive
           ? () {
+              debugPrint('🔵 [Drawer] Item tapped: ${item.title}');
+              debugPrint('🔵 [Drawer] Action name: ${item.actionName}');
+
               sliderKey.currentState?.closeSlider();
+
               Future.delayed(const Duration(milliseconds: 300), () {
-                // ✅ التعامل مع حواج أولاً
+                debugPrint('🔵 [Drawer] Handling tap after delay');
                 _handleHawajCommands(item, controller);
               });
             }
@@ -267,51 +271,50 @@ class DynamicDrawerWidget extends StatelessWidget {
   /// ═══════════════════════════════════════════════════════════
   /// 🤖 التعامل مع أوامر حواج من الـ Drawer
   /// ═══════════════════════════════════════════════════════════
+  /// ═══════════════════════════════════════════════════════════
+  /// 🤖 التعامل مع أوامر حواج من الـ Drawer
+  /// ═══════════════════════════════════════════════════════════
+  /// ═══════════════════════════════════════════════════════════
+  /// 🤖 التعامل مع أوامر حواج من الـ Drawer
+  /// ═══════════════════════════════════════════════════════════
   void _handleHawajCommands(
       DrawerItemModel item, DrawerMenuController controller) {
-    // ✅ التحقق من وجود link يبدأ بـ @
-    if (item.actionName != null && item.actionName!.startsWith('@')) {
+    if (item.actionName == null) {
+      return;
+    }
+
+    // ✅ قائمة الأوامر التي تحتاج حواج
+    const hawajCommands = [
+      'daily_offers',
+      'realestate',
+      'real_estate',
+      'jobs',
+      'commercial_contracts',
+    ];
+
+    // ✅ التحقق: إذا الأمر يبدأ بـ @ أو موجود في القائمة
+    final actionName = item.actionName!.startsWith('@')
+        ? item.actionName!.substring(1)
+        : item.actionName!;
+
+    if (hawajCommands.contains(actionName)) {
       try {
         final hawajController = Get.find<HawajController>();
 
-        // ✅ استخراج الأمر (إزالة الـ @)
-        final command = item.actionName!.substring(1);
-
-        // ✅ تحديد Section و Screen حسب الأمر
-        String section = '1'; // افتراضي
-        String screen = '1'; // افتراضي
-
-        switch (command) {
-          case 'daily_offers':
-            section = '1';
-            screen = '1';
-            break;
-          case 'realestate':
-            section = '3';
-            screen = '1';
-            break;
-          case 'jobs':
-            section = '5';
-            screen = '1';
-            break;
-        }
-
-        debugPrint('🤖 [Drawer → Hawaj] Command: $command');
-        debugPrint('🤖 [Drawer → Hawaj] Section: $section, Screen: $screen');
+        debugPrint('🤖 [Drawer → Hawaj] Hawaj Command Detected: $actionName');
 
         // ✅ إرسال الطلب المباشر لحواج
-        hawajController.sendDirectRequest(
-          command: command,
-          section: section,
-          screen: screen,
-        );
+        hawajController.sendDirectRequest(command: actionName);
+
+        debugPrint('✅ [Drawer → Hawaj] Request sent successfully');
       } catch (e) {
-        debugPrint('❌ [Drawer → Hawaj] خطأ: Hawaj Controller غير موجود');
-        // إذا حواج مو موجود، استخدم الطريقة العادية
+        debugPrint('❌ [Drawer → Hawaj] خطأ: $e');
+        // Fallback للطريقة العادية
         controller.handleItemTap(item);
       }
     } else {
       // ✅ طريقة عادية بدون حواج
+      debugPrint('📱 [Drawer] Normal navigation: $actionName');
       controller.handleItemTap(item);
     }
   }
