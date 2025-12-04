@@ -12,7 +12,7 @@ extension SendDataResultsMapper on SendDataResultsResponse {
       screen: screen.onNull(),
       lat: lat.onNull(),
       lng: lng.onNull(),
-      parameters: parameters ?? [],
+      // parameters: parameters ?? [],
       message: message.onNull(),
       mp3: mp3.onNull(),
       offers: offers?.map((e) => e.toDomain()).toList(),

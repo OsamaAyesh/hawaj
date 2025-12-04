@@ -190,21 +190,21 @@ class _EditProfileScreenState extends State<EditProfileScreen>
                             controller: editController.genderController,
                           ),
                           SizedBox(height: ManagerHeight.h16),
-                          GestureDetector(
-                            onTap: () async {
-                              await editController.pickDob(context);
-                              if (!mounted) return;
-                            },
-                            child: AbsorbPointer(
-                              child: CustomPasswordField(
-                                label: ManagerStrings.gender,
-                                isRequired: false,
-                                iconPath: ManagerIcons.profileIcon3,
-                                isPasswordField: false,
-                                controller: editController.dobController,
-                              ),
-                            ),
-                          ),
+                          // GestureDetector(
+                          //   onTap: () async {
+                          //     await editController.pickDob(context);
+                          //     if (!mounted) return;
+                          //   },
+                          //   child: AbsorbPointer(
+                          //     child: CustomPasswordField(
+                          //       label: ManagerStrings.gender,
+                          //       isRequired: false,
+                          //       iconPath: ManagerIcons.profileIcon3,
+                          //       isPasswordField: false,
+                          //       controller: editController.dobController,
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

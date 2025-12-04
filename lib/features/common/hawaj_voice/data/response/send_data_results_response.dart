@@ -7,11 +7,11 @@ part 'send_data_results_response.g.dart';
 
 @JsonSerializable()
 class SendDataResultsResponse {
-  // ✅ تحديث: الآن screen و lat و lng و parameters و message و mp3
   final String? screen;
   final String? lat;
   final String? lng;
-  final List<dynamic>? parameters;
+
+  // final List<dynamic>? parameters;
   final String? message;
   final String? mp3;
 
@@ -28,7 +28,7 @@ class SendDataResultsResponse {
     this.screen,
     this.lat,
     this.lng,
-    this.parameters,
+    // this.parameters,
     this.message,
     this.mp3,
     this.offers,

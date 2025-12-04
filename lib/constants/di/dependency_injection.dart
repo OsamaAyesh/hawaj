@@ -87,4 +87,5 @@ initModule() async {
     debugPrint('[HawajRouting] ✅ MapBindings initialized inside init()');
   }
   initDrawerMenu();
+  initCompletedProfile();
 }

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_font_size.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
@@ -6,13 +8,13 @@ import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
 import 'package:app_mobile/core/widgets/button_app.dart';
 import 'package:app_mobile/core/widgets/loading_widget.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/widgets/labeled_text_field.dart';
 import '../../../../../core/widgets/lable_drop_down_button.dart';
-import '../../../../../core/widgets/upload_media_widget.dart';
 import '../controller/completed_profile_controller.dart';
 
 class CompleteInformationScreen extends StatefulWidget {
@@ -24,14 +26,33 @@ class CompleteInformationScreen extends StatefulWidget {
 }
 
 class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
-  // احتفظ بـ reference للـ controller
+  // ✅ إنشاء Controllers محلية في الـ State بدلاً من استخدام controllers من GetX
+  late final TextEditingController firstNameController;
+  late final TextEditingController lastNameController;
+  late final TextEditingController dateOfBirthController;
+
   late final CompletedProfileController controller;
 
   @override
   void initState() {
     super.initState();
-    // استخدم Get.find() مرة واحدة فقط في initState
+
+    // ✅ تهيئة Controllers المحلية
+    firstNameController = TextEditingController();
+    lastNameController = TextEditingController();
+    dateOfBirthController = TextEditingController();
+
+    // ✅ جلب GetX Controller
     controller = Get.find<CompletedProfileController>();
+  }
+
+  @override
+  void dispose() {
+    // ✅ التخلص من Controllers المحلية فقط عند dispose
+    firstNameController.dispose();
+    lastNameController.dispose();
+    dateOfBirthController.dispose();
+    super.dispose();
   }
 
   @override
@@ -164,12 +185,13 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
                         .scale(begin: Offset(0.8, 0.8), end: Offset(1, 1)),
                     SizedBox(height: ManagerHeight.h32),
 
-                    /// First Name
+                    /// First Name - استخدام Controller المحلي
                     LabeledTextField(
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.firstName,
                       hintText: ManagerStrings.firstName,
-                      controller: controller.firstNameController,
+                      controller: firstNameController,
+                      // ✅ Controller محلي
                       textInputAction: TextInputAction.next,
                       prefixIcon: const Icon(
                         Icons.person,
@@ -181,12 +203,13 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
                         .slideX(begin: -0.3, end: 0, duration: 400.ms),
                     SizedBox(height: ManagerHeight.h14),
 
-                    /// Last Name
+                    /// Last Name - استخدام Controller المحلي
                     LabeledTextField(
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.lastName,
                       hintText: ManagerStrings.lastName,
-                      controller: controller.lastNameController,
+                      controller: lastNameController,
+                      // ✅ Controller محلي
                       textInputAction: TextInputAction.next,
                       prefixIcon: const Icon(
                         Icons.person_outline,
@@ -224,12 +247,13 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
                         .slideX(begin: -0.2, end: 0, duration: 400.ms),
                     SizedBox(height: ManagerHeight.h14),
 
-                    /// Date of Birth
+                    /// Date of Birth - استخدام Controller المحلي
                     LabeledTextField(
                       widthButton: ManagerWidth.w130,
                       label: ManagerStrings.dob,
                       hintText: ManagerStrings.dob,
-                      controller: controller.dateOfBirthController,
+                      controller: dateOfBirthController,
+                      // ✅ Controller محلي
                       enabled: true,
                       prefixIcon: const Icon(
                         Icons.calendar_today,
@@ -243,7 +267,7 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
                           lastDate: DateTime.now(),
                         );
                         if (pickedDate != null) {
-                          controller.dateOfBirthController.text =
+                          dateOfBirthController.text =
                               pickedDate.toIso8601String().split("T").first;
                         }
                       },
@@ -260,10 +284,10 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
                         .slideX(begin: 0.3, end: 0, duration: 400.ms),
                     SizedBox(height: ManagerHeight.h32),
 
-                    /// Continue Button
+                    /// Continue Button - تمرير القيم من Controllers المحلية
                     ButtonApp(
                       title: ManagerStrings.continueButton,
-                      onPressed: () => controller.submitProfile(),
+                      onPressed: () => _submitProfile(),
                       paddingWidth: 0,
                     ).animate().fadeIn(duration: 400.ms, delay: 800.ms).slideY(
                           begin: 0.2,
@@ -296,7 +320,18 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
     );
   }
 
-  /// Bottom Sheet لاختيار الصورة
+  /// ✅ دالة لإرسال البيانات - تنسخ القيم من Controllers المحلية
+  Future<void> _submitProfile() async {
+    // نسخ القيم من Controllers المحلية إلى GetX Controller
+    controller.firstNameController.text = firstNameController.text;
+    controller.lastNameController.text = lastNameController.text;
+    controller.dateOfBirthController.text = dateOfBirthController.text;
+
+    // استدعاء دالة الإرسال
+    await controller.submitProfile();
+  }
+
+  /// Bottom Sheet لاختيار الصورة باستخدام FilePicker
   void _showImagePickerBottomSheet(BuildContext context) {
     Get.bottomSheet(
       Container(
@@ -310,26 +345,216 @@ class _CompleteInformationScreenState extends State<CompleteInformationScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            /// العنوان
             Text(
               'اختر صورة الملف الشخصي',
               style: getBoldTextStyle(
-                fontSize: ManagerFontSize.s14,
+                fontSize: ManagerFontSize.s16,
                 color: ManagerColors.black,
               ),
             ),
-            SizedBox(height: ManagerHeight.h20),
-            UploadMediaField(
-              label: 'صورة الملف الشخصي',
-              hint: 'اختر صورة',
-              note: 'الصور المدعومة: PNG, JPG, JPEG',
-              file: controller.avatarImage,
-              onFilePicked: (file) {
+            SizedBox(height: ManagerHeight.h24),
+
+            /// خيار المعرض
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: ManagerColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.photo_library,
+                  color: ManagerColors.primaryColor,
+                  size: 28,
+                ),
+              ),
+              title: Text(
+                'اختيار من المعرض',
+                style: getMediumTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: ManagerColors.black,
+                ),
+              ),
+              subtitle: Text(
+                'اختر صورة من معرض الصور',
+                style: getRegularTextStyle(
+                  fontSize: ManagerFontSize.s12,
+                  color: ManagerColors.greyWithColor,
+                ),
+              ),
+              onTap: () async {
                 Get.back();
+                await _pickImageFromGallery();
               },
+            ),
+
+            Divider(height: ManagerHeight.h24),
+
+            /// خيار الملفات
+            ListTile(
+              leading: Container(
+                padding: EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: ManagerColors.primaryColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.insert_drive_file,
+                  color: ManagerColors.primaryColor,
+                  size: 28,
+                ),
+              ),
+              title: Text(
+                'اختيار من الملفات',
+                style: getMediumTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: ManagerColors.black,
+                ),
+              ),
+              subtitle: Text(
+                'تصفح جميع الملفات',
+                style: getRegularTextStyle(
+                  fontSize: ManagerFontSize.s12,
+                  color: ManagerColors.greyWithColor,
+                ),
+              ),
+              onTap: () async {
+                Get.back();
+                await _pickImageFromFiles();
+              },
+            ),
+
+            SizedBox(height: ManagerHeight.h16),
+
+            /// زر الإلغاء
+            TextButton(
+              onPressed: () => Get.back(),
+              style: TextButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: ManagerWidth.w32,
+                  vertical: ManagerHeight.h12,
+                ),
+              ),
+              child: Text(
+                'إلغاء',
+                style: getMediumTextStyle(
+                  fontSize: ManagerFontSize.s14,
+                  color: ManagerColors.greyWithColor,
+                ),
+              ),
             ),
           ],
         ),
       ),
+      isDismissible: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
     );
+  }
+
+  /// دالة لاختيار الصورة من المعرض
+  Future<void> _pickImageFromGallery() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+
+        final fileSize = await file.length();
+        if (fileSize > 5 * 1024 * 1024) {
+          Get.snackbar(
+            'خطأ',
+            'حجم الصورة كبير جداً. الحد الأقصى 5 ميجابايت',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red.shade100,
+            colorText: Colors.red.shade900,
+            margin: EdgeInsets.all(ManagerWidth.w16),
+            borderRadius: 8,
+          );
+          return;
+        }
+
+        controller.avatarImage.value = file;
+
+        Get.snackbar(
+          'نجح',
+          'تم اختيار الصورة بنجاح',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade900,
+          margin: EdgeInsets.all(ManagerWidth.w16),
+          borderRadius: 8,
+          duration: Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      debugPrint('خطأ في اختيار الصورة: $e');
+      Get.snackbar(
+        'خطأ',
+        'فشل اختيار الصورة',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        margin: EdgeInsets.all(ManagerWidth.w16),
+        borderRadius: 8,
+      );
+    }
+  }
+
+  /// دالة لاختيار الصورة من جميع الملفات
+  Future<void> _pickImageFromFiles() async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final file = File(result.files.single.path!);
+
+        final fileSize = await file.length();
+        if (fileSize > 5 * 1024 * 1024) {
+          Get.snackbar(
+            'خطأ',
+            'حجم الصورة كبير جداً. الحد الأقصى 5 ميجابايت',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red.shade100,
+            colorText: Colors.red.shade900,
+            margin: EdgeInsets.all(ManagerWidth.w16),
+            borderRadius: 8,
+          );
+          return;
+        }
+
+        controller.avatarImage.value = file;
+
+        Get.snackbar(
+          'نجح',
+          'تم اختيار الصورة بنجاح',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade900,
+          margin: EdgeInsets.all(ManagerWidth.w16),
+          borderRadius: 8,
+          duration: Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      debugPrint('خطأ في اختيار الصورة: $e');
+      Get.snackbar(
+        'خطأ',
+        'فشل اختيار الصورة',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade900,
+        margin: EdgeInsets.all(ManagerWidth.w16),
+        borderRadius: 8,
+      );
+    }
   }
 }

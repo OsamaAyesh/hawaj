@@ -7,7 +7,8 @@ class SendDataResultsModel {
   final String screen;
   final String lat;
   final String lng;
-  final List<dynamic> parameters;
+
+  // final List<dynamic> parameters;
   final String message;
   final String mp3;
 
@@ -19,7 +20,7 @@ class SendDataResultsModel {
     required this.screen,
     required this.lat,
     required this.lng,
-    required this.parameters,
+    // required this.parameters,
     required this.message,
     required this.mp3,
     this.offers,

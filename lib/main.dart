@@ -52,7 +52,7 @@ class MyApp extends StatelessWidget {
               dotenv.env[EnvConstants.debug].onNullBool(),
           onGenerateRoute: RouteGenerator.getRoute,
           // initialRoute: Routes.managerProductsOfferProviderScreen,
-          initialRoute: Routes.managerProductsOfferProviderScreen,
+          initialRoute: Routes.splash,
           // initialRoute: Routes.getRealEstateMyOwnersScreen,
           navigatorKey: Get.key,
           theme: ThemeData(

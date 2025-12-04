@@ -101,7 +101,7 @@ class _HawajWelcomeStartScreenState extends State<HawajWelcomeStartScreen>
           ],
         ),
       ).withHawaj(
-        screen: HawajScreens.hawajStartScreen,
+        screen: "4",
         section: HawajSections.settingsSection,
         onHawajCommand: (command) async {
           debugPrint("[HawajWelcome] 🎯 Command received: $command");
