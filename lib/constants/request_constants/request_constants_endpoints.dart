@@ -21,7 +21,7 @@ class RequestConstantsEndpoints {
   static const String getCompany = '$apiUrlBase/getorganization';
   static const String getLists = '$apiUrlBase/getlists';
   static const String sendData = '$apiUrlBase/senddata';
-  static const String addMyPropertyOwners = '$apiUrlBase/addmypropertyowners';
+  static const String addMyPropertyOwners = '$apiUrlBase/addmypropertyowner';
   static const String getMyPropertyOwners = '$apiUrlBase/getmypropertyowners';
   static const String getMyRealEstate = '$apiUrlBase/getmypropertys';
   static const String editRealEstate = '$apiUrlBase/setmyproperty';
