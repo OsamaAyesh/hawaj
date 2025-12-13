@@ -21,7 +21,6 @@ class _MyPropertyOwnerScreenState extends State<MyPropertyOwnerScreen> {
   @override
   void initState() {
     super.initState();
-    // تحميل البيانات عند دخول الشاشة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = Get.find<GetMyPropertyOwnerController>();
       controller.fetchMyOwners();
