@@ -71,9 +71,6 @@ class _DashboardRealEstateManagerScreenState
         }
         initGetMyPropertyOwnersModule();
         Get.to(MyPropertyOwnerScreen());
-        // initGetMyRealEstates();
-        // initDeleteMyRealEstate();
-        // Get.to(ManagerMyRealEstateProviderScreen());
       },
       () {
         if (kDebugMode) {

@@ -22,11 +22,11 @@ class GetMyRealEstatesController extends GetxController {
   final realEstates = <RealEstateItemModel>[].obs;
 
   bool _isFetched = false;
+  String? _currentId;
 
   @override
   void onInit() {
     super.onInit();
-    fetchMyRealEstates();
   }
 
   Future<void> _loadCurrentLocation() async {
@@ -46,9 +46,11 @@ class GetMyRealEstatesController extends GetxController {
     }
   }
 
-  Future<void> fetchMyRealEstates() async {
-    if (_isFetched) return;
+  Future<void> fetchMyRealEstates(String id) async {
+    _currentId = id;
+    _isFetched = false;
     isLoading.value = true;
+    errorMessage.value = '';
 
     await _loadCurrentLocation();
     if (currentPosition == null) {
@@ -57,6 +59,7 @@ class GetMyRealEstatesController extends GetxController {
     }
 
     final request = GetMyRealEstatesRequest(
+      id: id,
       lat: currentPosition!.latitude.toString(),
       lng: currentPosition!.longitude.toString(),
       language: AppLanguage().getCurrentLocale(),
@@ -66,11 +69,15 @@ class GetMyRealEstatesController extends GetxController {
 
     result.fold(
       (Failure failure) {
-        errorMessage.value = failure.message;
-        AppSnackbar.error(failure.message);
+        errorMessage.value = failure.message ?? 'حدث خطأ غير متوقع';
+        AppSnackbar.error(failure.message ?? 'حدث خطأ غير متوقع');
       },
       (GetMyRealEstatesModel model) {
-        realEstates.assignAll(model.data);
+        if (model.data != null && model.data!.isNotEmpty) {
+          realEstates.assignAll(model.data!);
+        } else {
+          realEstates.clear();
+        }
         _isFetched = true;
       },
     );
@@ -79,7 +86,9 @@ class GetMyRealEstatesController extends GetxController {
   }
 
   Future<void> refreshEstates() async {
-    _isFetched = false;
-    await fetchMyRealEstates();
+    if (_currentId != null) {
+      _isFetched = false;
+      await fetchMyRealEstates(_currentId!);
+    }
   }
 }

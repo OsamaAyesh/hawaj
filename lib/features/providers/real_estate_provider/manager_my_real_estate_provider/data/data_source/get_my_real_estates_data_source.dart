@@ -34,6 +34,7 @@ class GetMyRealEstatesDataSourceImplement
       );
     }
     return await _appService.getMyRealEstate(
+      request.id,
       request.lat,
       request.lng,
       request.language,

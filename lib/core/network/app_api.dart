@@ -208,6 +208,7 @@ abstract class AppService {
   /// Get My Real Estates Request => getmypropertys
   @GET(RequestConstantsEndpoints.getMyRealEstate)
   Future<GetMyRealEstatesResponse> getMyRealEstate(
+    @Query(RequestConstants.propertyOwnerId) String? id,
     @Query(RequestConstants.lat) String? lat,
     @Query(RequestConstants.lng) String? lng,
     @Query(RequestConstants.language) String? language,

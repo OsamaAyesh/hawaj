@@ -305,7 +305,9 @@ class HawajRoutes {
       screen: HawajScreens.getMyRealEstates,
       // "20"
       name: 'Get My Real Estates Screen',
-      builder: (params) => const ManagerMyRealEstateProviderScreen(),
+      builder: (params) => const ManagerMyRealEstateProviderScreen(
+        id: '',
+      ),
       transition: HawajTransition.fade,
       init: (params) {
         initGetMyRealEstates();

@@ -26,8 +26,7 @@ class EditMyRealEstateController extends GetxController {
           AppSnackbar.error(failure.message);
         },
         (data) {
-          AppSnackbar.success("تم تعديل العقار بنجاح ✅");
-          Get.back();
+          AppSnackbar.success("تم تعديل العقار بنجاح ");
         },
       );
     } catch (e) {

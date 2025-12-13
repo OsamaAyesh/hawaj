@@ -284,7 +284,9 @@ class RouteGenerator {
         );
       case Routes.managerMyRealEstateProviderScreen:
         return MaterialPageRoute(
-          builder: (_) => ManagerMyRealEstateProviderScreen(),
+          builder: (_) => ManagerMyRealEstateProviderScreen(
+            id: '',
+          ),
         );
       case Routes.addCvUserScreen:
         return MaterialPageRoute(

@@ -5,14 +5,13 @@ import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_radius.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
-import 'package:app_mobile/core/util/empty_state_widget.dart';
-import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 
-import '../controller/get_my_property_owner_controller.dart';
-import '../widgets/shimmer_property_card_widget.dart';
+import '../../../manager_my_real_estate_provider/domain/di/di.dart';
+import '../../../manager_my_real_estate_provider/presentation/pages/manager_my_real_estate_provider_screen.dart';
 
 class PropertyOwnerCard extends StatefulWidget {
   final PropertyItemOwnerModel owner;
@@ -268,8 +267,11 @@ class PropertyOwnerCardState extends State<PropertyOwnerCard>
                   elevation: 0,
                   child: InkWell(
                     onTap: () {
-                      // الانتقال لشاشة العقارات
-                      // Get.toNamed('/properties', arguments: widget.owner.id);
+                      initGetMyRealEstates();
+                      initDeleteMyRealEstate();
+                      Get.to(ManagerMyRealEstateProviderScreen(
+                        id: widget.owner.id,
+                      ));
                     },
                     borderRadius: BorderRadius.circular(12),
                     child: Padding(
