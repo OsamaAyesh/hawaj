@@ -481,7 +481,6 @@ class DynamicDrawerWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // أيقونة خطأ متحركة
             TweenAnimationBuilder<double>(
               tween: Tween(begin: 0.8, end: 1.0),
               duration: const Duration(milliseconds: 600),
@@ -504,9 +503,7 @@ class DynamicDrawerWidget extends StatelessWidget {
                 );
               },
             ),
-
             SizedBox(height: ManagerHeight.h20),
-
             Text(
               'حدث خطأ في تحميل القائمة',
               style: getBoldTextStyle(
@@ -515,9 +512,7 @@ class DynamicDrawerWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-
             SizedBox(height: ManagerHeight.h8),
-
             Text(
               controller.errorMessage.value,
               style: getRegularTextStyle(
@@ -526,9 +521,7 @@ class DynamicDrawerWidget extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-
             SizedBox(height: ManagerHeight.h20),
-
             ElevatedButton.icon(
               onPressed: controller.refreshMenu,
               icon: const Icon(Icons.refresh),

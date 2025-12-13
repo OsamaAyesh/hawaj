@@ -20,8 +20,8 @@ import '../../../../../common/map/presenation/pages/map_screen.dart';
 import '../../../add_real_estate/domain/di/di.dart';
 import '../../../add_real_estate/presentation/pages/add_real_estate_screen.dart';
 import '../../../get_real_estate_my_owners/domain/di.dart';
-import '../../../manager_my_real_estate_provider/domain/di/di.dart';
-import '../../../manager_my_real_estate_provider/presentation/pages/manager_my_real_estate_provider_screen.dart';
+import '../../../my_property_owner/domain/di/di.dart';
+import '../../../my_property_owner/persentation/pages/my_property_owner_screen.dart';
 
 class DashboardRealEstateManagerScreen extends StatefulWidget {
   const DashboardRealEstateManagerScreen({super.key});
@@ -69,9 +69,11 @@ class _DashboardRealEstateManagerScreenState
         if (kDebugMode) {
           print("عقاراتي");
         }
-        initGetMyRealEstates();
-        initDeleteMyRealEstate();
-        Get.to(ManagerMyRealEstateProviderScreen());
+        initGetMyPropertyOwnersModule();
+        Get.to(MyPropertyOwnerScreen());
+        // initGetMyRealEstates();
+        // initDeleteMyRealEstate();
+        // Get.to(ManagerMyRealEstateProviderScreen());
       },
       () {
         if (kDebugMode) {

@@ -35,7 +35,6 @@ class _SplashScreenState extends State<SplashScreen>
     _startSplashLogic();
   }
 
-  /// تهيئة الأنيميشن
   void _initAnimations() {
     _fadeController =
         AnimationController(vsync: this, duration: const Duration(seconds: 2));
@@ -55,7 +54,6 @@ class _SplashScreenState extends State<SplashScreen>
     _slideController.forward();
   }
 
-  ///===== Run Splash Logic (Load + Move)
   Future<void> _startSplashLogic() async {
     try {
       /// ======== 1. Preload OnBoarding Data + Images (with timeout)
@@ -66,8 +64,7 @@ class _SplashScreenState extends State<SplashScreen>
       await preloadController
           .preloadOnBoarding()
           .timeout(const Duration(seconds: 5), onTimeout: () {
-        // ⚠️ If API or cache loading takes more than 5s, continue anyway
-        print("⚠️ Preload onboarding timed out, continue...");
+        print(" Preload onboarding timed out, continue...");
       });
 
       /// ====== 2. Wait for splash animation period
@@ -84,14 +81,11 @@ class _SplashScreenState extends State<SplashScreen>
       } else if (!hasSeenOnboarding) {
         Get.offAllNamed(Routes.onBoardingScreen);
       } else if (isLoggedIn) {
-        Get.offAllNamed(
-            Routes.hawajWelcomeStartScreen); // ✅ لازم يكون في Navigation هنا
+        Get.offAllNamed(Routes.hawajWelcomeStartScreen);
       } else {
         Get.offAllNamed(Routes.loginScreen);
       }
     } catch (e) {
-      print("❌ Error in splash logic: $e");
-      // Fallback to login screen in case of any error
       Get.offAllNamed(Routes.loginScreen);
     }
   }

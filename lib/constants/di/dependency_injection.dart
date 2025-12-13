@@ -18,11 +18,6 @@ import '../../features/common/hawaj_voice/domain/di/di.dart';
 import '../../features/common/map/domain/di/di.dart';
 import '../../features/common/map/presenation/controller/hawaj_map_data_controller.dart';
 import '../../features/common/map/presenation/controller/map_controller.dart';
-import '../../features/providers/offer_provider_new_api/add_offer_new/domain/di/di.dart';
-import '../../features/providers/offer_provider_new_api/register_organization_offer_provider/domain/di/di.dart';
-import '../../features/providers/offers_provider/add_offer/domain/di/di.dart';
-import '../../features/providers/offers_provider/register_company_offer_provider/domain/di/di.dart';
-import '../../features/providers/offers_provider/subscription_offer_provider/domain/di/di.dart';
 import '../../features/splash_and_boarding/domain/di/di.dart';
 
 final instance = GetIt.instance;
@@ -69,17 +64,9 @@ initModule() async {
   }
   initGetOnBoarding();
   initSendOtp();
-  initCreateOfferProvider();
-  initGetPlan();
-  // initGetOfferUser();
-  initRegisterMyCompanyOfferProvider();
 
   Get.put(LocaleController());
   initHawajAI();
-
-  ///New Inits
-  initRegisterOrganizationOfferProvider();
-  initAddOfferNew();
 
   Get.put(HawajMapDataController(), permanent: true);
   if (!Get.isRegistered<MapController>()) {
