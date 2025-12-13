@@ -2,6 +2,7 @@ import 'package:app_mobile/core/resources/manager_colors.dart';
 import 'package:app_mobile/core/resources/manager_height.dart';
 import 'package:app_mobile/core/resources/manager_styles.dart';
 import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/util/empty_state_widget.dart';
 import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
 import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
 import 'package:app_mobile/features/providers/real_estate_provider/register_to_real_estate_provider_service/presentation/pages/register_to_real_estate_provider_service_screen.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
+import '../../../edit_profile_real_state_owner/domain/di/di.dart';
 import '../../../edit_profile_real_state_owner/presentation/pages/edit_profile_real_state_owner_screen.dart';
 import '../../../register_to_real_estate_provider_service/domain/di/di.dart';
 import '../controller/get_my_real_estate_my_owner_controller.dart';
@@ -31,6 +33,9 @@ class _GetRealEstateMyOwnersScreenState
   void initState() {
     super.initState();
     controller = Get.find<GetRealEstateMyOwnersController>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchMyOwners();
+    });
   }
 
   @override
@@ -42,6 +47,7 @@ class _GetRealEstateMyOwnersScreenState
         onPressed: () async {
           initAddMyPropertyOwners();
           await Get.to(() => const RegisterToRealEstateProviderServiceScreen());
+          disposeAddMyPropertyOwners();
           await controller.refreshOwners();
         },
         icon: const Icon(Icons.add_rounded, color: ManagerColors.white),
@@ -74,13 +80,15 @@ class _GetRealEstateMyOwnersScreenState
         return RefreshIndicator(
           color: ManagerColors.primaryColor,
           onRefresh: () => controller.refreshOwners(),
-          child: ListView.builder(
+          child: ListView.separated(
             padding: EdgeInsets.symmetric(
               horizontal: ManagerWidth.w16,
               vertical: ManagerHeight.h12,
             ),
             physics: const AlwaysScrollableScrollPhysics(),
             itemCount: controller.owners.length,
+            separatorBuilder: (context, index) =>
+                SizedBox(height: ManagerHeight.h12),
             itemBuilder: (context, index) {
               final owner = controller.owners[index];
               return _AnimatedOwnerCard(
@@ -98,12 +106,13 @@ class _GetRealEstateMyOwnersScreenState
   }
 
   Widget _buildShimmerLoading() {
-    return ListView.builder(
+    return ListView.separated(
       padding: EdgeInsets.symmetric(
         horizontal: ManagerWidth.w16,
         vertical: ManagerHeight.h12,
       ),
       itemCount: 3,
+      separatorBuilder: (context, index) => SizedBox(height: ManagerHeight.h12),
       itemBuilder: (context, index) {
         return const PropertyOwnerShimmerWidget();
       },
@@ -178,74 +187,9 @@ class _GetRealEstateMyOwnersScreenState
   }
 
   Widget _buildEmptyState() {
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(36),
-                decoration: BoxDecoration(
-                  color: Colors.grey[100],
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  Icons.business_outlined,
-                  size: 90,
-                  color: Colors.grey[400],
-                ),
-              ),
-              const SizedBox(height: 28),
-              Text(
-                'لا توجد ملكيات',
-                style: getBoldTextStyle(
-                  fontSize: 24,
-                  color: Colors.grey[800]!,
-                ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                'لم يتم إضافة أي ملكيات بعد',
-                textAlign: TextAlign.center,
-                style: getRegularTextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[600]!,
-                ),
-              ),
-              const SizedBox(height: 36),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  initAddMyPropertyOwners();
-                  await Get.to(
-                      () => const RegisterToRealEstateProviderServiceScreen());
-                  await controller.refreshOwners();
-                },
-                icon: const Icon(Icons.add_rounded, size: 22),
-                label: Text(
-                  'إضافة ملكية جديدة',
-                  style: getMediumTextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: ManagerColors.primaryColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 48,
-                    vertical: 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  elevation: 2,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return EmptyStateWidget(
+      messageAr: "لا توجد ملكيات",
+      messageEn: "No ownership",
     );
   }
 }
@@ -306,25 +250,33 @@ class _AnimatedOwnerCardState extends State<_AnimatedOwnerCard>
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<GetRealEstateMyOwnersController>();
+
     return SlideTransition(
       position: _slideAnimation,
       child: FadeTransition(
         opacity: _fadeAnimation,
         child: PropertyOwnerCardWidget(
           owner: widget.owner,
-          onTap: () {
+          onTap: () async {
             final ownerId = widget.owner.id ?? '';
-            Get.to(() => EditProfileRealStateOwnerScreen(
+            initEditProfileMyPropertyOwnerModule(ownerId);
+            await Get.to(() => EditProfileRealStateOwnerScreen(
                   ownerId: ownerId,
                   owner: widget.owner,
                 ));
+            disposeEditProfileMyPropertyOwnerModule();
+            await controller.refreshOwners();
           },
-          onEdit: () {
+          onEdit: () async {
             final ownerId = widget.owner.id ?? '';
-            Get.to(() => EditProfileRealStateOwnerScreen(
+            initEditProfileMyPropertyOwnerModule(ownerId);
+            await Get.to(() => EditProfileRealStateOwnerScreen(
                   ownerId: ownerId,
                   owner: widget.owner,
                 ));
+            disposeEditProfileMyPropertyOwnerModule();
+            await controller.refreshOwners();
           },
         ),
       ),

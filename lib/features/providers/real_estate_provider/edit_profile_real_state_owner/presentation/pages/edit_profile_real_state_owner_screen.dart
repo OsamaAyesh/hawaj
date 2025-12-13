@@ -1,25 +1,33 @@
-import 'dart:io';
+// lib/features/providers/real_estate_provider/edit_profile_real_state_owner/presentation/pages/edit_profile_real_state_owner_screen.dart
 
+import 'package:app_mobile/core/model/property_item_owner_model.dart';
+import 'package:app_mobile/core/resources/manager_colors.dart';
+import 'package:app_mobile/core/resources/manager_font_size.dart';
+import 'package:app_mobile/core/resources/manager_height.dart';
+import 'package:app_mobile/core/resources/manager_strings.dart';
+import 'package:app_mobile/core/resources/manager_styles.dart';
+import 'package:app_mobile/core/resources/manager_width.dart';
+import 'package:app_mobile/core/widgets/button_app.dart';
+import 'package:app_mobile/core/widgets/custom_confirm_dialog.dart';
+import 'package:app_mobile/core/widgets/labeled_text_field.dart';
+import 'package:app_mobile/core/widgets/loading_widget.dart';
+import 'package:app_mobile/core/widgets/scaffold_with_back_button.dart';
+import 'package:app_mobile/core/widgets/sized_box_between_feilads_widgets.dart';
+import 'package:app_mobile/core/widgets/sub_title_text_screen_widget.dart';
+import 'package:app_mobile/core/widgets/title_text_screen_widget.dart';
+import 'package:app_mobile/core/widgets/upload_media_widget.dart';
+import 'package:app_mobile/features/common/hawaj_voice/presentation/widgets/hawaj_widget.dart';
+import 'package:app_mobile/features/common/map_ticker/domain/di/di.dart';
+import 'package:app_mobile/features/common/map_ticker/presenation/pages/map_ticker_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../../../../core/model/property_item_owner_model.dart';
-import '../../../../../../core/resources/manager_height.dart';
-import '../../../../../../core/resources/manager_width.dart';
-import '../../../../../../core/widgets/button_app.dart';
-import '../../../../../../core/widgets/custom_confirm_dialog.dart';
-import '../../../../../../core/widgets/labeled_text_field.dart';
-import '../../../../../../core/widgets/loading_widget.dart';
-import '../../../../../../core/widgets/scaffold_with_back_button.dart';
-import '../../../../../../core/widgets/sized_box_between_feilads_widgets.dart';
-import '../../../../../../core/widgets/upload_media_widget.dart';
+import '../../../../../../core/routes/hawaj_routing/hawaj_routing_and_screens.dart';
 import '../../domain/di/di.dart';
-import '../../presentation/controller/edit_profile_my_property_owner_controller.dart';
+import '../controller/edit_profile_my_property_owner_controller.dart';
 
 class EditProfileRealStateOwnerScreen extends StatefulWidget {
   final String ownerId;
-
-  /// The full owner model passed from the previous screen
   final PropertyItemOwnerModel owner;
 
   const EditProfileRealStateOwnerScreen({
@@ -37,68 +45,54 @@ class _EditProfileRealStateOwnerScreenState
     extends State<EditProfileRealStateOwnerScreen> {
   late final EditProfileMyPropertyOwnerController controller;
 
-  // Text Controllers
-  final nameController = TextEditingController();
-  final mobileController = TextEditingController();
-  final whatsappController = TextEditingController();
-  final addressController = TextEditingController();
-  final briefController = TextEditingController();
-
   @override
   void initState() {
     super.initState();
 
-    /// 🟢 Initialize DI module with the passed ownerId
-    initEditProfileMyPropertyOwnerModule(widget.owner.id ?? '');
+    // Initialize DI
+    initEditProfileMyPropertyOwnerModule(widget.ownerId);
 
-    /// 🟢 Get the controller instance
+    // Get controller
     controller = Get.find<EditProfileMyPropertyOwnerController>();
 
-    /// 🟢 Initialize data into the controller and fields
-    _initOwnerData(widget.owner);
+    // Populate data
+    _initOwnerData();
   }
 
-  /// Initialize owner data from model
-  void _initOwnerData(PropertyItemOwnerModel owner) {
-    controller.ownerName = owner.ownerName;
-    controller.mobileNumber = owner.mobileNumber;
-    controller.whatsappNumber = owner.whatsappNumber;
-    controller.locationLat = owner.locationLat;
-    controller.locationLng = owner.locationLng;
-    controller.detailedAddress = owner.detailedAddress;
-    controller.accountType = owner.accountType;
-    controller.companyName = owner.companyName;
-    controller.companyBrief = owner.companyBrief;
+  void _initOwnerData() {
+    final owner = widget.owner;
 
-    // Set values in text fields
-    nameController.text = owner.companyName ?? '';
-    mobileController.text = owner.mobileNumber ?? '';
-    whatsappController.text = owner.whatsappNumber ?? '';
-    addressController.text = owner.detailedAddress ?? '';
-    briefController.text = owner.companyBrief ?? '';
+    // Set text fields
+    controller.ownerNameController.text = owner.ownerName ?? '';
+    controller.mobileNumberController.text = owner.mobileNumber ?? '';
+    controller.whatsappNumberController.text = owner.whatsappNumber ?? '';
+    controller.locationLatController.text = owner.locationLat ?? '';
+    controller.locationLngController.text = owner.locationLng ?? '';
+    controller.detailedAddressController.text = owner.detailedAddress ?? '';
+    controller.companyNameController.text = owner.companyName ?? '';
+    controller.companyBriefController.text = owner.companyBrief ?? '';
+
+    // Set account type
+    controller.selectedAccountType.value = owner.accountType ?? '1';
+
+    // Store existing URLs
+    controller.existingCompanyLogoUrl = owner.companyLogo ?? '';
+    // Add other URLs if available in model
   }
 
   @override
   void dispose() {
-    /// 🔴 Dispose DI module and controller when leaving the screen
     disposeEditProfileMyPropertyOwnerModule();
-
-    nameController.dispose();
-    mobileController.dispose();
-    whatsappController.dispose();
-    addressController.dispose();
-    briefController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return ScaffoldWithBackButton(
-      title: "تعديل بياناتي",
+      title: "تعديل بيانات الملكية",
       body: Obx(() {
         return Stack(
           children: [
-            /// ===== المحتوى الرئيسي =====
             SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
               padding: EdgeInsets.symmetric(horizontal: ManagerWidth.w16)
@@ -108,58 +102,111 @@ class _EditProfileRealStateOwnerScreenState
                 children: [
                   SizedBox(height: ManagerHeight.h24),
 
-                  /// ===== الاسم التجاري أو الشخصي =====
+                  /// ===== العنوان =====
+                  const TitleTextScreenWidget(
+                    title: "تحديث بيانات الملكية",
+                  ),
+                  SizedBox(height: ManagerHeight.h4),
+                  const SubTitleTextScreenWidget(
+                    subTitle:
+                        "قم بتعديل وتحديث جميع بيانات ملكيتك العقارية بشكل احترافي.",
+                  ),
+                  SizedBox(height: ManagerHeight.h24),
+
+                  /// ===== اسم الشخص =====
                   LabeledTextField(
-                    controller: nameController,
-                    label: "الاسم التجاري أو اسم الشخص",
-                    hintText: "أدخل اسم المكتب أو اسمك الكامل",
-                    widthButton: 130,
-                    onChanged: (val) => controller.companyName = val,
+                    controller: controller.ownerNameController,
+                    label: "اسم الشخص",
+                    hintText: "أدخل الاسم الكامل",
+                    widthButton: ManagerWidth.w130,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
                   /// ===== رقم الجوال =====
                   LabeledTextField(
-                    controller: mobileController,
+                    controller: controller.mobileNumberController,
                     label: "رقم الجوال",
-                    hintText: "أدخل رقم الهاتف",
+                    hintText: "أدخل رقم الجوال",
                     keyboardType: TextInputType.phone,
-                    widthButton: 130,
-                    onChanged: (val) => controller.mobileNumber = val,
+                    widthButton: ManagerWidth.w130,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
                   /// ===== رقم الواتساب =====
                   LabeledTextField(
-                    controller: whatsappController,
-                    label: "رقم الواتس آب",
-                    hintText:
-                        "أدخل رقم الهاتف مع مفتاح الدولة (مثال: +970599XXXXXX)",
+                    controller: controller.whatsappNumberController,
+                    label: "رقم الواتساب",
+                    hintText: "أدخل رقم الواتساب",
                     keyboardType: TextInputType.phone,
-                    widthButton: 130,
-                    onChanged: (val) => controller.whatsappNumber = val,
+                    widthButton: ManagerWidth.w130,
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// ===== الموقع الجغرافي =====
+                  LabeledTextField(
+                    label: "تعيين الموقع الجغرافي",
+                    controller: controller.locationLatController,
+                    hintText: "حدد موقع مكتبك",
+                    widthButton: 140,
+                    onButtonTap: () async {
+                      MapTickerBindings().dependencies();
+                      final result = await Get.to(
+                        () => const MapTickerScreen(),
+                      );
+
+                      if (result != null) {
+                        controller.locationLatController.text =
+                            result.latitude.toString();
+                        controller.locationLngController.text =
+                            result.longitude.toString();
+                      }
+                    },
+                    buttonWidget: Container(
+                      width: ManagerWidth.w140,
+                      height: ManagerHeight.h44,
+                      decoration: BoxDecoration(
+                        color: ManagerColors.primaryColor,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "حدد موقع مكتبك",
+                          style: getBoldTextStyle(
+                            fontSize: ManagerFontSize.s12,
+                            color: ManagerColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
                   /// ===== العنوان التفصيلي =====
                   LabeledTextField(
-                    controller: addressController,
+                    controller: controller.detailedAddressController,
                     label: "العنوان التفصيلي",
-                    hintText: "أدخل العنوان التفصيلي للمكتب",
-                    widthButton: 130,
-                    onChanged: (val) => controller.detailedAddress = val,
+                    hintText: "أدخل العنوان التفصيلي لمكتبك",
+                    widthButton: ManagerWidth.w130,
+                  ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// ===== اسم الشركة =====
+                  LabeledTextField(
+                    controller: controller.companyNameController,
+                    label: "اسم الشركة",
+                    hintText: "أدخل اسم شركتك العقارية",
+                    widthButton: ManagerWidth.w130,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
                   /// ===== وصف مختصر للنشاط =====
                   LabeledTextField(
-                    controller: briefController,
+                    controller: controller.companyBriefController,
                     label: "وصف مختصر للنشاط",
-                    hintText: "أدخل نبذة موجزة عن خدماتك العقارية",
+                    hintText: "أدخل وصفًا مختصرًا عن نشاطك العقاري",
                     minLines: 3,
                     maxLines: 5,
-                    widthButton: 130,
-                    onChanged: (val) => controller.companyBrief = val,
+                    widthButton: ManagerWidth.w130,
                   ),
                   const SizedBoxBetweenFieldWidgets(),
 
@@ -167,17 +214,53 @@ class _EditProfileRealStateOwnerScreenState
                   UploadMediaField(
                     label: "شعار مقدم العقارات",
                     hint: "ارفع شعار مقدم العقارات",
-                    note: "اختياري (PNG أو JPG)",
-                    file: controller.companyLogo == null
-                        ? Rx<File?>(null)
-                        : Rx<File?>(controller.companyLogo),
+                    note: "PNG أو JPG (اختياري)",
+                    file: controller.companyLogo,
+                    existingUrl: controller.existingCompanyLogoUrl,
                   ),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// ===== نوع الحساب =====
+                  Obx(() => _AccountTypeSelector(
+                        selectedType: controller.selectedAccountType.value,
+                        onChanged: (value) => controller.setAccountType(value),
+                      )),
+                  const SizedBoxBetweenFieldWidgets(),
+
+                  /// ===== الحقول الإضافية في حال مكتب عقاري =====
+                  Obx(() {
+                    if (controller.selectedAccountType.value == '1') {
+                      return Column(
+                        children: [
+                          UploadMediaField(
+                            label: "شهادة الوساطة العقارية",
+                            hint: "ارفع شهادة الوساطة العقارية",
+                            note: "PDF أو صورة",
+                            file: controller.brokerageCertificate,
+                            existingUrl:
+                                controller.existingBrokerageCertificateUrl,
+                          ),
+                          const SizedBoxBetweenFieldWidgets(),
+                          UploadMediaField(
+                            label: "السجل التجاري",
+                            hint: "ارفع السجل التجاري",
+                            note: "PDF أو صورة",
+                            file: controller.commercialRegister,
+                            existingUrl:
+                                controller.existingCommercialRegisterUrl,
+                          ),
+                          const SizedBoxBetweenFieldWidgets(),
+                        ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  }),
 
                   SizedBox(height: ManagerHeight.h24),
 
-                  /// ===== زر التعديل =====
+                  /// ===== زر التحديث =====
                   ButtonApp(
-                    title: "تعديل",
+                    title: "تحديث البيانات",
                     onPressed: () {
                       showDialog(
                         context: context,
@@ -203,18 +286,91 @@ class _EditProfileRealStateOwnerScreenState
               ),
             ),
 
-            /// ===== Overlay Loading فوق المحتوى =====
-            if (controller.isLoading.value)
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.black.withOpacity(0.15),
-                alignment: Alignment.center,
-                child: const LoadingWidget(),
-              ),
+            /// ===== Loading Overlay =====
+            if (controller.isLoading.value) const LoadingWidget(),
           ],
         );
       }),
+    ).withHawaj(
+      section: HawajSections.realEstates,
+      screen: HawajScreens.myOwnerPropertys,
+    );
+  }
+}
+
+class _AccountTypeSelector extends StatelessWidget {
+  final String selectedType;
+  final Function(String) onChanged;
+
+  const _AccountTypeSelector({
+    required this.selectedType,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          ManagerStrings.accountType,
+          style: getBoldTextStyle(
+            fontSize: ManagerFontSize.s14,
+            color: Colors.black,
+          ),
+        ),
+        const SizedBox(height: 8),
+        _buildRadioOption("1", ManagerStrings.officeAccount),
+        const SizedBox(height: 8),
+        _buildRadioOption("2", ManagerStrings.personalAccount),
+      ],
+    );
+  }
+
+  Widget _buildRadioOption(String value, String label) {
+    final isSelected = selectedType == value;
+
+    return GestureDetector(
+      onTap: () => onChanged(value),
+      child: Row(
+        children: [
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: isSelected
+                    ? ManagerColors.primaryColor
+                    : Colors.grey.shade400,
+                width: 2,
+              ),
+            ),
+            child: isSelected
+                ? Center(
+                    child: Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                        color: ManagerColors.primaryColor,
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                  )
+                : null,
+          ),
+          SizedBox(width: ManagerWidth.w6),
+          Text(
+            label,
+            style: getMediumTextStyle(
+              fontSize: ManagerFontSize.s14,
+              color: isSelected
+                  ? ManagerColors.primaryColor
+                  : Colors.grey.shade400,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
